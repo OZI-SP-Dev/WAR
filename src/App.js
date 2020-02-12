@@ -2,7 +2,11 @@ import React from 'react';
 import { Component } from 'react'
 import logo from './logo.svg';
 import './App.css';
-import { Button } from 'react-bootstrap';
+
+import AppHeader from './AppHeader';
+import AppLeftNav from './AppLeftNav';
+import TestList from './TestList';
+
 import { Web } from '@pnp/sp/webs';
 import '@pnp/sp/site-users';
 
@@ -21,39 +25,34 @@ class App extends Component {
       headers: { "Accept": "application/json; odata=verbose" }
     });
 
-    this.setState({isLoading: true});
-    web.select("Title")().then(w => {
-      let title = w.Title;
-      this.setState({ SiteTitle: title, isLoading: false });
-    }, e => {
-      this.setState({ SiteTitle: 'Error Title', isLoading: false });
-    });
+    this.setState({ isLoading: true });
 
     web.currentUser.get().then(r => {
-      this.setState({DisplayName: r['Title']}); 
+      this.setState({ DisplayName: r['Title'], isLoading: false });
     }, e => {
-      this.setState({DisplayName: 'Unknown User'});
+      this.setState({ DisplayName: 'Unknown User', isLoading: false });
     });
   }
 
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Welcome <h1>{this.state.DisplayName}</h1>
-          </a>
-        </header>
-        <Button variant="link" className="mr-2">Link</Button>
+        <AppHeader />
+        <div id="top" className="container-fluid">
+          <div class="row">
+            <AppLeftNav />
+            <main class="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
+              <div class="App-react">
+              <img src={logo} className="App-logo" alt="logo" />
+              <p>
+                Edit <code>src/App.js</code> and save to reload.
+              </p>
+                Welcome <h1>{this.state.DisplayName}</h1>
+              </div>
+              <TestList />
+            </main>
+          </div>
+        </div>
       </div>
     );
   }
