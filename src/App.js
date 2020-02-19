@@ -6,9 +6,7 @@ import './App.css';
 import AppHeader from './AppHeader';
 import AppLeftNav from './AppLeftNav';
 import TestList from './TestList';
-
-import { Web } from '@pnp/sp/webs';
-import '@pnp/sp/site-users';
+import { UserProvider } from './UserProvider';
 
 class App extends Component {
   constructor(props) {
@@ -16,33 +14,25 @@ class App extends Component {
     this.state = {
       SiteTitle: null,
       DisplayName: null,
-      isLoading: false
+      isLoading: false,
+      UserContext: React.createContext('Test User')
     };
   }
 
   componentDidMount() {
-    const web = new Web('https://cs2.eis.af.mil/sites/10251').configure({
-      headers: { "Accept": "application/json; odata=verbose" }
-    });
-
-    this.setState({ isLoading: true });
-
-    web.currentUser.get().then(r => {
-      this.setState({ DisplayName: r['Title'], isLoading: false });
-    }, e => {
-      this.setState({ DisplayName: 'Unknown User', isLoading: false });
-    });
   }
 
   render() {
     return (
       <div className="App">
-        <AppHeader />
+        <UserProvider>
+          <AppHeader />
+        </UserProvider>
         <div id="top" className="container-fluid">
-          <div class="row">
+          <div className="row">
             <AppLeftNav />
-            <main class="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
-              <div class="App-react">
+            <main className="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
+              <div className="App-react">
               <img src={logo} className="App-logo" alt="logo" />
               <p>
                 Edit <code>src/App.js</code> and save to reload.
