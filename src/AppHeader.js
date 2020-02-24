@@ -23,7 +23,7 @@ function AppHeader() {
           </NavDropdown>
         </Nav>
         <Navbar.Collapse className="justify-content-end">
-          <Navbar.Text>
+          <Navbar.Text className="mr-2">
             Welcome {user.data}
           </Navbar.Text>
         </Navbar.Collapse>
