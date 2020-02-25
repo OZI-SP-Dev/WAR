@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import './AppHeader.css';
-import { UserContext } from './UserProvider';
+import { UserContext } from '../../UserProvider';
 
 function AppHeader() {
   const user = useContext(UserContext);
