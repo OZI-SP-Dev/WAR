@@ -3,8 +3,8 @@ import { Component } from 'react'
 import logo from './logo.svg';
 import './App.css';
 
-import AppHeader from './AppHeader';
-import AppLeftNav from './AppLeftNav';
+import AppHeader from './components/appHeader/AppHeader';
+import AppLeftNav from './components/appLeftNav/AppLeftNav';
 import TestList from './TestList';
 import { UserProvider } from './UserProvider';
 
