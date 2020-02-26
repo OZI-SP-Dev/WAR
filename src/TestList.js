@@ -11,15 +11,16 @@ class TestList extends Component {
     super(props);
     this.state = {
       listData: [
-        { id: '1', Title: 'A Title', myColumn: 'My Column' },
-        { id: '2', Title: 'A second title!', myColumn: 'More than one column?!' }
+        { ID: '1', Title: 'A Title', myColumn: 'My Column' },
+        { ID: '2', Title: 'A second title!', myColumn: 'More than one column?!' }
       ],
       isLoading: false
     };
   }
 
   componentDidMount() {
-    const web = new Web('https://cs2.eis.af.mil/sites/10251').configure({
+    //TODO move web to a provider
+    const web = new Web('https://usaf.dps.mil/teams/10251').configure({
       headers: { "Accept": "application/json; odata=verbose" }
     });
 
@@ -32,9 +33,9 @@ class TestList extends Component {
     });
   }
 
-  deleteItem = id => {
+  deleteItem = ID => {
     // delete operation to remove item
-    let newData = this.state.listData.filter( el => el.id !== id ); 
+    let newData = this.state.listData.filter( el => el.ID !== ID ); 
     this.setState({ listData: newData });
   };
 
@@ -42,12 +43,12 @@ class TestList extends Component {
     const data = this.state.listData;
 
     const mapRows = data.map((item, index) => (
-      <tr key={item.id}>
-        <td>{item.id}</td>
+      <tr key={item.ID}>
+        <td>{item.ID}</td>
         <td>{item.Title}</td>
         <td>{item.myColumn}</td>
         <td>
-          <Button onClick={() => this.deleteItem(item.id)}>
+          <Button onClick={() => this.deleteItem(item.ID)}>
             Delete Item
             </Button>
         </td>

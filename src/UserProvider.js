@@ -8,17 +8,18 @@ export const UserProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
 
     const getUser = async () => {
-        const web = new Web('https://cs2.eis.af.mil/sites/10251').configure({
+      //TODO move web to a provider
+        const web = new Web('https://usaf.dps.mil/teams/10251').configure({
             headers: { "Accept": "application/json; odata=verbose" }
         });
 
         setLoading(true);
-        let newUser = 'Default User';
+        let newUser = {Title: 'Default User'};
         try {
           newUser = await web.currentUser.get();
         } catch (error) {console.log(error);}
 
-        setData(newUser);
+        setData(newUser.Title);
         setLoading(false);
     }
 
