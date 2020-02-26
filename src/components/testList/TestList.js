@@ -1,4 +1,5 @@
 import React from 'react';
+import TestListModal from '../testListModal/TestListModal';
 import { Component } from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { Web } from '@pnp/sp/webs';
@@ -14,7 +15,8 @@ class TestList extends Component {
         { ID: '1', Title: 'A Title', myColumn: 'My Column' },
         { ID: '2', Title: 'A second title!', myColumn: 'More than one column?!' }
       ],
-      isLoading: false
+      isLoading: false,
+      showModal: false
     };
   }
 
@@ -36,7 +38,7 @@ class TestList extends Component {
   deleteItem = ID => {
     // delete operation to remove item
     let newData = this.state.listData.filter( el => el.ID !== ID ); 
-    this.setState({ listData: newData });
+    this.setState({ listData: newData, showModal: true });
   };
 
   renderItems = () => {
@@ -76,6 +78,7 @@ class TestList extends Component {
             </tbody>
           </Table>
         </div>
+        <TestListModal show = {this.state.showModal} handleClose = {() => this.setState({showModal: false})} />
       </div>
     );
   }

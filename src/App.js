@@ -5,7 +5,7 @@ import './App.css';
 
 import AppHeader from './components/appHeader/AppHeader';
 import AppLeftNav from './components/appLeftNav/AppLeftNav';
-import TestList from './TestList';
+import TestList from './components/testList/TestList';
 import { UserProvider } from './UserProvider';
 
 class App extends Component {
