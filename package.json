@@ -1,6 +1,6 @@
 {
   "name": "weekly-activity-report",
-  "homepage": "https://usaf.dps.mil/teams/10251",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -28,6 +28,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:test": "set PUBLIC_URL=https://usaf.dps.mil/teams/10251/test&&react-scripts build&&npm run rename",
+    "build:war-dev": "set PUBLIC_URL=https://usaf.dps.mil/teams/10251/WAR-DEV/test&&react-scripts build&&npm run rename",
+    "rename": "node -e \"require('fs').rename('build/index.html', 'build/index.aspx', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
