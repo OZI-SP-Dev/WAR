@@ -6,7 +6,7 @@ import './App.css';
 import AppHeader from './components/appHeader/AppHeader';
 import AppLeftNav from './components/appLeftNav/AppLeftNav';
 import TestList from './components/testList/TestList';
-import { UserProvider } from './UserProvider';
+import { UserProvider } from './providers/UserProvider';
 
 class App extends Component {
   constructor(props) {

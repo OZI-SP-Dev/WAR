@@ -11,15 +11,15 @@ class TestListModal extends Component {
         return (
             <Modal show={this.props.show} onHide={this.props.handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>{this.props.modalDisplayName || "Pop-up"}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+                <Modal.Body>{this.props.children || "description"}</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={this.props.handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={this.props.handleClose}>
-                        Save Changes
+                    <Button variant={this.props.submitButtonVariant || "primary"} onClick={this.props.handleSubmit}>
+                        {this.props.submitButtonText || "Submit"}
                     </Button>
                 </Modal.Footer>
             </Modal>
