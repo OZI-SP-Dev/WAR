@@ -1,6 +1,6 @@
 {
   "name": "weekly-activity-report",
-  "homepage": ".",
+  "homepage": "https://usaf.dps.mil/teams/10251",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -18,6 +18,7 @@
     "react-datepicker": "^2.13.0",
     "react-dom": "^16.12.0",
     "react-redux": "^7.1.3",
+    "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.3.1",
     "redux": "^4.0.5",
