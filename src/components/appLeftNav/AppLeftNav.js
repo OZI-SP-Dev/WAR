@@ -1,6 +1,7 @@
 import React from 'react';
 import { Component } from 'react';
 import './AppLeftNav.css';
+import yoda from './yoda.webp';
 
 class AppLeftNav extends Component {
     constructor(props) {
@@ -8,18 +9,11 @@ class AppLeftNav extends Component {
         this.state = {};
     }
 
-    componentDidMount() {
-
-    }
-
-    deleteItem = id => {
-        // delete operation to remove item
-    };
-
     render() {
         return (
             <nav className="col-md-2 d-none d-md-block bg-light sidebar">
                 <div className="sidebar-sticky">
+                    <img src={yoda} alt="Logo" className="logo" />
                     <ul className="nav flex-column">
                         <li className="nav-item">
                             <a className="nav-link active" href="#top">

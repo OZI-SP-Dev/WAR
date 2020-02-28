@@ -52,3 +52,8 @@
     font-size: .75rem;
     text-transform: uppercase;
   }
+
+  .logo {
+    max-width: 100%;
+    max-height: 100%;
+  }

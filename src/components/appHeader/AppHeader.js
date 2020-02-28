@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 import './AppHeader.css';
 import { UserContext } from '../../UserProvider';
 
@@ -11,8 +12,12 @@ function AppHeader() {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link href="#home">Home</Nav.Link>
-          <Nav.Link href="#link">Link</Nav.Link>
+          <LinkContainer to="/">
+            <Nav.Link>Home</Nav.Link>
+          </LinkContainer>
+          <LinkContainer to="/Help" className="justify-content-end">
+            <Nav.Link>Help</Nav.Link>
+          </LinkContainer>
           <NavDropdown title="Dropdown" id="basic-nav-dropdown">
             <NavDropdown.Item>Action</NavDropdown.Item>
             <NavDropdown.Item>Another action</NavDropdown.Item>
