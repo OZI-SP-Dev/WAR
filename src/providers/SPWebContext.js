@@ -1,7 +1,6 @@
 import "@pnp/sp/sites";
 import { Web } from '@pnp/sp/webs';
-import { sp } from "@pnp/sp";
 
-export const spWebContext = new Web(sp.site.getWebUrlFromPageUrl(window.location)).configure({
+export const spWebContext = new Web(process.env.REACT_APP_API_URL).configure({
     headers: { "Accept": "application/json; odata=verbose" }
   });
