@@ -18,12 +18,14 @@ function AppHeader() {
           <LinkContainer to="/Help" className="justify-content-end">
             <Nav.Link>Help</Nav.Link>
           </LinkContainer>
-          <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-            <NavDropdown.Item>Action</NavDropdown.Item>
-            <NavDropdown.Item>Another action</NavDropdown.Item>
-            <NavDropdown.Item>Something</NavDropdown.Item>
+          <NavDropdown title="Reports" id="basic-nav-dropdown">
+            <LinkContainer to="/MyItems">
+              <NavDropdown.Item>My Items</NavDropdown.Item>
+            </LinkContainer>
             <NavDropdown.Divider />
-            <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+            <NavDropdown.Item>WAR</NavDropdown.Item>
+            <NavDropdown.Item>Big Rocks</NavDropdown.Item>
+            <NavDropdown.Item>Annual History</NavDropdown.Item>
           </NavDropdown>
         </Nav>
         <Navbar.Collapse className="justify-content-end">

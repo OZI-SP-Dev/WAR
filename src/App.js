@@ -10,6 +10,7 @@ import AppHeader from './components/appHeader/AppHeader';
 import AppLeftNav from './components/appLeftNav/AppLeftNav';
 import TestList from './TestList';
 import Help from './components/Help/Help';
+import MyItems from './components/MyItems/MyItems';
 
 
 class App extends Component {
@@ -32,6 +33,9 @@ class App extends Component {
                 <Switch>
                   <Route path="/Help">
                     <Help />
+                  </Route>
+                  <Route path="/MyItems">
+                    <MyItems />
                   </Route>
                   <Route path="/">
                     <TestList />
