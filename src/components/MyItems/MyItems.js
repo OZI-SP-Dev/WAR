@@ -85,7 +85,7 @@ class MyItems extends Component {
 
   render() {
     return (
-      <Container>
+      <Container className="mb-3" >
         <Accordion defaultActiveKey="0">
           <Row className="justify-content-md-center"><h1>My Items</h1></Row>
           <Card>
