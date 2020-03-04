@@ -3,10 +3,6 @@ import { Component } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 
 class TestListModal extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <Modal show={this.props.show} onHide={this.props.handleClose}>
