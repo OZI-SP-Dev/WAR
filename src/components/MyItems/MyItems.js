@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Accordion, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { spWebContext } from '../../providers/SPWebContext';
 import './MyItems.css';
+import EditActivityModal from './EditActivityModal';
 
 class MyItems extends Component {
   constructor(props) {
@@ -10,14 +11,11 @@ class MyItems extends Component {
       listData: [],
       isLoading: true,
       showAddModal: false,
-      newItemTitle: '',
-      newItemWeekOf: '3/1/2020',
-      newItemBranch: 'OZI',
-      newItemInterestItems: '',
-      newItemActionItems: 'Informational.',
-      newItemOPRs: 'Robert Porterfield',
       showDeleteModal: false,
-      deleteItemId: -1
+      deleteItemId: -1,
+      showEditModal: false,
+      editActivity: {},
+      editItemID: -1
     };
     this.web = spWebContext;
     let today = new Date();
@@ -98,16 +96,23 @@ class MyItems extends Component {
     this.setState({ listData: newData, newItem: true });
   }
 
+  submitEditActivity = () => {
+    this.setState({showEditModal: false});
+  }
+
   renderCards = (weekOf) => {
     const data = this.state.listData;
 
     const mapRows = data.filter(item => item.WeekOf === weekOf).map((item, index) => (
       <Col xl={6} className="mb-3" key={item.ID}>
-        <Card className="activity">
+        <Card className="activity" 
+          onClick={() => this.setState({ showEditModal: true, editActivity: item })}>
           <Card.Body>
             <Card.Title>Activity/Purpose: <span ref="Title">{item.Title}</span></Card.Title>
             <Card.Text>
               <strong>Specific items of interest:</strong> <span>{item.InterestItems}</span><br />
+              {//TODO allow for InterestItems to display with line breaks
+              }
               <strong>Action items for {item.Branch}:</strong> <span>{item.ActionItems}</span><br />
               <strong>OPRs:</strong> <span>{item.OPRs}</span>
             </Card.Text>
@@ -173,6 +178,11 @@ class MyItems extends Component {
 
     return (
       <Container>
+        <EditActivityModal 
+          showEditModal={this.state.showEditModal}
+          submitEditActivity={this.submitEditActivity}
+          activity={this.state.editActivity}
+        />
         <Row className="justify-content-center"><h1>My Items</h1></Row>
         {isLoading ? <MySpinner /> : this.renderData()}
       </Container>
