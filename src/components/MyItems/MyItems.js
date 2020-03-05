@@ -21,6 +21,8 @@ class MyItems extends Component {
       deleteItemId: -1
     };
     this.web = spWebContext;
+    let today = new Date();
+    this.weekStart = new Date(today.getYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
   }
 
   componentDidMount() {
@@ -147,7 +149,7 @@ class MyItems extends Component {
             <Card>
               <Accordion.Toggle as={Card.Header} eventKey="0">
                 Period of Accomplishments: 2 - 6 Mar 2020
-            </Accordion.Toggle>
+              </Accordion.Toggle>
               <Accordion.Collapse eventKey="0">
                 <Card.Body>
                   <Row>
