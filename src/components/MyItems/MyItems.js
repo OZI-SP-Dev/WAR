@@ -36,12 +36,12 @@ class MyItems extends Component {
       setTimeout(() => {
         let listData = [
           {
-            ID: '1', Title: 'SP BAC', WeekOf: '3/1/2020', Branch: 'OZI',
+            ID: '1', Title: 'SP BAC', WeekOf: '2020-03-10T00:00:00Z', Branch: 'OZI',
             InterestItems: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.',
             ActionItems: 'Informational.', OPRs: 'Robert Porterfield; Jeremy Clark'
           },
           {
-            ID: '2', Title: 'SP Support', WeekOf: '3/1/2020', Branch: 'OZI',
+            ID: '2', Title: 'SP Support', WeekOf: '2020-03-10T00:00:00Z', Branch: 'OZI',
             InterestItems: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.',
             ActionItems: 'Informational.', OPRs: 'Robert Porterfield'
           },
@@ -116,71 +116,68 @@ class MyItems extends Component {
         </Card>
       </Col>
     ));
-    return mapRows;
+
+    const NoData = () => <Col>You have no saved items for this period of accomplishment.</Col>;
+
+    return mapRows.length ? mapRows : <NoData />;
   };
 
-  render() {
-    if (this.state.isLoading) {
-      return (
-        <Container className="h-100">
-          <Row className="justify-content-center"><h1>My Items</h1></Row>
-          <Row className="h-100 justify-content-center align-items-center">
-              <Spinner animation="border" role="status">
-                <span className="sr-only">Loading...</span>
-              </Spinner> Loading...
-          </Row>
-        </Container>
-      );
-    } else if (this.state.listData.length === 0) {
-      return (
-        <Container className="h-100">
-          <Row className="justify-content-center"><h1>My Items</h1></Row>
-          <Row className="h-100 justify-content-center align-items-center">
-              You have no saved items for this period of accomplishment.
-          </Row>
-        </Container>
-      );
-    } else {
-
-      return (
-        <Container>
-          <Row className="justify-content-center"><h1>My Items</h1></Row>
-          <Accordion defaultActiveKey="0" className="mb-3">
-            <Card>
-              <Accordion.Toggle as={Card.Header} eventKey="0">
-                Period of Accomplishments: 2 - 6 Mar 2020
-              </Accordion.Toggle>
-              <Accordion.Collapse eventKey="0">
-                <Card.Body>
-                  <Row>
-                    {this.renderCards('3/1/2020')}
-                  </Row>
-                  <Row>
-                    <Col xs={12}>
-                      <Button disabled={this.state.newItem} className="float-right" variant="primary" onClick={() => this.newItem()}>New</Button>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
-          </Accordion>
-          <Accordion className="mb-3">
-            <Card>
-              <Accordion.Toggle as={Card.Header} eventKey="1">
-                Period of Accomplishments: 9 - 13 Mar 2020
+  renderData = () => {
+    const { newItem } = this.state;
+    return (
+      <>
+        <Accordion defaultActiveKey="0" className="mb-3">
+          <Card>
+            <Accordion.Toggle as={Card.Header} eventKey="0">
+              Period of Accomplishments: 2 - 6 Mar 2020
             </Accordion.Toggle>
-              <Accordion.Collapse eventKey="1">
-                <Card.Body>
-                  <Row>
-                    {this.renderCards('2/23/2020')}
-                  </Row>
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
-          </Accordion>
-        </Container>
-      );
-    }
+            <Accordion.Collapse eventKey="0">
+              <Card.Body>
+                <Row>
+                  {this.renderCards('3/1/2020')}
+                </Row>
+                <Row>
+                  <Col xs={12}>
+                    <Button disabled={newItem} className="float-right" variant="primary" onClick={() => this.newItem()}>New</Button>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Accordion.Collapse>
+          </Card>
+        </Accordion>
+        <Accordion className="mb-3">
+          <Card>
+            <Accordion.Toggle as={Card.Header} eventKey="1">
+              Period of Accomplishments: 9 - 13 Mar 2020
+            </Accordion.Toggle>
+            <Accordion.Collapse eventKey="1">
+              <Card.Body>
+                <Row>
+                  {this.renderCards('2/23/2020')}
+                </Row>
+              </Card.Body>
+            </Accordion.Collapse>
+          </Card>
+        </Accordion>
+      </>
+    );
+  }
+
+  render() {
+    const { isLoading } = this.state;
+    const MySpinner = () =>
+      <Row className="h-100 justify-content-center align-items-center">
+        <Spinner animation="border" role="status">
+          <span className="sr-only">Loading...</span>
+        </Spinner> Loading...
+      </Row>
+
+    return (
+      <Container>
+        <Row className="justify-content-center"><h1>My Items</h1></Row>
+        {isLoading ? <MySpinner /> : this.renderData()}
+      </Container>
+    );
   }
 }
 
