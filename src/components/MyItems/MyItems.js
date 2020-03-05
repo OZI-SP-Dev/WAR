@@ -1,8 +1,7 @@
-import React from 'react';
-import { Component, Text } from 'react';
-import { Container, Accordion, Row, Col, Card, Button, Spinner, Form, Table } from 'react-bootstrap';
-import './MyItems.css';
+import React, { Component } from 'react';
+import { Accordion, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { spWebContext } from '../../providers/SPWebContext';
+import './MyItems.css';
 
 class MyItems extends Component {
   constructor(props) {
@@ -21,6 +20,8 @@ class MyItems extends Component {
       deleteItemId: -1
     };
     this.web = spWebContext;
+    let today = new Date();
+    this.weekStart = new Date(today.getYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
   }
 
   componentDidMount() {
