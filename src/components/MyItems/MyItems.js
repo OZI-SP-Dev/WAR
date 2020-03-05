@@ -1,30 +1,66 @@
 import React from 'react';
 import { Component } from 'react';
-import { Container, Accordion, Row, Col, Card, Button } from 'react-bootstrap';
-import "@pnp/sp/webs";
-import "@pnp/sp/lists";
-import "@pnp/sp/items";
+import { Container, Accordion, Row, Col, Card, Button, Spinner, Form, Table } from 'react-bootstrap';
+import './MyItems.css';
+import { spWebContext } from '../../providers/SPWebContext';
 
 class MyItems extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      listData: [
-        {
-          ID: '1', Title: 'SP BAC', WeekOf: '3/1/2020', Branch: 'OZI',
-          InterestItems: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.',
-          ActionItems: 'Informational.', OPRs: 'Robert Porterfield; Jeremy Clark'
-        },
-        {
-          ID: '2', Title: 'SP Support', WeekOf: '3/1/2020', Branch: 'OZI',
-          InterestItems: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.',
-          ActionItems: 'Informational.', OPRs: 'Robert Porterfield'
-        }
-      ],
-      isLoading: false,
-      newItem: false,
-      newID: 3
+      listData: [],
+      isLoading: true,
+      showAddModal: false,
+      newItemTitle: '',
+      newItemWeekOf: '3/1/2020',
+      newItemBranch: 'OZI',
+      newItemInterestItems: '',
+      newItemActionItems: 'Informational.',
+      newItemOPRs: 'Robert Porterfield',
+      showDeleteModal: false,
+      deleteItemId: -1
     };
+    this.web = spWebContext;
+  }
+
+  componentDidMount() {
+    this.fetchItems();
+  }
+
+  fetchItems = () => {
+    this.setState({ isLoading: true });
+    if (process.env.NODE_ENV === 'development') {
+      // Emulate a "long" web call so we can watch the spinners
+      setTimeout(() => {
+        let listData = [
+          {
+            ID: '1', Title: 'SP BAC', WeekOf: '3/1/2020', Branch: 'OZI',
+            InterestItems: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.',
+            ActionItems: 'Informational.', OPRs: 'Robert Porterfield; Jeremy Clark'
+          },
+          {
+            ID: '2', Title: 'SP Support', WeekOf: '3/1/2020', Branch: 'OZI',
+            InterestItems: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.',
+            ActionItems: 'Informational.', OPRs: 'Robert Porterfield'
+          },
+          {
+            ID: '3', Title: 'SP Support', WeekOf: '2/23/2020', Branch: 'OZI',
+            InterestItems: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.',
+            ActionItems: 'Informational.', OPRs: 'Robert Porterfield'
+          }
+        ];
+        this.setState({ isLoading: false, listData })
+      }, // end of arrow function
+        3000); // timeout duration
+    } else {
+      this.web.lists.getByTitle("Activities").items.get().then(r => {
+        console.log(r);
+        this.setState({ isLoading: false, listData: r });
+      }, e => {
+        console.error(e);
+        this.setState({ isLoading: false });
+      });
+    }
   }
 
   saveItem = ID => {
@@ -64,18 +100,16 @@ class MyItems extends Component {
   renderCards = (weekOf) => {
     const data = this.state.listData;
 
-    const mapRows = data.map((item, index) => (
+    const mapRows = data.filter(item => item.WeekOf === weekOf).map((item, index) => (
       <Col xl={6} className="mb-3" key={item.ID}>
-        <Card>
+        <Card className="activity">
           <Card.Body>
-            <Card.Title>Activity/Purpose: <span ref="Title" contentEditable="true" spellCheck="true">{item.Title}</span></Card.Title>
+            <Card.Title>Activity/Purpose: <span ref="Title">{item.Title}</span></Card.Title>
             <Card.Text>
-              <strong>Specific items of interest:</strong> <span ref="InterestItems" contentEditable="true" spellCheck="true">{item.InterestItems}</span><br />
-              <strong>Action items for {item.Branch}:</strong> <span ref="ActionItems" contentEditable="true" spellCheck="true">{item.ActionItems}</span><br />
-              <strong>OPRs:</strong> <span contentEditable="true">{item.OPRs}</span>
+              <strong>Specific items of interest:</strong> <span ref="InterestItems">{item.InterestItems}</span><br />
+              <strong>Action items for {item.Branch}:</strong> <span ref="ActionItems">{item.ActionItems}</span><br />
+              <strong>OPRs:</strong> <span >{item.OPRs}</span>
             </Card.Text>
-            {//<Button className="float-right" variant="primary" onClick={() => this.saveItem(item.ID)}>Save</Button>
-            }
           </Card.Body>
         </Card>
       </Col>
@@ -84,42 +118,67 @@ class MyItems extends Component {
   };
 
   render() {
-    return (
-      <Container className="mb-3" >
-        <Accordion defaultActiveKey="0">
-          <Row className="justify-content-md-center"><h1>My Items</h1></Row>
-          <Card>
-            <Accordion.Toggle as={Card.Header} eventKey="0">
-              Period of Accomplishments: 2 - 6 Mar 2020
+    if (this.state.isLoading) {
+      return (
+        <Container className="h-100">
+          <Row className="justify-content-center"><h1>My Items</h1></Row>
+          <Row className="h-100 justify-content-center align-items-center">
+              <Spinner animation="border" role="status">
+                <span className="sr-only">Loading...</span>
+              </Spinner> Loading...
+          </Row>
+        </Container>
+      );
+    } else if (this.state.listData.length === 0) {
+      return (
+        <Container className="h-100">
+          <Row className="justify-content-center"><h1>My Items</h1></Row>
+          <Row className="h-100 justify-content-center align-items-center">
+              You have no saved items for this period of accomplishment.
+          </Row>
+        </Container>
+      );
+    } else {
+
+      return (
+        <Container>
+          <Row className="justify-content-center"><h1>My Items</h1></Row>
+          <Accordion defaultActiveKey="0" className="mb-3">
+            <Card>
+              <Accordion.Toggle as={Card.Header} eventKey="0">
+                Period of Accomplishments: 2 - 6 Mar 2020
             </Accordion.Toggle>
-            <Accordion.Collapse eventKey="0">
-              <Card.Body>
-                <Row>
-                  {this.renderCards('3/1/2020')}
-                </Row>
-                <Row>
-                  <Col xs={12}>
-                    <Button disabled={this.state.newItem} className="float-right" variant="primary" onClick={() => this.newItem()}>New</Button>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Accordion.Collapse>
-          </Card>
-          <Card>
-            <Accordion.Toggle as={Card.Header} eventKey="1">
-              Period of Accomplishments: 9 - 13 Mar 2020
+              <Accordion.Collapse eventKey="0">
+                <Card.Body>
+                  <Row>
+                    {this.renderCards('3/1/2020')}
+                  </Row>
+                  <Row>
+                    <Col xs={12}>
+                      <Button disabled={this.state.newItem} className="float-right" variant="primary" onClick={() => this.newItem()}>New</Button>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Accordion.Collapse>
+            </Card>
+          </Accordion>
+          <Accordion className="mb-3">
+            <Card>
+              <Accordion.Toggle as={Card.Header} eventKey="1">
+                Period of Accomplishments: 9 - 13 Mar 2020
             </Accordion.Toggle>
-            <Accordion.Collapse eventKey="1">
-              <Card.Body>
-                <Row>
-                  {this.renderCards('2/23/2020')}
-                </Row>
-              </Card.Body>
-            </Accordion.Collapse>
-          </Card>
-        </Accordion>
-      </Container>
-    );
+              <Accordion.Collapse eventKey="1">
+                <Card.Body>
+                  <Row>
+                    {this.renderCards('2/23/2020')}
+                  </Row>
+                </Card.Body>
+              </Accordion.Collapse>
+            </Card>
+          </Accordion>
+        </Container>
+      );
+    }
   }
 }
 
