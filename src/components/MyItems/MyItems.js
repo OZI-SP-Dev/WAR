@@ -1,8 +1,7 @@
-import React from 'react';
-import { Component } from 'react';
-import { Container, Accordion, Row, Col, Card, Button, Spinner, Form, Table } from 'react-bootstrap';
-import './MyItems.css';
+import React, { Component } from 'react';
+import { Accordion, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { spWebContext } from '../../providers/SPWebContext';
+import './MyItems.css';
 
 class MyItems extends Component {
   constructor(props) {
