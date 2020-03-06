@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Accordion, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { spWebContext } from '../../providers/SPWebContext';
-import EditActivityModal from './EditActivityModal';
 import './Activities.css';
+import ActivityAccordion from './ActivityAccordion';
+import EditActivityModal from './EditActivityModal';
 
 class Activities extends Component {
   constructor(props) {
@@ -97,72 +98,25 @@ class Activities extends Component {
   }
 
   submitEditActivity = () => {
-    this.setState({showEditModal: false});
+    this.setState({ showEditModal: false });
   }
-
-  renderCards = (weekOf) => {
-    const data = this.state.listData;
-
-    const mapRows = data.filter(item => item.WeekOf === weekOf).map((item, index) => (
-      <Col xl={6} className="mb-3" key={item.ID}>
-        <Card className="activity" 
-          onClick={() => this.setState({ showEditModal: true, editActivity: item })}>
-          <Card.Body>
-            <Card.Title>Activity/Purpose: <span ref="Title">{item.Title}</span></Card.Title>
-            <Card.Text>
-              <strong>Specific items of interest:</strong> <span>{item.InterestItems}</span><br />
-              {//TODO allow for InterestItems to display with line breaks
-              }
-              <strong>Action items for {item.Branch}:</strong> <span>{item.ActionItems}</span><br />
-              <strong>OPRs:</strong> <span>{item.OPRs}</span>
-            </Card.Text>
-          </Card.Body>
-        </Card>
-      </Col>
-    ));
-
-    const NoData = () => <Col>You have no saved items for this period of accomplishment.</Col>;
-
-    return mapRows.length ? mapRows : <NoData />;
-  };
 
   renderData = () => {
     const { newItem } = this.state;
     return (
       <>
-        <Accordion defaultActiveKey="0" className="mb-3">
-          <Card>
-            <Accordion.Toggle as={Card.Header} eventKey="0">
-              Period of Accomplishments: 2 - 6 Mar 2020
-            </Accordion.Toggle>
-            <Accordion.Collapse eventKey="0">
-              <Card.Body>
-                <Row>
-                  {this.renderCards('2020-03-01T06:00:00Z')}
-                </Row>
-                <Row>
-                  <Col xs={12}>
-                    <Button disabled={newItem} className="float-right" variant="primary" onClick={() => this.newItem()}>New</Button>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Accordion.Collapse>
-          </Card>
-        </Accordion>
-        <Accordion className="mb-3">
-          <Card>
-            <Accordion.Toggle as={Card.Header} eventKey="1">
-              Period of Accomplishments: 9 - 13 Mar 2020
-            </Accordion.Toggle>
-            <Accordion.Collapse eventKey="1">
-              <Card.Body>
-                <Row>
-                  {this.renderCards('2020-02-23T06:00:00Z')}
-                </Row>
-              </Card.Body>
-            </Accordion.Collapse>
-          </Card>
-        </Accordion>
+        <ActivityAccordion 
+          weekOf='2020-03-01T06:00:00Z' 
+          actions={this.state.listData} 
+          disableNewButton={newItem} 
+          newButtonOnClick={() => this.newItem()} 
+        />
+        <ActivityAccordion 
+          weekOf='2020-02-23T06:00:00Z' 
+          actions={this.state.listData} 
+          disableNewButton={newItem} 
+          newButtonOnClick={() => this.newItem()} 
+        />
       </>
     );
   }
@@ -178,7 +132,7 @@ class Activities extends Component {
 
     return (
       <Container>
-        <EditActivityModal 
+        <EditActivityModal
           showEditModal={this.state.showEditModal}
           submitEditActivity={this.submitEditActivity}
           activity={this.state.editActivity}
