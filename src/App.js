@@ -1,15 +1,14 @@
-import React from 'react';
-import { Component } from 'react'
+import React, { Component } from 'react';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
-
-import { HashRouter as Router, Switch, Route } from 'react-router-dom';
-
+import Activities from './components/Activities/Activities';
 import AppHeader from './components/appHeader/AppHeader';
 import AppLeftNav from './components/appLeftNav/AppLeftNav';
+import Help from './components/Help/Help';
 import TestList from './components/testList/TestList';
 import { UserProvider } from './providers/UserProvider';
-import Help from './components/Help/Help';
-import MyItems from './components/MyItems/MyItems';
+
+
 
 
 class App extends Component {
@@ -33,8 +32,8 @@ class App extends Component {
                   <Route path="/Help">
                     <Help />
                   </Route>
-                  <Route path="/MyItems">
-                    <MyItems />
+                  <Route path="/Activities">
+                    <Activities />
                   </Route>
                   <Route path="/">
                     <TestList />

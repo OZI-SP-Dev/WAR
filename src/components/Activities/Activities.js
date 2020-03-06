@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Accordion, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { spWebContext } from '../../providers/SPWebContext';
-import './MyItems.css';
 import EditActivityModal from './EditActivityModal';
+import './Activities.css';
 
-class MyItems extends Component {
+class Activities extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -190,4 +190,4 @@ class MyItems extends Component {
   }
 }
 
-export default MyItems;
+export default Activities;

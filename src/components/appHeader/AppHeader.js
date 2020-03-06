@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import './AppHeader.css';
 import { UserContext } from '../../providers/UserProvider';
+import './AppHeader.css';
 
 function AppHeader() {
   const user = useContext(UserContext);
@@ -19,8 +19,8 @@ function AppHeader() {
             <Nav.Link>Help</Nav.Link>
           </LinkContainer>
           <NavDropdown title="Reports" id="basic-nav-dropdown">
-            <LinkContainer to="/MyItems">
-              <NavDropdown.Item>My Items</NavDropdown.Item>
+            <LinkContainer to="/Activities">
+              <NavDropdown.Item>Activities</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />
             <NavDropdown.Item>WAR</NavDropdown.Item>

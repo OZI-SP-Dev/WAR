@@ -1,7 +1,8 @@
 import React from 'react';
 import { Accordion, Button, Card, Col, Row } from 'react-bootstrap';
 
-class ItemAccordion extends Component {
+class Activi
+ extends Component {
 
     constructor(props) {
         super(props);
