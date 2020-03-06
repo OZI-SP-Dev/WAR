@@ -20,7 +20,7 @@ class ActivityAccordion extends Component {
         return (
             <Accordion defaultActiveKey="0" className="mb-3">
                 <Card>
-                    <Accordion.Toggle as={Card.Header} eventKey="0">
+                    <Accordion.Toggle as={Card.Header} eventKey="0" style={{cursor: 'pointer'}}>
                         Period of Accomplishments: {`${this.formatDate(this.startWeek)} - ${this.formatDate(this.endWeek)}`}
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey="0">
