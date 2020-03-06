@@ -15,14 +15,17 @@ class ActivityCardsWeek extends Component {
 
     render() {
         return (
-            this.filteredActions.length &&
+            this.filteredActions.length ?
             this.filteredActions.map((action, index) => (
                 <Col xl={6} className="mb-3" key={action.ID}>
-                    <Card className="activity">
+                    <Card className="activity"
+                        onClick={() => this.props.onClick(action)}>
                         <Card.Body>
                             <Card.Title>Activity/Purpose: <span ref="Title">{action.Title}</span></Card.Title>
                             <Card.Text>
                                 <strong>Specific items of interest:</strong> <span ref="InterestItems">{action.InterestItems}</span><br />
+                                {//TODO allow for InterestItems to display with line breaks
+                                }
                                 <strong>Action items for {action.Branch}:</strong> <span ref="ActionItems">{action.ActionItems}</span><br />
                                 <strong>OPRs:</strong> <span >{action.OPRs}</span>
                             </Card.Text>
@@ -30,7 +33,7 @@ class ActivityCardsWeek extends Component {
                     </Card>
                 </Col>
             )) 
-            || <Col>You have no saved items for this period of accomplishment.</Col>);
+            : <Col>You have no saved items for this period of accomplishment.</Col>);
     }
 }
 

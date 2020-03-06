@@ -110,12 +110,14 @@ class Activities extends Component {
           actions={this.state.listData} 
           disableNewButton={newItem} 
           newButtonOnClick={() => this.newItem()} 
+          cardOnClick={(action) => this.setState({ showEditModal: true, editActivity: action })}
         />
         <ActivityAccordion 
           weekOf='2020-02-23T06:00:00Z' 
           actions={this.state.listData} 
           disableNewButton={newItem} 
           newButtonOnClick={() => this.newItem()} 
+          cardOnClick={(action) => this.setState({ showEditModal: true, editActivity: action })}
         />
       </>
     );

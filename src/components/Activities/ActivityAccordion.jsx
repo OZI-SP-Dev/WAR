@@ -26,7 +26,11 @@ class ActivityAccordion extends Component {
                     <Accordion.Collapse eventKey="0">
                         <Card.Body>
                             <Row>
-                                <ActivityCardsWeek weekStart={this.startWeek} actions={this.props.actions} />
+                                <ActivityCardsWeek 
+                                    weekStart={this.startWeek} 
+                                    actions={this.props.actions} 
+                                    onClick={this.props.cardOnClick}
+                                />
                             </Row>
                             <Row>
                                 <Col xs={12}>
