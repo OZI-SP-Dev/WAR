@@ -13,6 +13,7 @@
     "eslint-plugin-flowtype": "^3.13.0",
     "fibers": "^4.0.2",
     "jquery": "^3.4.1",
+    "moment": "^2.24.0",
     "node-sass": "^4.13.1",
     "react": "^16.12.0",
     "react-bootstrap": "^1.0.0-beta.16",
