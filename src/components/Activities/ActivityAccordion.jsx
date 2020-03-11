@@ -12,7 +12,8 @@ class ActivityAccordion extends Component {
     }
 
     formatDate = (date) => {
-        return `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
+        //using 'default' instead of 'en-us' was causing Edge to puke
+        return `${date.getDate()} ${date.toLocaleString('en-us', { month: 'short' })} ${date.getFullYear()}`;
     }
 
     render() {
