@@ -6,6 +6,7 @@ class ActivityAccordion extends Component {
 
     constructor(props) {
         super(props);
+        console.log(props.weekOf);
         this.startWeek = new Date(props.weekOf);
         this.endWeek = new Date(props.weekOf);
         this.endWeek.setDate(this.startWeek.getDate() + 6);

@@ -8,6 +8,16 @@ import EditActivityModal from './EditActivityModal';
 class Activities extends Component {
   constructor(props) {
     super(props);
+    // set up the initial weeks that we will use to pull activity data
+    let today = new Date();
+    let weekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
+    let initialWeeks = [];
+    for (let i = 0; i < 4; ++i) {
+      let week = new Date(weekStart);
+      week.setDate(weekStart.getDate() - (7 * i));
+      initialWeeks.push(week);
+    }
+    console.log(initialWeeks);
     this.state = {
       listData: [],
       isLoading: true,
@@ -16,11 +26,10 @@ class Activities extends Component {
       deleteItemId: -1,
       showEditModal: false,
       editActivity: {},
-      editItemID: -1
+      editItemID: -1,
+      loadedWeeks: initialWeeks
     };
     this.web = spWebContext;
-    let today = new Date();
-    this.weekStart = new Date(today.getYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
   }
 
   componentDidMount() {
@@ -53,7 +62,7 @@ class Activities extends Component {
       }, // end of arrow function
         3000); // timeout duration
     } else {
-      this.web.lists.getByTitle("Activities").items.get().then(r => {
+      this.web.lists.getByTitle("Activities").items.filter(`WeekOf ge '${this.state.loadedWeeks[this.state.loadedWeeks.length-1].toISOString()}' and WeekOf le '${this.state.loadedWeeks[0].toISOString()}'`).get().then(r => {
         console.log(r);
         this.setState({ isLoading: false, listData: r });
       }, e => {
@@ -105,20 +114,14 @@ class Activities extends Component {
     const { newItem } = this.state;
     return (
       <>
+      {this.state.loadedWeeks.map(date => 
         <ActivityAccordion 
-          weekOf='2020-03-01T06:00:00Z' 
+          weekOf={date.toISOString()} 
           actions={this.state.listData} 
           disableNewButton={newItem} 
           newButtonOnClick={() => this.newItem()} 
           cardOnClick={(action) => this.setState({ showEditModal: true, editActivity: action })}
-        />
-        <ActivityAccordion 
-          weekOf='2020-02-23T06:00:00Z' 
-          actions={this.state.listData} 
-          disableNewButton={newItem} 
-          newButtonOnClick={() => this.newItem()} 
-          cardOnClick={(action) => this.setState({ showEditModal: true, editActivity: action })}
-        />
+        />)}
       </>
     );
   }
