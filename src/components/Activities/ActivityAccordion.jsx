@@ -6,14 +6,12 @@ class ActivityAccordion extends Component {
 
     constructor(props) {
         super(props);
-        console.log(props.weekOf);
         this.startWeek = new Date(props.weekOf);
         this.endWeek = new Date(props.weekOf);
         this.endWeek.setDate(this.startWeek.getDate() + 6);
     }
 
     formatDate = (date) => {
-        console.log(`formatting date ${date}`);
         return `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
     }
 

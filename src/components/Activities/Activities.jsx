@@ -116,7 +116,7 @@ class Activities extends Component {
       <>
       {this.state.loadedWeeks.map(date => 
         <ActivityAccordion 
-          weekOf={date.toISOString()} 
+          weekOf={date} 
           actions={this.state.listData} 
           disableNewButton={newItem} 
           newButtonOnClick={() => this.newItem()} 
