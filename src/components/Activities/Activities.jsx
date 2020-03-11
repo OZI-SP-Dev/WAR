@@ -65,7 +65,7 @@ class Activities extends Component {
     }
   }
 
-  saveItem = ID => {
+  /*saveItem = ID => {
     // do some saving here
     let listData = this.state.listData;
     let itemIndex = listData.findIndex(item => item.ID === ID);
@@ -80,23 +80,27 @@ class Activities extends Component {
       this.setState({ listData, newItem: false, newID: item.ID + 1 });
     }
     this.setState({ listData });
-  };
+  };*/
 
   deleteItem = ID => {
     // delete operation to remove item
     let newData = this.state.listData.filter(el => el.ID !== ID);
     this.setState({ listData: newData });
-  };
+  }
 
   newItem = () => {
+    let today = new Date();
+    let inputWeekOf = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
+    inputWeekOf = inputWeekOf.toISOString().split('T',1)[0];
+    console.log(inputWeekOf);
+   
     let item = {
-      ID: 'New', Title: 'New Item', WeekOf: '2020-03-08T06:00:00Z', Branch: 'OZI',
+      ID: -1, Title: 'New Item', WeekOf: '2020-03-08T06:00:00Z', InputWeekOf: inputWeekOf, Branch: 'OZI',
       InterestItems: 'Items of interest...',
-      ActionItems: 'Informational.', OPRs: 'Robert Porterfield'
+      ActionItems: 'Informational.', OPRs: this.props.user.data
     }
-    let newData = this.state.listData;
-    newData.push(item);
-    this.setState({ listData: newData, newItem: true });
+
+    this.setState({ showEditModal: true, editActivity: item });
   }
 
   submitEditActivity = (event, state) => {

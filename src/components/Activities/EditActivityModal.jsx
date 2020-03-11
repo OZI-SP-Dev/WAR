@@ -30,7 +30,7 @@ class EditActivityModal extends Component {
   render() {
     return (
       <ActivityModal
-        modalDisplayName="Edit Activity"
+        modalDisplayName="Activity"
         show={this.props.showEditModal}
         handleClose={e => this.closeActivity(e)}
         handleSubmit={e => this.props.submitEditActivity(e, this.state.activity)}

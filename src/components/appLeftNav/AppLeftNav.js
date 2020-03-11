@@ -1,7 +1,7 @@
 import React from 'react';
 import { Component } from 'react';
 import './AppLeftNav.css';
-import yoda from './yoda.webp';
+import yoda from './yoda.webp'; // ISSUE: .webp files do not load in Edge
 
 class AppLeftNav extends Component {
     constructor(props) {
