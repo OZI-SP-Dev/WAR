@@ -12,7 +12,7 @@ class ActivityModal extends Component {
         <Modal.Footer>
           <Button variant="secondary" onClick={this.props.handleClose}>
             Close
-                    </Button>
+          </Button>
           <Button variant={this.props.submitButtonVariant || "primary"} onClick={this.props.handleSubmit}>
             {this.props.submitButtonText || "Submit"}
           </Button>

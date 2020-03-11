@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Container, Row, Spinner } from 'react-bootstrap';
 import { spWebContext } from '../../providers/SPWebContext';
 import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
@@ -16,7 +16,9 @@ class Activities extends Component {
       deleteItemId: -1,
       showEditModal: false,
       editActivity: {},
-      editItemID: -1
+      editItem: {
+        ID: -1, Title: '', WeekOf: '', Branch: '', InterestItems: '', ActionItems: '', OPRs: ''
+      }
     };
     this.web = spWebContext;
     let today = new Date();
@@ -88,7 +90,7 @@ class Activities extends Component {
 
   newItem = () => {
     let item = {
-      ID: 'New', Title: 'New Item', WeekOf: '2020-03-01T06:00:00Z', Branch: 'OZI',
+      ID: 'New', Title: 'New Item', WeekOf: '2020-03-08T06:00:00Z', Branch: 'OZI',
       InterestItems: 'Items of interest...',
       ActionItems: 'Informational.', OPRs: 'Robert Porterfield'
     }
@@ -97,26 +99,38 @@ class Activities extends Component {
     this.setState({ listData: newData, newItem: true });
   }
 
-  submitEditActivity = () => {
+  submitEditActivity = (event, state) => {
+    event.persist();
+    console.log(state);
     this.setState({ showEditModal: false });
+  }
+
+  closeEditActivity = () => {
+    this.setState({ showEditModal: false });
+  }
+
+  cardOnClick = (action) => {
+    const editActivity = action;
+    editActivity.InputWeekOf = editActivity.WeekOf.split('T',1)[0];
+    this.setState({ showEditModal: true, editActivity });
   }
 
   renderData = () => {
     const { newItem } = this.state;
     return (
       <>
-        <ActivityAccordion 
-          weekOf='2020-03-01T06:00:00Z' 
-          actions={this.state.listData} 
-          disableNewButton={newItem} 
-          newButtonOnClick={() => this.newItem()} 
-          cardOnClick={(action) => this.setState({ showEditModal: true, editActivity: action })}
+        <ActivityAccordion
+          weekOf='2020-03-01T06:00:00Z'
+          actions={this.state.listData}
+          disableNewButton={newItem}
+          newButtonOnClick={() => this.newItem()}
+          cardOnClick={this.cardOnClick}
         />
-        <ActivityAccordion 
-          weekOf='2020-02-23T06:00:00Z' 
-          actions={this.state.listData} 
-          disableNewButton={newItem} 
-          newButtonOnClick={() => this.newItem()} 
+        <ActivityAccordion
+          weekOf='2020-02-23T06:00:00Z'
+          actions={this.state.listData}
+          disableNewButton={newItem}
+          newButtonOnClick={() => this.newItem()}
           cardOnClick={(action) => this.setState({ showEditModal: true, editActivity: action })}
         />
       </>
@@ -135,8 +149,10 @@ class Activities extends Component {
     return (
       <Container>
         <EditActivityModal
+          key={this.state.editActivity.ID}
           showEditModal={this.state.showEditModal}
           submitEditActivity={this.submitEditActivity}
+          closeEditActivity={this.closeEditActivity}
           activity={this.state.editActivity}
         />
         <Row className="justify-content-center"><h1>My Items</h1></Row>
