@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Button, Container, Row, Spinner } from 'react-bootstrap';
 import { spWebContext } from '../../providers/SPWebContext';
 import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
@@ -8,16 +8,6 @@ import EditActivityModal from './EditActivityModal';
 class Activities extends Component {
   constructor(props) {
     super(props);
-    // set up the initial weeks that we will use to pull activity data
-    let today = new Date();
-    let weekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
-    let initialWeeks = [];
-    for (let i = 0; i < 4; ++i) {
-      let week = new Date(weekStart);
-      week.setDate(weekStart.getDate() - (7 * i));
-      initialWeeks.push(week);
-    }
-    console.log(initialWeeks);
     this.state = {
       listData: [],
       isLoading: true,
@@ -27,9 +17,12 @@ class Activities extends Component {
       showEditModal: false,
       editActivity: {},
       editItemID: -1,
-      loadedWeeks: initialWeeks
+      loadedWeeks: []
     };
     this.web = spWebContext;
+    // set up the initial weeks that we will use to pull activity data
+    let today = new Date();
+    this.addNewWeeks(4, new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0));
   }
 
   componentDidMount() {
@@ -110,30 +103,32 @@ class Activities extends Component {
     this.setState({ showEditModal: false });
   }
 
-  renderData = () => {
-    const { newItem } = this.state;
-    return (
-      <>
-      {this.state.loadedWeeks.map(date => 
-        <ActivityAccordion 
-          weekOf={date} 
-          actions={this.state.listData} 
-          disableNewButton={newItem} 
-          newButtonOnClick={() => this.newItem()} 
-          cardOnClick={(action) => this.setState({ showEditModal: true, editActivity: action })}
-        />)}
-      </>
-    );
+  addNewWeeks(numWeeks, weekStart) {
+    let newWeeks = this.state.loadedWeeks;
+    for (let i = 0; i < numWeeks; ++i) {
+      let week = new Date(weekStart);
+      week.setDate(weekStart.getDate() - (7 * i));
+      newWeeks.push(week);
+    }
+    this.setState({loadedWeeks: newWeeks});
+  }
+
+  loadMoreWeeks = () => {
+    let lastWeekLoaded = this.state.loadedWeeks[this.state.loadedWeeks.length - 1];
+    let nextWeekStart = new Date(lastWeekLoaded);
+    nextWeekStart.setDate(lastWeekLoaded.getDate() - 7);
+    this.addNewWeeks(4, nextWeekStart);
+    this.fetchItems();
   }
 
   render() {
     const { isLoading } = this.state;
     const MySpinner = () =>
-      <Row className="h-100 justify-content-center align-items-center">
+      <div className="spinner">
         <Spinner animation="border" role="status">
           <span className="sr-only">Loading...</span>
-        </Spinner> Loading...
-      </Row>
+        </Spinner>
+      </div>
 
     return (
       <Container>
@@ -143,7 +138,16 @@ class Activities extends Component {
           activity={this.state.editActivity}
         />
         <Row className="justify-content-center"><h1>My Items</h1></Row>
-        {isLoading ? <MySpinner /> : this.renderData()}
+        {this.state.loadedWeeks.map(date => 
+          <ActivityAccordion 
+            weekOf={date} 
+            actions={this.state.listData} 
+            disableNewButton={this.state.newItem} 
+            newButtonOnClick={() => this.newItem()} 
+            cardOnClick={(action) => this.setState({ showEditModal: true, editActivity: action })}
+          />)}
+        <Button className="float-right mb-3" variant="primary" onClick={this.loadMoreWeeks}>Load More Activities</Button>
+        {isLoading && <MySpinner />}
       </Container>
     );
   }
