@@ -104,6 +104,48 @@ class Activities extends Component {
   }
 
   submitEditActivity = (event, state) => {
+    //build object to save
+    let activity = {};
+    activity.Title = state.Title;
+    activity.WeekOf = state.inputWeekOf;
+    activity.Branch = state.Branch;
+    activity.InterestItems = state.InterestItems;
+    activity.ActionItems = state.ActionItems;
+    
+    //activity.OPRs = ; //convert to peopler picker format... skipping for now
+    
+    //TODO set loading
+    let list = this.web.lists.getByTitle("Activities");
+
+    //determine if new or edit
+    if (state.ID !== -1) {
+      //EDIT
+      console.log(`Submitting updated item ${this.state.Title}!`);
+      list.items.getById(state.ID).update(activity)
+        .then(r => {
+          console.log(r);
+          let listData = this.state.listData;
+          let itemIndex = listData.findIndex(item => item.ID === this.state.ID);
+          listData[itemIndex] = r;
+          this.setState({listData});
+          
+        }, e => {
+          console.error(e);
+          activity.ID = this.state.ID;
+          let listData = this.state.listData;
+          let itemIndex = listData.findIndex(item => item.ID === this.state.ID);
+          activity.ID = this.state.ID;
+          listData[itemIndex] = activity;          
+          this.setState({activity});
+        });
+    } else {
+      //NEW
+
+    }
+    
+    //catch errors
+    //clear modal
+    //clear loading
     event.persist();
     console.log(state);
     this.setState({ showEditModal: false });
