@@ -83,14 +83,14 @@ class EditActivityModal extends Component {
             />
           </Form.Group>
           <Form.Group controlId="editActivityOPRs">
-            {//TODO Convrert to people picker
+            {//TODO Convert to people picker
             }
             <Form.Label>OPRs</Form.Label>
             <Form.Control 
               type="text"
-              defaultValue={this.props.activity.OPRs}
-              value={this.state.OPRs}
-              onChange={(e) => this.updateActivity(e, 'OPRs')}
+              defaultValue={this.props.activity.TextOPRs}
+              value={this.state.TextOPRs}
+              onChange={(e) => this.updateActivity(e, 'TextOPRs')}
             />
           </Form.Group>
         </Form>

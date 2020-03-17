@@ -4,6 +4,7 @@ import { spWebContext } from '../../providers/SPWebContext';
 import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
 import EditActivityModal from './EditActivityModal';
+import GetActivityDevDefaults from './ActivityDevDefaults';
 
 class Activities extends Component {
   constructor(props) {
@@ -12,14 +13,14 @@ class Activities extends Component {
       listData: [],
       isLoading: true,
       showAddModal: false,
+      showEditModal: false,
       showDeleteModal: false,
       deleteItemId: -1,
-      showEditModal: false,
       editActivity: {},
-      editItemID: -1,
       loadedWeeks: []
     };
     this.web = spWebContext;
+
     // set up the initial weeks that we will use to pull activity data
     let today = new Date();
     this.addNewWeeks(4, new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0));
@@ -32,55 +33,18 @@ class Activities extends Component {
   fetchItems = () => {
     this.setState({ isLoading: true });
     if (process.env.NODE_ENV === 'development') {
-      // Emulate a "long" web call so we can watch the spinners
-      setTimeout(() => {
-        let listData = [
-          {
-            ID: '1', Title: 'SP BAC', WeekOf: '2020-03-01T06:00:00Z', Branch: 'OZI',
-            InterestItems: 'Lorem\n ipsum\n dolor sit amet, consectetur adipiscing elit.\n Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.',
-            ActionItems: 'Informational.', OPRs: 'Robert Porterfield; Jeremy Clark'
-          },
-          {
-            ID: '2', Title: 'SP Support', WeekOf: '2020-03-01T06:00:00Z', Branch: 'OZI',
-            InterestItems: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.',
-            ActionItems: 'Informational.', OPRs: 'Robert Porterfield'
-          },
-          {
-            ID: '3', Title: 'SP Support', WeekOf: '2020-02-23T06:00:00Z', Branch: 'OZI',
-            InterestItems: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.',
-            ActionItems: 'Informational.', OPRs: 'Robert Porterfield'
-          }
-        ];
-        this.setState({ isLoading: false, listData })
-      }, // end of arrow function
-        3000); // timeout duration
+      GetActivityDevDefaults().then(r => {
+        this.setState({ isLoading: false, listData: r });
+      });
     } else {
-      this.web.lists.getByTitle("Activities").items.filter(`WeekOf ge '${this.state.loadedWeeks[this.state.loadedWeeks.length-1].toISOString()}' and WeekOf le '${this.state.loadedWeeks[0].toISOString()}'`).get().then(r => {
-        console.log(r);
+      this.web.lists.getByTitle("Activities").items.filter(`WeekOf ge '${this.state.loadedWeeks[this.state.loadedWeeks.length - 1].toISOString()}' and WeekOf le '${this.state.loadedWeeks[0].toISOString()}'`).get().then(r => {
         this.setState({ isLoading: false, listData: r });
       }, e => {
-        console.error(e);
+        //TODO better error handling
         this.setState({ isLoading: false });
       });
     }
   }
-
-  /*saveItem = ID => {
-    // do some saving here
-    let listData = this.state.listData;
-    let itemIndex = listData.findIndex(item => item.ID === ID);
-    let item = listData[itemIndex];
-    item.Title = 'New Title';
-    item.InterestItems = 'New Interests';
-    item.ActionItems = 'New Actions!';
-    listData[itemIndex] = item;
-    if (ID === 'New') {
-      item.ID = this.state.newID;
-      // Probably not thread safe - just for easy testing
-      this.setState({ listData, newItem: false, newID: item.ID + 1 });
-    }
-    this.setState({ listData });
-  };*/
 
   deleteItem = ID => {
     // delete operation to remove item
@@ -91,13 +55,12 @@ class Activities extends Component {
   newItem = () => {
     let today = new Date();
     let inputWeekOf = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
-    inputWeekOf = inputWeekOf.toISOString().split('T',1)[0];
-    console.log(inputWeekOf);
-   
+    inputWeekOf = inputWeekOf.toISOString().split('T', 1)[0];
+
     let item = {
       ID: -1, Title: 'New Item', WeekOf: '2020-03-08T06:00:00Z', InputWeekOf: inputWeekOf, Branch: 'OZI',
       InterestItems: 'Items of interest...',
-      ActionItems: 'Informational.', OPRs: this.props.user.data
+      ActionItems: 'Informational.', TextOPRs: this.props.user.data
     }
 
     this.setState({ showEditModal: true, editActivity: item });
@@ -107,47 +70,66 @@ class Activities extends Component {
     //build object to save
     let activity = {};
     activity.Title = state.Title;
-    activity.WeekOf = state.inputWeekOf;
+    activity.WeekOf = state.InputWeekOf;
     activity.Branch = state.Branch;
     activity.InterestItems = state.InterestItems;
     activity.ActionItems = state.ActionItems;
-    
-    //activity.OPRs = ; //convert to peopler picker format... skipping for now
-    
-    //TODO set loading
-    let list = this.web.lists.getByTitle("Activities");
+    activity.TextOPRs = state.TextOPRs; //TODO convert to peopler picker format...
+
+    let activityList = this.web.lists.getByTitle("Activities");
 
     //determine if new or edit
+    this.setState({isLoading: true});
+    console.log(state);
     if (state.ID !== -1) {
       //EDIT
-      console.log(`Submitting updated item ${this.state.Title}!`);
-      list.items.getById(state.ID).update(activity)
+      console.log(`Submitting updated item ${activity.Title}!`);
+      //TODO Include ETag checks/handling
+      activityList.items.getById(state.ID).update(activity)
         .then(r => {
           console.log(r);
+          console.log(state);
           let listData = this.state.listData;
-          let itemIndex = listData.findIndex(item => item.ID === this.state.ID);
-          listData[itemIndex] = r;
-          this.setState({listData});
-          
+          let itemIndex = listData.findIndex(item => item.ID === state.ID);
+          console.log(`Item index ${itemIndex}`);
+          activity.WeekOf = activity.WeekOf + 'T06:00:00Z';
+          const item = { ...listData[itemIndex], ...activity };
+          listData[itemIndex] = item;
+          console.log(listData);
+          this.setState({isLoading: false, listData });
         }, e => {
           console.error(e);
-          activity.ID = this.state.ID;
           let listData = this.state.listData;
-          let itemIndex = listData.findIndex(item => item.ID === this.state.ID);
-          activity.ID = this.state.ID;
-          listData[itemIndex] = activity;          
-          this.setState({activity});
+          let itemIndex = listData.findIndex(item => item.ID === state.ID);
+          activity.ID = state.ID;
+          listData[itemIndex] = activity;
+          this.setState({isLoading:false, listData });
         });
     } else {
       //NEW
+      console.log(`Submitting new item ${activity.Title}!`);
+      let listData = this.state.listData;
 
+      if (process.env.NODE_ENV === 'development') {
+        activity.ID = Math.max.apply(Math, listData.map( o => {return o.ID})) + 1;
+        activity.WeekOf = activity.WeekOf + 'T06:00:00Z';
+        listData.push(activity);
+        this.setState({isLoading:false, listData });
+      } else {
+        activityList.items.add(activity)
+          .then(r => {
+            console.log(r);
+            listData.push(r.data);
+            this.setState({isLoading:false, listData });
+          }, e => {
+            //TODO error handling
+            console.error(e);
+            this.setState({isLoading: false});
+          });
+      }
     }
-    
-    //catch errors
-    //clear modal
-    //clear loading
-    event.persist();
-    console.log(state);
+
+    //event.persist();
     this.setState({ showEditModal: false });
   }
 
@@ -158,7 +140,7 @@ class Activities extends Component {
       week.setDate(weekStart.getDate() - (7 * i));
       newWeeks.push(week);
     }
-    this.setState({loadedWeeks: newWeeks});
+    this.setState({ loadedWeeks: newWeeks });
   }
 
   loadMoreWeeks = () => {
@@ -175,7 +157,7 @@ class Activities extends Component {
 
   cardOnClick = (action) => {
     const editActivity = action;
-    editActivity.InputWeekOf = editActivity.WeekOf.split('T',1)[0];
+    editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
     this.setState({ showEditModal: true, editActivity });
   }
 
@@ -198,13 +180,13 @@ class Activities extends Component {
           activity={this.state.editActivity}
         />
         <Row className="justify-content-center"><h1>My Items</h1></Row>
-        {this.state.loadedWeeks.map(date => 
-          <ActivityAccordion 
+        {this.state.loadedWeeks.map(date =>
+          <ActivityAccordion
             key={date}
-            weekOf={date} 
-            actions={this.state.listData} 
-            disableNewButton={this.state.newItem} 
-            newButtonOnClick={() => this.newItem()} 
+            weekOf={date}
+            actions={this.state.listData}
+            disableNewButton={this.state.newItem}
+            newButtonOnClick={() => this.newItem()}
             cardOnClick={(action) => this.cardOnClick(action)}
           />)}
         <Button className="float-right mb-3" variant="primary" onClick={this.loadMoreWeeks}>Load More Activities</Button>

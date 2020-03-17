@@ -26,7 +26,9 @@ class ActivityCardsWeek extends Component {
                                 {//TODO allow for InterestItems to display with line breaks
                                 }
                                 <strong>Action items for {action.Branch}:</strong> <span ref="ActionItems">{action.ActionItems}</span><br />
-                                <strong>OPRs:</strong> <span >{action.OPRs}</span>
+                                <strong>OPRs:</strong> <span >{action.TextOPRs}</span>
+                                {//TODO Change to people picker
+                                }
                             </Card.Text>
                         </Card.Body>
                     </Card>
