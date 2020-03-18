@@ -1,20 +1,28 @@
 import React, { Component } from 'react';
-import { Form } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
+import moment from 'moment';
 import ActivityModal from './ActivityModal';
 
 class EditActivityModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activity: {}
+      //activity: {},
+      activity: this.props.activity,
+      validated: false
     }
-    this.state.activity = Object.assign({}, this.props.activity);  //deep copy
+    //this.state.activity = Object.assign({}, this.props.activity);  //deep copy
+  }
+
+  static getDerivedStateFromProps(newProps, oldState) {
+    if (newProps.activity !== oldState.activity) {
+      return { activity: newProps.activity };
+    }
   }
 
   closeActivity(e) {
     //reset form fields
-    let activity = Object.assign({}, this.props.activity);  //deep copy
-    this.setState({activity});
+    this.setState({activity: {}, validated: false});
     
     //callback parent
     this.props.closeEditActivity(e);
@@ -27,21 +35,36 @@ class EditActivityModal extends Component {
     this.setState({activity});
   }
 
+  validateActivity(e) {
+    const form = document.getElementById("EditActivityModal");
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.setState({validated: true});
+    } else {
+      this.props.submitEditActivity(e, this.state.activity)
+      this.setState({validated: false, activity: {}})
+    }
+  }
+
   render() {
     return (
       <ActivityModal
         modalDisplayName="Activity"
         show={this.props.showEditModal}
         handleClose={e => this.closeActivity(e)}
-        handleSubmit={e => this.props.submitEditActivity(e, this.state.activity)}
+        handleSubmit={e => this.validateActivity(e)}
       >
-        <Form onSubmit={e => this.props.submitEditActivity(e, this.state.activity)}>
+        <Form id="EditActivityModal" noValidate validated={this.state.validated}
+          onSubmit={e => this.validateActivity(e)}
+        >
           <Form.Group controlId="editActivityWeekOf">
             <Form.Label>Period of Accomplishment</Form.Label>
             <Form.Control
               type="date"
               defaultValue={this.props.activity.InputWeekOf}
               value={this.state.InputWeekOf}
+              max={moment().day(6).format('YYYY-MM-DD')}
               onChange={(e) => this.updateActivity(e, 'InputWeekOf')}
             />
           </Form.Group>
@@ -60,26 +83,32 @@ class EditActivityModal extends Component {
             <Form.Label>Activity/Purpose</Form.Label>
             <Form.Control
               type="text"
+              placeholder="Title with no trailing period"
               defaultValue={this.props.activity.Title}
               value={this.state.Title}
               onChange={(e) => this.updateActivity(e, 'Title')}
+              required
             />
           </Form.Group>
           <Form.Group controlId="editActivityInterestItems">
             <Form.Label>Specific items of interest</Form.Label>
             <Form.Control as="textarea" rows="5"
+              placeholder="Items of interest..."
               defaultValue={this.props.activity.InterestItems}
               value={this.state.InterestItems}
               onChange={(e) => this.updateActivity(e, 'InterestItems')}
+              required
             />
           </Form.Group>
           <Form.Group controlId="editActivityActionItems">
             <Form.Label>Action items</Form.Label>
             <Form.Control 
               type="text"
+              placeholder="Informational."
               defaultValue={this.props.activity.ActionItems}
               value={this.state.ActionItems}
               onChange={(e) => this.updateActivity(e, 'ActionItems')}
+              required
             />
           </Form.Group>
           <Form.Group controlId="editActivityOPRs">
@@ -91,6 +120,7 @@ class EditActivityModal extends Component {
               defaultValue={this.props.activity.TextOPRs}
               value={this.state.TextOPRs}
               onChange={(e) => this.updateActivity(e, 'TextOPRs')}
+              required
             />
           </Form.Group>
         </Form>

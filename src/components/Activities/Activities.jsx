@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Container, Row, Spinner } from 'react-bootstrap';
 import { spWebContext } from '../../providers/SPWebContext';
+import moment from 'moment';
 import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
 import EditActivityModal from './EditActivityModal';
@@ -12,10 +13,7 @@ class Activities extends Component {
     this.state = {
       listData: [],
       isLoading: true,
-      showAddModal: false,
       showEditModal: false,
-      showDeleteModal: false,
-      deleteItemId: -1,
       editActivity: {},
       loadedWeeks: []
     };
@@ -37,7 +35,10 @@ class Activities extends Component {
         this.setState({ isLoading: false, listData: r });
       });
     } else {
-      this.web.lists.getByTitle("Activities").items.filter(`WeekOf ge '${this.state.loadedWeeks[this.state.loadedWeeks.length - 1].toISOString()}' and WeekOf le '${this.state.loadedWeeks[0].toISOString()}'`).get().then(r => {
+      //FIXME WeekOf le is not pulling current week data
+      let maxDate = new Date(this.state.loadedWeeks[0]);
+      maxDate.setDate(maxDate.getDate() + 1);
+      this.web.lists.getByTitle("Activities").items.filter(`WeekOf ge '${this.state.loadedWeeks[this.state.loadedWeeks.length - 1].toISOString()}' and WeekOf le '${maxDate.toISOString()}'`).get().then(r => {
         this.setState({ isLoading: false, listData: r });
       }, e => {
         //TODO better error handling
@@ -53,14 +54,9 @@ class Activities extends Component {
   }
 
   newItem = () => {
-    let today = new Date();
-    let inputWeekOf = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
-    inputWeekOf = inputWeekOf.toISOString().split('T', 1)[0];
-
     let item = {
-      ID: -1, Title: 'New Item', WeekOf: '2020-03-08T06:00:00Z', InputWeekOf: inputWeekOf, Branch: 'OZI',
-      InterestItems: 'Items of interest...',
-      ActionItems: 'Informational.', TextOPRs: this.props.user.data
+      ID: -1, Title: '', WeekOf: moment().day(0), InputWeekOf: moment().day(0).format("YYYY-MM-DD"),
+      Branch: 'OZI', InterestItems: '', ActionItems: '', TextOPRs: this.props.user.data
     }
 
     this.setState({ showEditModal: true, editActivity: item });
@@ -70,7 +66,7 @@ class Activities extends Component {
     //build object to save
     let activity = {};
     activity.Title = state.Title;
-    activity.WeekOf = state.InputWeekOf;
+    activity.WeekOf = moment(state.InputWeekOf).day(0).toISOString();
     activity.Branch = state.Branch;
     activity.InterestItems = state.InterestItems;
     activity.ActionItems = state.ActionItems;
@@ -80,24 +76,21 @@ class Activities extends Component {
 
     //determine if new or edit
     this.setState({isLoading: true});
-    console.log(state);
     if (state.ID !== -1) {
+      console.log(state.ID);
       //EDIT
       console.log(`Submitting updated item ${activity.Title}!`);
       //TODO Include ETag checks/handling
       activityList.items.getById(state.ID).update(activity)
         .then(r => {
-          console.log(r);
-          console.log(state);
+          //UPDATE returns new ETag, but not the rest of the data
           let listData = this.state.listData;
           let itemIndex = listData.findIndex(item => item.ID === state.ID);
-          console.log(`Item index ${itemIndex}`);
-          activity.WeekOf = activity.WeekOf + 'T06:00:00Z';
-          const item = { ...listData[itemIndex], ...activity };
+          const item = { ...listData[itemIndex], ...activity }; //merge objects
           listData[itemIndex] = item;
-          console.log(listData);
           this.setState({isLoading: false, listData });
         }, e => {
+          //TODO Error handling, currently just pushing as if success
           console.error(e);
           let listData = this.state.listData;
           let itemIndex = listData.findIndex(item => item.ID === state.ID);
@@ -109,16 +102,13 @@ class Activities extends Component {
       //NEW
       console.log(`Submitting new item ${activity.Title}!`);
       let listData = this.state.listData;
-
       if (process.env.NODE_ENV === 'development') {
         activity.ID = Math.max.apply(Math, listData.map( o => {return o.ID})) + 1;
-        activity.WeekOf = activity.WeekOf + 'T06:00:00Z';
         listData.push(activity);
         this.setState({isLoading:false, listData });
       } else {
         activityList.items.add(activity)
           .then(r => {
-            console.log(r);
             listData.push(r.data);
             this.setState({isLoading:false, listData });
           }, e => {
@@ -128,8 +118,7 @@ class Activities extends Component {
           });
       }
     }
-
-    //event.persist();
+    //should we dismiss this with the loading spinner instead of pre-emptively?
     this.setState({ showEditModal: false });
   }
 
@@ -185,7 +174,6 @@ class Activities extends Component {
             key={date}
             weekOf={date}
             actions={this.state.listData}
-            disableNewButton={this.state.newItem}
             newButtonOnClick={() => this.newItem()}
             cardOnClick={(action) => this.cardOnClick(action)}
           />)}
