@@ -28,6 +28,9 @@ class Activities extends Component {
     this.fetchItems();
   }
 
+  //TODO refactor so fetchItems is given a date range - we can then fetch specific
+  //weeks rather than all of the data all over again
+  //then combine existing listData with recently fetched data
   fetchItems = () => {
     this.setState({ isLoading: true });
     if (process.env.NODE_ENV === 'development') {
@@ -35,10 +38,13 @@ class Activities extends Component {
         this.setState({ isLoading: false, listData: r });
       });
     } else {
-      //FIXME WeekOf le is not pulling current week data
       let maxDate = new Date(this.state.loadedWeeks[0]);
-      maxDate.setDate(maxDate.getDate() + 1);
-      this.web.lists.getByTitle("Activities").items.filter(`WeekOf ge '${this.state.loadedWeeks[this.state.loadedWeeks.length - 1].toISOString()}' and WeekOf le '${maxDate.toISOString()}'`).get().then(r => {
+      maxDate.setDate(maxDate.getDate() + 1); //TODO verify this is the correct end datetime
+      let filterstring = `WeekOf ge '${this.state.loadedWeeks[this.state.loadedWeeks.length - 1].toISOString()}' and WeekOf le '${maxDate.toISOString()}'`;
+      filterstring += ` and AuthorId eq ${this.props.user.Id}`;
+
+      //this.web.lists.getByTitle("Activities").items.filter(`WeekOf ge '${this.state.loadedWeeks[this.state.loadedWeeks.length - 1].toISOString()}' and WeekOf le '${maxDate.toISOString()}'`).get().then(r => {
+    this.web.lists.getByTitle("Activities").items.filter(filterstring).get().then(r => {
         this.setState({ isLoading: false, listData: r });
       }, e => {
         //TODO better error handling
@@ -56,7 +62,7 @@ class Activities extends Component {
   newItem = () => {
     let item = {
       ID: -1, Title: '', WeekOf: moment().day(0), InputWeekOf: moment().day(0).format("YYYY-MM-DD"),
-      Branch: 'OZI', InterestItems: '', ActionItems: '', TextOPRs: this.props.user.data
+      Branch: 'OZI', InterestItems: '', ActionItems: '', TextOPRs: this.props.user.Title
     }
 
     this.setState({ showEditModal: true, editActivity: item });

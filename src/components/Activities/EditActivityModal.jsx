@@ -7,17 +7,16 @@ class EditActivityModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      //activity: {},
       activity: this.props.activity,
       validated: false
     }
-    //this.state.activity = Object.assign({}, this.props.activity);  //deep copy
   }
 
   static getDerivedStateFromProps(newProps, oldState) {
     if (newProps.activity !== oldState.activity) {
       return { activity: newProps.activity };
     }
+    return null;
   }
 
   closeActivity(e) {

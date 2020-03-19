@@ -21,10 +21,8 @@ class ActivityCardsWeek extends Component {
                         onClick={() => this.props.onClick(action)}>
                         <Card.Body>
                             <Card.Title>Activity/Purpose: <span ref="Title">{action.Title}</span></Card.Title>
-                            <Card.Text>
-                                <strong>Specific items of interest:</strong> <span ref="InterestItems">{action.InterestItems}</span><br />
-                                {//TODO allow for InterestItems to display with line breaks
-                                }
+                            <Card.Text as="div">
+                                <strong>Specific items of interest:</strong> <span style={{whiteSpace: 'pre-line'}} ref="InterestItems">{action.InterestItems}</span><br />
                                 <strong>Action items for {action.Branch}:</strong> <span ref="ActionItems">{action.ActionItems}</span><br />
                                 <strong>OPRs:</strong> <span >{action.TextOPRs}</span>
                                 {//TODO Change to people picker

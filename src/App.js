@@ -26,6 +26,8 @@ class App extends Component {
                     <Route path="/Activities">
                       <UserContext.Consumer>
                         {user => (
+                          user.loading ? 
+                          <>Loading...</> :
                           <Activities user={user} />
                         )}
                       </UserContext.Consumer>
