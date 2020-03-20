@@ -5,8 +5,9 @@ import moment from 'moment';
 import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
 import EditActivityModal from './EditActivityModal';
-import GetActivityDevDefaults from './ActivityDevDefaults';
+import ActivityDev from './ActivityDev';
 
+//TODO consider moving away from datetime and going to ISO weeks
 class Activities extends Component {
   constructor(props) {
     super(props);
@@ -15,56 +16,49 @@ class Activities extends Component {
       isLoading: true,
       showEditModal: false,
       editActivity: {},
-      loadedWeeks: []
+      loadedWeeks: [],
+      loadingMoreWeeks: false,
+      saveError: false
     };
     this.web = spWebContext;
-
-    // set up the initial weeks that we will use to pull activity data
-    let today = new Date();
-    this.addNewWeeks(4, new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0));
   }
 
   componentDidMount() {
-    this.fetchItems();
+    let today = new Date();
+    let weekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
+    this.fetchItems(4, weekStart);
   }
 
-  //TODO refactor so fetchItems is given a date range - we can then fetch specific
-  //weeks rather than all of the data all over again
-  //then combine existing listData with recently fetched data
-  fetchItems = () => {
-    this.setState({ isLoading: true });
+  fetchItems = (numWeeks, weekStart) => {
     if (process.env.NODE_ENV === 'development') {
-      GetActivityDevDefaults().then(r => {
-        this.setState({ isLoading: false, listData: r });
+      ActivityDev.GetActivityDevDefaults().then(r => {
+        this.setState({ loadingMoreWeeks: false, isLoading: false, listData: r });
+        this.addNewWeeks(numWeeks, weekStart);
       });
     } else {
-      let maxDate = new Date(this.state.loadedWeeks[0]);
-      maxDate.setDate(maxDate.getDate() + 1); //TODO verify this is the correct end datetime
-      let filterstring = `WeekOf ge '${this.state.loadedWeeks[this.state.loadedWeeks.length - 1].toISOString()}' and WeekOf le '${maxDate.toISOString()}'`;
+      let maxDate = new Date(weekStart);
+      maxDate.setDate(maxDate.getDate() + 1);
+      let minDate = new Date(weekStart);
+      minDate.setDate(minDate.getDate() - (numWeeks * 7));
+      let filterstring = `WeekOf ge '${minDate.toISOString()}' and WeekOf le '${maxDate.toISOString()}'`;
       filterstring += ` and AuthorId eq ${this.props.user.Id}`;
 
-      //this.web.lists.getByTitle("Activities").items.filter(`WeekOf ge '${this.state.loadedWeeks[this.state.loadedWeeks.length - 1].toISOString()}' and WeekOf le '${maxDate.toISOString()}'`).get().then(r => {
-    this.web.lists.getByTitle("Activities").items.filter(filterstring).get().then(r => {
-        this.setState({ isLoading: false, listData: r });
+      this.web.lists.getByTitle("Activities").items.filter(filterstring).get().then(r => {
+        const listData = this.state.listData.concat(r);
+        this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
+        this.addNewWeeks(numWeeks, weekStart);
       }, e => {
         //TODO better error handling
-        this.setState({ isLoading: false });
+        this.setState({ loadingMoreWeeks: false, isLoading: false });
       });
     }
-  }
-
-  deleteItem = ID => {
-    // delete operation to remove item
-    let newData = this.state.listData.filter(el => el.ID !== ID);
-    this.setState({ listData: newData });
   }
 
   newItem = () => {
-    let item = {
+    const item = {
       ID: -1, Title: '', WeekOf: moment().day(0), InputWeekOf: moment().day(0).format("YYYY-MM-DD"),
       Branch: 'OZI', InterestItems: '', ActionItems: '', TextOPRs: this.props.user.Title
     }
-
     this.setState({ showEditModal: true, editActivity: item });
   }
 
@@ -78,54 +72,59 @@ class Activities extends Component {
     activity.ActionItems = state.ActionItems;
     activity.TextOPRs = state.TextOPRs; //TODO convert to peopler picker format...
 
-    let activityList = this.web.lists.getByTitle("Activities");
+    const activityList = this.web.lists.getByTitle("Activities");
 
     //determine if new or edit
-    this.setState({isLoading: true});
+    this.setState({ isLoading: true });
     if (state.ID !== -1) {
-      console.log(state.ID);
-      //EDIT
+      //EDIT existing item
       console.log(`Submitting updated item ${activity.Title}!`);
       //TODO Include ETag checks/handling
-      activityList.items.getById(state.ID).update(activity)
-        .then(r => {
-          //UPDATE returns new ETag, but not the rest of the data
-          let listData = this.state.listData;
-          let itemIndex = listData.findIndex(item => item.ID === state.ID);
-          const item = { ...listData[itemIndex], ...activity }; //merge objects
-          listData[itemIndex] = item;
-          this.setState({isLoading: false, listData });
-        }, e => {
-          //TODO Error handling, currently just pushing as if success
-          console.error(e);
-          let listData = this.state.listData;
-          let itemIndex = listData.findIndex(item => item.ID === state.ID);
-          activity.ID = state.ID;
-          listData[itemIndex] = activity;
-          this.setState({isLoading:false, listData });
-        });
-    } else {
-      //NEW
-      console.log(`Submitting new item ${activity.Title}!`);
-      let listData = this.state.listData;
       if (process.env.NODE_ENV === 'development') {
-        activity.ID = Math.max.apply(Math, listData.map( o => {return o.ID})) + 1;
-        listData.push(activity);
-        this.setState({isLoading:false, listData });
+        const listData = this.state.listData;
+        const itemIndex = listData.findIndex(item => item.ID === state.ID);
+        const item = { ...listData[itemIndex], ...activity }; //merge objects
+        listData[itemIndex] = item;
+        this.setState({ isLoading: false, showEditModal: false, saveError: false, listData });
+      } else {
+        activityList.items.getById(state.ID).update(activity)
+          .then(r => {
+            //Note: .update() returns the new ETag, but not the rest of the data
+            const listData = this.state.listData;
+            const itemIndex = listData.findIndex(item => item.ID === state.ID);
+            const item = { ...listData[itemIndex], ...activity }; //merge objects
+            listData[itemIndex] = item;
+            this.setState({ isLoading: false, showEditModal: false, saveError: false, listData });
+          }, e => {
+            console.error(e);
+            this.setState({ saveError: true, isLoading: false });
+          });
+      }
+    } else {
+      //NEW item to be created
+      console.log(`Submitting new item ${activity.Title}!`);
+      const listData = this.state.listData;
+      if (process.env.NODE_ENV === 'development') {
+        activity.ID = Math.max.apply(Math, listData.map(o => { return o.ID })) + 1;
+        ActivityDev.AddDevActivity(activity).then(() => {
+          if (this.state.saveError) {
+            listData.push(activity);
+            this.setState({ isLoading: false, saveError: false, showEditModal: false, listData });
+          } else {
+            this.setState({ isLoading: false, saveError: true });
+          }
+        });
       } else {
         activityList.items.add(activity)
           .then(r => {
             listData.push(r.data);
-            this.setState({isLoading:false, listData });
+            this.setState({ isLoading: false, saveError: false, showEditModal: false, listData });
           }, e => {
-            //TODO error handling
             console.error(e);
-            this.setState({isLoading: false});
+            this.setState({ saveError: true, isLoading: false });
           });
       }
     }
-    //should we dismiss this with the loading spinner instead of pre-emptively?
-    this.setState({ showEditModal: false });
   }
 
   addNewWeeks(numWeeks, weekStart) {
@@ -139,15 +138,15 @@ class Activities extends Component {
   }
 
   loadMoreWeeks = () => {
+    this.setState({ loadingMoreWeeks: true })
     let lastWeekLoaded = this.state.loadedWeeks[this.state.loadedWeeks.length - 1];
     let nextWeekStart = new Date(lastWeekLoaded);
     nextWeekStart.setDate(lastWeekLoaded.getDate() - 7);
-    this.addNewWeeks(4, nextWeekStart);
-    this.fetchItems();
+    this.fetchItems(4, nextWeekStart);
   }
 
   closeEditActivity = () => {
-    this.setState({ showEditModal: false });
+    this.setState({ showEditModal: false, saveError: false });
   }
 
   cardOnClick = (action) => {
@@ -157,11 +156,11 @@ class Activities extends Component {
   }
 
   render() {
-    const { isLoading } = this.state;
+    const { isLoading, loadingMoreWeeks } = this.state;
     const MySpinner = () =>
       <div className="spinner">
         <Spinner animation="border" role="status">
-          <span className="sr-only">Loading...</span>
+          <span className="sr-only">Fetching activities...</span>
         </Spinner>
       </div>
 
@@ -173,6 +172,8 @@ class Activities extends Component {
           submitEditActivity={this.submitEditActivity}
           closeEditActivity={this.closeEditActivity}
           activity={this.state.editActivity}
+          saving={this.state.isLoading}
+          error={this.state.saveError}
         />
         <Row className="justify-content-center"><h1>My Items</h1></Row>
         {this.state.loadedWeeks.map(date =>
@@ -183,7 +184,10 @@ class Activities extends Component {
             newButtonOnClick={() => this.newItem()}
             cardOnClick={(action) => this.cardOnClick(action)}
           />)}
-        <Button className="float-right mb-3" variant="primary" onClick={this.loadMoreWeeks}>Load More Activities</Button>
+        <Button disabled={loadingMoreWeeks} className="float-right mb-3" variant="primary" onClick={this.loadMoreWeeks}>
+          {loadingMoreWeeks && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
+          {' '}Load More Activities
+        </Button>
         {isLoading && <MySpinner />}
       </Container>
     );

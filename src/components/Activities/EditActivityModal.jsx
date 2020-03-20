@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import moment from 'moment';
 import ActivityModal from './ActivityModal';
 
@@ -53,8 +53,10 @@ class EditActivityModal extends Component {
         show={this.props.showEditModal}
         handleClose={e => this.closeActivity(e)}
         handleSubmit={e => this.validateActivity(e)}
+        saving={this.props.saving}
+        error={this.props.error}
       >
-        <Form id="EditActivityModal" noValidate validated={this.state.validated}
+        <Form disabled={this.props.saving} id="EditActivityModal" noValidate validated={this.state.validated}
           onSubmit={e => this.validateActivity(e)}
         >
           <Form.Group controlId="editActivityWeekOf">

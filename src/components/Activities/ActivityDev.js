@@ -1,6 +1,7 @@
-
+  const sleep = m => new Promise(r => setTimeout(r, m));
+  
   // Emulate a "long" web call so we can watch the spinners
-  async function GetActivityDevDefaults() {
+  export async function GetActivityDevDefaults() {
     const sleep = m => new Promise(r => setTimeout(r, m));
     let listData = [
       {
@@ -23,4 +24,9 @@
     return listData;
   }
 
-export default GetActivityDevDefaults;
+  export async function AddDevActivity() {
+    await sleep(3000);
+    return
+  }
+
+export default { GetActivityDevDefaults, AddDevActivity }
