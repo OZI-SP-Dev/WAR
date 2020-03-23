@@ -1,39 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { Web } from '@pnp/sp/webs';
+import { spWebContext } from './SPWebContext';
 import '@pnp/sp/site-users';
 
 export const UserContext = React.createContext();
 export const UserProvider = ({ children }) => {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [Id, setId] = useState(null);
+  const [Title, setTitle] = useState('Default User');
+  const [Email, setEmail] = useState(null);
 
-    const getUser = async () => {
-      //TODO move web to a provider
-        const web = new Web('https://usaf.dps.mil/teams/10251').configure({
-            headers: { "Accept": "application/json; odata=verbose" }
-        });
-
-        setLoading(true);
-        let newUser = {Title: 'Default User'};
-        try {
-          newUser = await web.currentUser.get();
-        } catch (error) {console.log(error);}
-
-        setData(newUser.Title);
+  const getUser = async () => {
+    if (process.env.NODE_ENV === 'development') {
+      setLoading(false);
+    } else {
+      try {
+        const web = spWebContext;
+        let currentUser = await web.currentUser.get();
+        setTitle(currentUser.Title);
+        setId(currentUser.Id);
+        setEmail(currentUser.Email);
         setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
     }
+  }
 
-    useEffect(() => {
-        getUser().catch((error) => {
-          console.log(error);
-          setData('Test User');
-          setLoading(false);
-        })
-    }, [])
+  useEffect(() => {
+    getUser().catch((error) => {
+      console.log(error);
+    })
+  }, [])
 
-    return (
-      <UserContext.Provider value={{ loading, data }}>
-          {children}
-      </UserContext.Provider>
-    )
+  return (
+    <UserContext.Provider value={{ loading, Title, Id, Email }}>
+      {children}
+    </UserContext.Provider>
+  )
 }

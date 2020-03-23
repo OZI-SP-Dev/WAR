@@ -30,7 +30,7 @@ function AppHeader() {
         </Nav>
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text className="mr-2">
-            Welcome {user.data}
+            Welcome {user.Title}
           </Navbar.Text>
         </Navbar.Collapse>
       </Navbar.Collapse>
