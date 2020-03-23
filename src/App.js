@@ -5,6 +5,7 @@ import Activities from './components/Activities/Activities';
 import AppHeader from './components/appHeader/AppHeader';
 import AppLeftNav from './components/appLeftNav/AppLeftNav';
 import Help from './components/Help/Help';
+import TestList from './components/testList/TestList';
 import { UserProvider, UserContext } from './providers/UserProvider';
 
 class App extends Component {
@@ -22,7 +23,7 @@ class App extends Component {
                     <Route path="/Help">
                       <Help />
                     </Route>
-                    <Route path={["/", "/Activities"]}>
+                    <Route path="/Activities">
                       <UserContext.Consumer>
                         {user => (
                           user.loading ? 
@@ -31,6 +32,9 @@ class App extends Component {
                         )}
                       </UserContext.Consumer>
                     </Route>
+                    <Router path="/">
+                      <TestList />
+                    </Router>
                   </Switch>
                 </main>
               </div>

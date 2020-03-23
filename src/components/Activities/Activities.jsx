@@ -20,6 +20,10 @@ class Activities extends Component {
       loadingMoreWeeks: false,
       saveError: false
     };
+    //FIXME Strange behavior with this.web.lists.getByTitle(...) not being found
+    // when I make Activities the default route. Is there another call that we must complete first?
+    // the web should already be established... do we need to make sure this component doesn't mount
+    // until _after_ the user is fetched?
     this.web = spWebContext;
   }
 
@@ -72,7 +76,7 @@ class Activities extends Component {
     activity.ActionItems = state.ActionItems;
     activity.TextOPRs = state.TextOPRs; //TODO convert to peopler picker format...
 
-    const activityList = this.web.lists.getByTitle("Activities");
+    let activityList = this.web.lists.getByTitle("Activities");
 
     //determine if new or edit
     this.setState({ isLoading: true });
@@ -81,7 +85,7 @@ class Activities extends Component {
       console.log(`Submitting updated item ${activity.Title}!`);
       //TODO Include ETag checks/handling
       if (process.env.NODE_ENV === 'development') {
-        const listData = this.state.listData;
+        let listData = this.state.listData;
         const itemIndex = listData.findIndex(item => item.ID === state.ID);
         const item = { ...listData[itemIndex], ...activity }; //merge objects
         listData[itemIndex] = item;
@@ -90,7 +94,7 @@ class Activities extends Component {
         activityList.items.getById(state.ID).update(activity)
           .then(r => {
             //Note: .update() returns the new ETag, but not the rest of the data
-            const listData = this.state.listData;
+            let listData = this.state.listData;
             const itemIndex = listData.findIndex(item => item.ID === state.ID);
             const item = { ...listData[itemIndex], ...activity }; //merge objects
             listData[itemIndex] = item;
@@ -103,7 +107,7 @@ class Activities extends Component {
     } else {
       //NEW item to be created
       console.log(`Submitting new item ${activity.Title}!`);
-      const listData = this.state.listData;
+      let listData = this.state.listData;
       if (process.env.NODE_ENV === 'development') {
         activity.ID = Math.max.apply(Math, listData.map(o => { return o.ID })) + 1;
         ActivityDev.AddDevActivity(activity).then(() => {
@@ -150,7 +154,7 @@ class Activities extends Component {
   }
 
   cardOnClick = (action) => {
-    const editActivity = action;
+    let editActivity = action;
     editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
     this.setState({ showEditModal: true, editActivity });
   }
