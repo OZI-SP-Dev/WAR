@@ -90,6 +90,9 @@ class EditActivityModal extends Component {
               onChange={(e) => this.updateActivity(e, 'Title')}
               required
             />
+            <Form.Control.Feedback type="invalid">
+              Enter a title with no trailing period.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="editActivityInterestItems">
             <Form.Label>Specific items of interest</Form.Label>
@@ -100,6 +103,9 @@ class EditActivityModal extends Component {
               onChange={(e) => this.updateActivity(e, 'InterestItems')}
               required
             />
+            <Form.Control.Feedback type="invalid">
+              Enter at least one item of interest.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="editActivityActionItems">
             <Form.Label>Action items</Form.Label>
@@ -123,6 +129,9 @@ class EditActivityModal extends Component {
               onChange={(e) => this.updateActivity(e, 'TextOPRs')}
               required
             />
+            <Form.Control.Feedback type="invalid">
+              You must have at least one OPR.
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </ActivityModal>
