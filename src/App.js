@@ -23,7 +23,7 @@ class App extends Component {
                     <Route path="/Help">
                       <Help />
                     </Route>
-                    <Route path="/Activities">
+                    <Route path="/">
                       <UserContext.Consumer>
                         {user => (
                           user.loading ? 
@@ -32,7 +32,7 @@ class App extends Component {
                         )}
                       </UserContext.Consumer>
                     </Route>
-                    <Router path="/">
+                    <Router path="/TestLIst">
                       <TestList />
                     </Router>
                   </Switch>

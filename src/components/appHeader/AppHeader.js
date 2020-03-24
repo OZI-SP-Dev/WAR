@@ -8,7 +8,7 @@ function AppHeader() {
   const user = useContext(UserContext);
   return (
     <Navbar fixed="top" expand="lg" variant="dark" bg="dark" className="p-0 shadow">
-      <Navbar.Brand href="#home" className="col-sm-3 col-md-2 mr-0">Weekly Activity Report</Navbar.Brand>
+      <Navbar.Brand className="col-sm-3 col-md-2 mr-0">Weekly Activity Report</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
