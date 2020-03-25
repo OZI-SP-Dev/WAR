@@ -78,6 +78,9 @@ class EditActivityModal extends Component {
             >
               <option>--</option>
               <option>OZI</option>
+              <option>OZIC</option>
+              <option>OZIF</option>
+              <option>OZIP</option>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="editActivityTitle">

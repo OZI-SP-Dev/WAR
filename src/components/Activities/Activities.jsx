@@ -20,10 +20,6 @@ class Activities extends Component {
       loadingMoreWeeks: false,
       saveError: false
     };
-    //FIXME Strange behavior with this.web.lists.getByTitle(...) not being found
-    // when I make Activities the default route. Is there another call that we must complete first?
-    // the web should already be established... do we need to make sure this component doesn't mount
-    // until _after_ the user is fetched?
     this.web = spWebContext;
   }
 
@@ -61,7 +57,7 @@ class Activities extends Component {
   newItem = () => {
     const item = {
       ID: -1, Title: '', WeekOf: moment().day(0), InputWeekOf: moment().day(0).format("YYYY-MM-DD"),
-      Branch: 'OZI', InterestItems: '', ActionItems: '', TextOPRs: this.props.user.Title
+      Branch: 'OZIC', InterestItems: '', ActionItems: '', TextOPRs: this.props.user.Title
     }
     this.setState({ showEditModal: true, editActivity: item });
   }
