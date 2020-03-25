@@ -15,12 +15,17 @@ class ContactUsModal extends Component {
   }
 
   defaultEmailProps() {
-    return {
-      To: ["AFLCMC.XP-OZ.BACSupport@us.af.mil"],
-      //From: '',
+    const emailProps = {
+      //To: ["AFLCMC.XP-OZ.BACSupport@us.af.mil"],
+      //MUST be to a valid SharePoint User
+      To: ["robert.porterfield.2@us.af.mil"],
       Subject: "Weekly Activity Report",
-      Body: "Here is the body. <b>It supports html</b>"
-    }
+      Body: "Here is the body. <b>It supports html</b>",
+      AdditionalHeaders: {
+          "content-type": "text/html"
+      }
+    };
+    return emailProps;
   }
 
   /** Reset all form fields to defaults */
