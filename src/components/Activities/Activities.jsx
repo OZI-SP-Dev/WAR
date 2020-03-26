@@ -1,11 +1,11 @@
+import moment from 'moment';
 import React, { Component } from 'react';
 import { Button, Container, Row, Spinner } from 'react-bootstrap';
-import { spWebContext } from '../../providers/SPWebContext';
-import moment from 'moment';
 import './Activities.css';
+import ActivitiesApi from './ActivitiesApi';
+import ActivitiesApiDev from './ActivitiesApiDev';
 import ActivityAccordion from './ActivityAccordion';
 import EditActivityModal from './EditActivityModal';
-import ActivityDev from './ActivityDev';
 
 //TODO consider moving away from datetime and going to ISO weeks
 class Activities extends Component {
@@ -24,7 +24,7 @@ class Activities extends Component {
     // when I make Activities the default route. Is there another call that we must complete first?
     // the web should already be established... do we need to make sure this component doesn't mount
     // until _after_ the user is fetched?
-    this.web = spWebContext;
+    this.activitiesAPI = process.env.NODE_ENV === 'development' ? new ActivitiesApiDev() : new ActivitiesApi();
   }
 
   componentDidMount() {
@@ -34,28 +34,14 @@ class Activities extends Component {
   }
 
   fetchItems = (numWeeks, weekStart) => {
-    if (process.env.NODE_ENV === 'development') {
-      ActivityDev.GetActivityDevDefaults().then(r => {
-        this.setState({ loadingMoreWeeks: false, isLoading: false, listData: r });
-        this.addNewWeeks(numWeeks, weekStart);
-      });
-    } else {
-      let maxDate = new Date(weekStart);
-      maxDate.setDate(maxDate.getDate() + 1);
-      let minDate = new Date(weekStart);
-      minDate.setDate(minDate.getDate() - (numWeeks * 7));
-      let filterstring = `WeekOf ge '${minDate.toISOString()}' and WeekOf le '${maxDate.toISOString()}'`;
-      filterstring += ` and AuthorId eq ${this.props.user.Id}`;
-
-      this.web.lists.getByTitle("Activities").items.filter(filterstring).get().then(r => {
-        const listData = this.state.listData.concat(r);
-        this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
-        this.addNewWeeks(numWeeks, weekStart);
-      }, e => {
-        //TODO better error handling
-        this.setState({ loadingMoreWeeks: false, isLoading: false });
-      });
-    }
+    this.activitiesAPI.fetchActivities(numWeeks, weekStart, this.props.user.Id).then(r => {
+      const listData = this.state.listData.concat(r);
+      this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
+      this.addNewWeeks(numWeeks, weekStart);
+    }, e => {
+      //TODO better error handling
+      this.setState({ loadingMoreWeeks: false, isLoading: false });
+    });
   }
 
   newItem = () => {
@@ -66,72 +52,31 @@ class Activities extends Component {
     this.setState({ showEditModal: true, editActivity: item });
   }
 
-  submitEditActivity = (event, state) => {
-    //build object to save
-    let activity = {};
-    activity.Title = state.Title;
-    activity.WeekOf = moment(state.InputWeekOf).day(0).toISOString();
-    activity.Branch = state.Branch;
-    activity.InterestItems = state.InterestItems;
-    activity.ActionItems = state.ActionItems;
-    activity.TextOPRs = state.TextOPRs; //TODO convert to peopler picker format...
-
-    let activityList = this.web.lists.getByTitle("Activities");
-
-    //determine if new or edit
+  submitActivity = (event, newActivity) => {
     this.setState({ isLoading: true });
-    if (state.ID !== -1) {
-      //EDIT existing item
-      console.log(`Submitting updated item ${activity.Title}!`);
-      //TODO Include ETag checks/handling
-      if (process.env.NODE_ENV === 'development') {
-        let listData = this.state.listData;
-        const itemIndex = listData.findIndex(item => item.ID === state.ID);
-        const item = { ...listData[itemIndex], ...activity }; //merge objects
-        listData[itemIndex] = item;
-        this.setState({ isLoading: false, showEditModal: false, saveError: false, listData });
-      } else {
-        activityList.items.getById(state.ID).update(activity)
-          .then(r => {
-            //Note: .update() returns the new ETag, but not the rest of the data
-            let listData = this.state.listData;
-            const itemIndex = listData.findIndex(item => item.ID === state.ID);
-            const item = { ...listData[itemIndex], ...activity }; //merge objects
-            listData[itemIndex] = item;
-            this.setState({ isLoading: false, showEditModal: false, saveError: false, listData });
-          }, e => {
-            console.error(e);
-            this.setState({ saveError: true, isLoading: false });
-          });
-      }
-    } else {
-      //NEW item to be created
-      console.log(`Submitting new item ${activity.Title}!`);
-      let listData = this.state.listData;
-      if (process.env.NODE_ENV === 'development') {
-        activity.ID = Math.max.apply(Math, listData.map(o => { return o.ID })) + 1;
-        ActivityDev.AddDevActivity(activity).then(() => {
-          if (this.state.saveError) {
-            listData.push(activity);
-            this.setState({ isLoading: false, saveError: false, showEditModal: false, listData });
-          } else {
-            this.setState({ isLoading: false, saveError: true });
-          }
-        });
-      } else {
-        activityList.items.add(activity)
-          .then(r => {
-            listData.push(r.data);
-            this.setState({ isLoading: false, saveError: false, showEditModal: false, listData });
-          }, e => {
-            console.error(e);
-            this.setState({ saveError: true, isLoading: false });
-          });
-      }
-    }
+    //build object to save
+    let activityToSubmit = {
+      ID: newActivity.ID,
+      Title: newActivity.Title,
+      WeekOf: moment(newActivity.InputWeekOf).day(0).toISOString(),
+      Branch: newActivity.Branch,
+      InterestItems: newActivity.InterestItems,
+      ActionItems: newActivity.ActionItems,
+      TextOPRs: newActivity.TextOPRs //TODO convert to peopler picker format...
+    };
+
+    this.activitiesAPI.submitActivity(activityToSubmit).then(r => {
+      // filter out the old activity, if it already existed
+      let activityList = this.state.listData.filter(activity => activity.ID !== r.data.ID);
+      activityList.push(r.data);
+      this.setState({ isLoading: false, showEditModal: false, saveError: false, listData: activityList });
+    }, e => {
+      console.error(e);
+      this.setState({ saveError: true, isLoading: false });
+    });
   }
 
-  addNewWeeks(numWeeks, weekStart) {
+  addNewWeeks = (numWeeks, weekStart) => {
     let newWeeks = this.state.loadedWeeks;
     for (let i = 0; i < numWeeks; ++i) {
       let week = new Date(weekStart);
@@ -153,7 +98,7 @@ class Activities extends Component {
     this.setState({ showEditModal: false, saveError: false });
   }
 
-  cardOnClick = (action) => {
+  cardOnClick(action) {
     let editActivity = action;
     editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
     this.setState({ showEditModal: true, editActivity });
@@ -173,7 +118,7 @@ class Activities extends Component {
         <EditActivityModal
           key={this.state.editActivity.ID}
           showEditModal={this.state.showEditModal}
-          submitEditActivity={this.submitEditActivity}
+          submitEditActivity={this.submitActivity}
           closeEditActivity={this.closeEditActivity}
           activity={this.state.editActivity}
           saving={this.state.isLoading}
