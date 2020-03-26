@@ -6,9 +6,16 @@ class ActivityAccordion extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      open: true
+    };
     this.startWeek = new Date(props.weekOf);
     this.endWeek = new Date(props.weekOf);
     this.endWeek.setDate(this.startWeek.getDate() + 6);
+  }
+
+  accordionClicked = () => {
+    this.setState({open: !this.state.open});
   }
 
   formatDate = (date) => {
@@ -20,8 +27,9 @@ class ActivityAccordion extends Component {
     return (
       <Accordion defaultActiveKey="0" className="mb-3">
         <Card>
-          <Accordion.Toggle as={Card.Header} eventKey="0" style={{ cursor: 'pointer' }}>
+          <Accordion.Toggle as={Card.Header} eventKey="0" style={{ cursor: 'pointer' }} onClick={this.accordionClicked}>
             Period of Accomplishments: {`${this.formatDate(this.startWeek)} - ${this.formatDate(this.endWeek)}`}
+            <div className={this.state.open ? 'arrow-down float-right' : 'arrow-right float-right'} />
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="0">
             <Card.Body>
