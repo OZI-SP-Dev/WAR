@@ -7,6 +7,7 @@ import AppLeftNav from './components/appLeftNav/AppLeftNav';
 import Help from './components/Help/Help';
 import TestList from './components/testList/TestList';
 import { UserProvider, UserContext } from './providers/UserProvider';
+import { ContactUsProvider } from './components/ContactUs/ContactUsProvider';
 
 class App extends Component {
   render() {
@@ -14,31 +15,33 @@ class App extends Component {
       <Router>
         <div>
           <UserProvider>
-            <AppHeader />
-            <div id="top" className="container-fluid">
-              <div className="row">
-                <AppLeftNav />
-                <main className="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
-                  <Switch>
-                    <Route path="/Help">
-                      <Help />
-                    </Route>
-                    <Route path="/">
-                      <UserContext.Consumer>
-                        {user => (
-                          user.loading ? 
-                          <>Loading...</> :
-                          <Activities user={user} />
-                        )}
-                      </UserContext.Consumer>
-                    </Route>
-                    <Router path="/TestLIst">
-                      <TestList />
-                    </Router>
-                  </Switch>
-                </main>
+            <ContactUsProvider>
+              <AppHeader />
+              <div id="top" className="container-fluid">
+                <div className="row">
+                  <AppLeftNav />
+                  <main className="col-md-9 ml-sm-auto col-lg-10 px-4" role="main">
+                    <Switch>
+                      <Route path="/Help">
+                        <Help />
+                      </Route>
+                      <Route path="/">
+                        <UserContext.Consumer>
+                          {user => (
+                            user.loading ?
+                              <>Loading...</> :
+                              <Activities user={user} />
+                          )}
+                        </UserContext.Consumer>
+                      </Route>
+                      <Router path="/TestLIst">
+                        <TestList />
+                      </Router>
+                    </Switch>
+                  </main>
+                </div>
               </div>
-            </div>
+            </ContactUsProvider>
           </UserProvider>
         </div>
       </Router>
