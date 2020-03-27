@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Accordion, Button, Card, Col, Row } from 'react-bootstrap';
+import { Accordion, Badge, Button, Card, Col, Row } from 'react-bootstrap';
 import ActivityCardsWeek from './ActivityCardsWeek'
 
 class ActivityAccordion extends Component {
@@ -14,8 +14,17 @@ class ActivityAccordion extends Component {
     this.endWeek.setDate(this.startWeek.getDate() + 6);
   }
 
+  datesAreEqual(date1, date2) {
+    return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate();
+  }
+
+  getFilteredActions() {
+    console.log(this.props.actions);
+    return this.props.actions.filter(action => this.datesAreEqual(new Date(action.WeekOf), this.startWeek));
+  }
+
   accordionClicked = () => {
-    this.setState({open: !this.state.open});
+    this.setState({ open: !this.state.open });
   }
 
   formatDate = (date) => {
@@ -24,11 +33,13 @@ class ActivityAccordion extends Component {
   }
 
   render() {
+    let filteredActions = this.getFilteredActions();
     return (
       <Accordion defaultActiveKey="0" className="mb-3">
         <Card>
           <Accordion.Toggle as={Card.Header} eventKey="0" style={{ cursor: 'pointer' }} onClick={this.accordionClicked}>
-            Period of Accomplishments: {`${this.formatDate(this.startWeek)} - ${this.formatDate(this.endWeek)}`}
+            Period of Accomplishments: {`${this.formatDate(this.startWeek)} - ${this.formatDate(this.endWeek)} `}
+            <Badge variant="secondary">{filteredActions.length}</Badge>
             <div className={this.state.open ? 'arrow-down float-right' : 'arrow-right float-right'} />
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="0">
@@ -36,7 +47,7 @@ class ActivityAccordion extends Component {
               <Row>
                 <ActivityCardsWeek
                   weekStart={this.startWeek}
-                  actions={this.props.actions}
+                  actions={filteredActions}
                   onClick={this.props.cardOnClick}
                 />
               </Row>

@@ -2,20 +2,11 @@ import React, { Component } from 'react';
 import { Card, Col } from 'react-bootstrap';
 
 class ActivityCardsWeek extends Component {
-
-    datesAreEqual(date1, date2) {
-        return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate();
-    }
-
-    getFilteredActions() {
-        return this.props.actions.filter(action => this.datesAreEqual(new Date(action.WeekOf), this.props.weekStart));
-    }
-
     render() {
-        let filteredActions = this.getFilteredActions();
+        const actions = this.props.actions;
         return (
-            filteredActions.length ?
-            filteredActions.map((action, index) => (
+            actions.length ?
+            actions.map((action, index) => (
                 <Col xl={6} className="mb-3" key={action.ID}>
                     <Card className="activity"
                         onClick={() => this.props.onClick(action)}>

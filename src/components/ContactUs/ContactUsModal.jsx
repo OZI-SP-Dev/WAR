@@ -16,9 +16,8 @@ class ContactUsModal extends Component {
 
   defaultEmailProps() {
     const emailProps = {
-      //To: ["AFLCMC.XP-OZ.BACSupport@us.af.mil"],
-      //MUST be to a valid SharePoint User
-      To: ["robert.porterfield.2@us.af.mil"],
+      //To: MUST be to a valid SharePoint User
+      To: this.props.contactEmails,
       Subject: "Weekly Activity Report",
       Body: "Here is the body. <b>It supports html</b>",
       AdditionalHeaders: {
@@ -42,14 +41,17 @@ class ContactUsModal extends Component {
         baseUrl: process.env.REACT_APP_API_URL
       }
     });
-    sp.utility.sendEmail(this.state.emailProps).then(
+    let emailProps = this.state.emailProps;
+    emailProps.Body = encodeURIComponent(emailProps.body).Replace("\r\n", "<br />");
+    sp.utility.sendEmail(emailProps).then(
       () => {
         this.resetForm();
         this.setState({ sending: false });
         this.onHide();
       },
-      () => {
+      (e) => {
         console.log("Error sending email");
+        console.log(e);
         this.setState({ sending: false, error: true});
       }
     );

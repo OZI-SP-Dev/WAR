@@ -62,6 +62,11 @@ class Activities extends Component {
       TextOPRs: newActivity.TextOPRs //TODO convert to peopler picker format...
     };
 
+    // Remove trailing period(s) from Title
+    while (activityToSubmit.Title.charAt(activityToSubmit.Title.length-1) === '.') {
+      activityToSubmit.Title = activityToSubmit.Title.slice(0, -1);
+    }
+
     this.activitiesAPI.submitActivity(activityToSubmit).then(r => {
       // filter out the old activity, if it already existed
       let activityList = this.state.listData.filter(activity => activity.ID !== r.data.ID);
