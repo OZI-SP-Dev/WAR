@@ -19,7 +19,7 @@ export const ContactUsProvider = ({ children }) => {
       try {
         let contacts = await spWebContext.lists.getByTitle("Contacts").items.get();
         let contactEmails = [];
-        contacts.foreach(contact => {
+        contacts.forEach(contact => {
           contactEmails.push(contact.Title);
         });
         setContactEmails(contactEmails);
@@ -39,12 +39,12 @@ export const ContactUsProvider = ({ children }) => {
 
   return (
     <ContactUsContext.Provider value={{ setShowContactUs }}>
-      <ContactUsModal
+      {!loading && <ContactUsModal
         showContactUsModal={showContactUs}
         hideContactUs={hideContactUs}
         contactEmails={contactEmails}
         loading={loading}
-      />
+      />}
       {children}
     </ContactUsContext.Provider>
   )

@@ -42,7 +42,7 @@ class ContactUsModal extends Component {
       }
     });
     let emailProps = this.state.emailProps;
-    emailProps.Body = encodeURIComponent(emailProps.body).replace("\r\n", "<br />");
+    emailProps.Body = encodeURIComponent(emailProps.Body).replace("\r\n", "<br />");
     sp.utility.sendEmail(emailProps).then(
       () => {
         this.resetForm();
