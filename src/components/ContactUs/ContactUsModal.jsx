@@ -41,8 +41,12 @@ class ContactUsModal extends Component {
         baseUrl: process.env.REACT_APP_API_URL
       }
     });
-    let emailProps = this.state.emailProps;
-    emailProps.Body = encodeURIComponent(emailProps.Body).replace("\r\n", "<br />");
+    let emailProps = {...this.state.emailProps};
+     //use regex in order to replace all
+    emailProps.Body = emailProps.Body
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\n/g, '<BR>');
     sp.utility.sendEmail(emailProps).then(
       () => {
         this.resetForm();
