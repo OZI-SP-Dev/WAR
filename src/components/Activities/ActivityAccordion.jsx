@@ -7,11 +7,17 @@ class ActivityAccordion extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: true
+      open: false
     };
     this.startWeek = new Date(props.weekOf);
     this.endWeek = new Date(props.weekOf);
     this.endWeek.setDate(this.startWeek.getDate() + 6);
+    let now = new Date();
+    let currentWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay(), 0, 0, 0, 0);
+    this.isThisWeek = this.datesAreEqual(this.startWeek, currentWeek);
+    if (this.isThisWeek) {
+      this.state.open = true;
+    }
   }
 
   datesAreEqual(date1, date2) {
@@ -35,7 +41,7 @@ class ActivityAccordion extends Component {
   render() {
     let filteredActions = this.getFilteredActions();
     return (
-      <Accordion defaultActiveKey="0" className="mb-3">
+      <Accordion defaultActiveKey={this.isThisWeek ? "0" : ""} className="mb-3">
         <Card>
           <Accordion.Toggle as={Card.Header} eventKey="0" style={{ cursor: 'pointer' }} onClick={this.accordionClicked}>
             Period of Accomplishments: {`${this.formatDate(this.startWeek)} - ${this.formatDate(this.endWeek)} `}
