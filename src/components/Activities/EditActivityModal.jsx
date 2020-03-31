@@ -1,28 +1,42 @@
 import React, { Component } from 'react';
 import { Form } from 'react-bootstrap';
-import moment from 'moment';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 import ActivityModal from './ActivityModal';
 
 class EditActivityModal extends Component {
   constructor(props) {
     super(props);
+    let weekStart = new Date(props.activity.WeekOf);
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
     this.state = {
       activity: this.props.activity,
-      validated: false
+      validated: false,
+      selectedDate: weekStart,
+      highlightDates: EditActivityModal.getWeek(weekStart)
     }
   }
 
   static getDerivedStateFromProps(newProps, oldState) {
     if (newProps.activity !== oldState.activity) {
-      return { activity: newProps.activity };
+      let weekStart = new Date(newProps.activity.WeekOf);
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      return {
+        activity: newProps.activity,
+        selectedDate: weekStart,
+        highlightDates: EditActivityModal.getWeek(weekStart)
+      };
     }
     return null;
   }
 
   closeActivity(e) {
     //reset form fields
-    this.setState({activity: {}, validated: false});
-    
+    this.setState({
+      activity: {},
+      validated: false
+    });
+
     //callback parent
     this.props.closeEditActivity(e);
   }
@@ -31,7 +45,7 @@ class EditActivityModal extends Component {
   updateActivity(e, field) {
     const activity = this.state.activity;
     activity[field] = e.target.value;
-    this.setState({activity});
+    this.setState({ activity });
   }
 
   validateActivity(e) {
@@ -39,11 +53,27 @@ class EditActivityModal extends Component {
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
-      this.setState({validated: true});
+      this.setState({ validated: true });
     } else {
       this.props.submitEditActivity(e, this.state.activity)
-      this.setState({validated: false, activity: {}})
+      this.setState({ validated: false, activity: {} })
     }
+  }
+
+  static getWeek(weekStart) {
+    let week = [];
+    for (let i = 0; i < 7; ++i) {
+      week.push(new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + i, 0, 0, 0, 0));
+    }
+    return week;
+  }
+
+  onDateChange(date) {
+    let selectedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay(), 0, 0, 0, 0);
+    let highlightDates = EditActivityModal.getWeek(selectedDate);
+    let activity = this.state.activity;
+    activity.InputWeekOf = selectedDate;
+    this.setState({ activity, selectedDate, highlightDates });
   }
 
   render() {
@@ -61,12 +91,12 @@ class EditActivityModal extends Component {
         >
           <Form.Group controlId="editActivityWeekOf">
             <Form.Label>Period of Accomplishment</Form.Label>
-            <Form.Control
-              type="date"
-              defaultValue={this.props.activity.InputWeekOf}
-              value={this.state.InputWeekOf}
-              max={moment().day(6).format('YYYY-MM-DD')}
-              onChange={(e) => this.updateActivity(e, 'InputWeekOf')}
+            <DatePicker
+              selected={this.state.selectedDate}
+              onChange={date => this.onDateChange(date)}
+              highlightDates={this.state.highlightDates}
+              maxDate={new Date()}
+              inline
             />
           </Form.Group>
           <Form.Group controlId="editActivityOrg">
@@ -112,7 +142,7 @@ class EditActivityModal extends Component {
           </Form.Group>
           <Form.Group controlId="editActivityActionItems">
             <Form.Label>Action items</Form.Label>
-            <Form.Control 
+            <Form.Control
               type="text"
               placeholder="Informational."
               defaultValue={this.props.activity.ActionItems}
@@ -125,7 +155,7 @@ class EditActivityModal extends Component {
             {//TODO Convert to people picker
             }
             <Form.Label>OPRs</Form.Label>
-            <Form.Control 
+            <Form.Control
               type="text"
               defaultValue={this.props.activity.TextOPRs}
               value={this.state.TextOPRs}

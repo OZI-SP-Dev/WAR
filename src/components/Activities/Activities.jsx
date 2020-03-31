@@ -41,9 +41,9 @@ class Activities extends Component {
     });
   }
 
-  newItem = () => {
+  newItem = (date) => {
     const item = {
-      ID: -1, Title: '', WeekOf: moment().day(0), InputWeekOf: moment().day(0).format("YYYY-MM-DD"),
+      ID: -1, Title: '', WeekOf: moment(date).day(0), InputWeekOf: moment(date).format("YYYY-MM-DD"),
       Branch: 'OZIC', InterestItems: '', ActionItems: '', TextOPRs: this.props.user.Title
     }
     this.setState({ showEditModal: true, editActivity: item });
@@ -132,7 +132,7 @@ class Activities extends Component {
             key={date}
             weekOf={date}
             actions={this.state.listData}
-            newButtonOnClick={() => this.newItem()}
+            newButtonOnClick={() => this.newItem(date)}
             cardOnClick={(action) => this.cardOnClick(action)}
           />)}
         <Button disabled={loadingMoreWeeks} className="float-right mb-3" variant="primary" onClick={this.loadMoreWeeks}>

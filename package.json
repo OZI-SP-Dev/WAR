@@ -50,5 +50,8 @@
       "last 1 safari version",
       "edge 16"
     ]
+  },
+  "devDependencies": {
+    "@types/react-datepicker": "^2.11.0"
   }
 }
