@@ -18,7 +18,8 @@ class Activities extends Component {
       editActivity: {},
       loadedWeeks: [],
       loadingMoreWeeks: false,
-      saveError: false
+      saveError: false,
+      minCreateDate: {}
     };
     
     this.activitiesAPI = process.env.NODE_ENV === 'development' ? new ActivitiesApiDev() : new ActivitiesApi();
@@ -27,6 +28,8 @@ class Activities extends Component {
   componentDidMount() {
     let today = new Date();
     let weekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
+    // TODO: this is the default, but different limits will be implemented after roles are added
+    this.setState({minCreateDate: weekStart});
     this.fetchItems(4, weekStart);
   }
 
@@ -125,8 +128,9 @@ class Activities extends Component {
           activity={this.state.editActivity}
           saving={this.state.isLoading}
           error={this.state.saveError}
+          minCreateDate={this.state.minCreateDate}
         />
-        <Row className="justify-content-center"><h1>My Items</h1></Row>
+        <Row className="justify-content-center"><h1>Activities</h1></Row>
         {this.state.loadedWeeks.map(date =>
           <ActivityAccordion
             key={date}
@@ -134,6 +138,8 @@ class Activities extends Component {
             actions={this.state.listData}
             newButtonOnClick={() => this.newItem(date)}
             cardOnClick={(action) => this.cardOnClick(action)}
+            disableNewButton={this.state.showEditModal}
+            showNewButton={date >= this.state.minCreateDate}
           />)}
         <Button disabled={loadingMoreWeeks} className="float-right mb-3" variant="primary" onClick={this.loadMoreWeeks}>
           {loadingMoreWeeks && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}

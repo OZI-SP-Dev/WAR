@@ -25,10 +25,15 @@ class ActivityModal extends Component {
           <Button disabled={this.props.saving} variant="secondary" onClick={this.props.handleClose}>
             Close
           </Button>
-          <Button disabled={this.props.saving} variant={this.props.submitButtonVariant || "primary"} onClick={this.props.handleSubmit}>
-            {this.props.saving && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
-            {' '}{this.props.submitButtonText || "Submit"}
-          </Button>
+          {!this.props.readOnly &&
+            <Button
+              disabled={this.props.saving}
+              variant={this.props.submitButtonVariant || "primary"}
+              onClick={this.props.handleSubmit}
+            >
+              {this.props.saving && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
+              {' '}{this.props.submitButtonText || "Submit"}
+            </Button>}
           {this.props.error && <Alert variant='danger' className="w-100">There was an error saving your activity!</Alert>}
         </Modal.Footer>
       </Modal>

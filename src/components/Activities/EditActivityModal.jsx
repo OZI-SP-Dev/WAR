@@ -13,7 +13,8 @@ class EditActivityModal extends Component {
       activity: this.props.activity,
       validated: false,
       selectedDate: weekStart,
-      highlightDates: EditActivityModal.getWeek(weekStart)
+      highlightDates: EditActivityModal.getWeek(weekStart),
+      datePickerOpen: false
     }
   }
 
@@ -76,7 +77,25 @@ class EditActivityModal extends Component {
     this.setState({ activity, selectedDate, highlightDates });
   }
 
+  isReadOnly() {
+    return this.props.activity.ID > -1 && new Date(this.props.activity.WeekOf) < this.props.minCreateDate;
+  }
+
   render() {
+    console.log(this.state.selectedDate);
+    const DatePickerCustomInput = ({ value }) => (
+      <>
+        <Form.Label>Period of Accomplishment</Form.Label>
+        <Form.Control
+          type="text"
+          value={value}
+          onClick={() => !this.isReadOnly() && this.setState({datePickerOpen: true})}
+          required
+          readOnly={this.isReadOnly()}
+        />
+      </>
+    );
+
     return (
       <ActivityModal
         modalDisplayName="Activity"
@@ -84,19 +103,23 @@ class EditActivityModal extends Component {
         handleClose={e => this.closeActivity(e)}
         handleSubmit={e => this.validateActivity(e)}
         saving={this.props.saving}
+        readOnly={this.isReadOnly()}
         error={this.props.error}
       >
         <Form disabled={this.props.saving} id="EditActivityModal" noValidate validated={this.state.validated}
           onSubmit={e => this.validateActivity(e)}
         >
           <Form.Group controlId="editActivityWeekOf">
-            <Form.Label>Period of Accomplishment</Form.Label>
             <DatePicker
               selected={this.state.selectedDate}
               onChange={date => this.onDateChange(date)}
               highlightDates={this.state.highlightDates}
+              minDate={this.props.minCreateDate}
               maxDate={new Date()}
-              inline
+              customInput={<DatePickerCustomInput />}
+              open={this.state.datePickerOpen}
+              onClickOutside={() => this.setState({datePickerOpen: false})}
+              shouldCloseOnSelect={false}
             />
           </Form.Group>
           <Form.Group controlId="editActivityOrg">
@@ -105,6 +128,7 @@ class EditActivityModal extends Component {
               defaultValue={this.props.activity.Branch}
               value={this.state.Branch}
               onChange={(e) => this.updateActivity(e, 'Branch')}
+              disabled={this.isReadOnly()}
             >
               <option>--</option>
               <option>OZI</option>
@@ -121,6 +145,7 @@ class EditActivityModal extends Component {
               defaultValue={this.props.activity.Title}
               value={this.state.Title}
               onChange={(e) => this.updateActivity(e, 'Title')}
+              readOnly={this.isReadOnly()}
               required
             />
             <Form.Control.Feedback type="invalid">
@@ -134,6 +159,7 @@ class EditActivityModal extends Component {
               defaultValue={this.props.activity.InterestItems}
               value={this.state.InterestItems}
               onChange={(e) => this.updateActivity(e, 'InterestItems')}
+              readOnly={this.isReadOnly()}
               required
             />
             <Form.Control.Feedback type="invalid">
@@ -148,6 +174,7 @@ class EditActivityModal extends Component {
               defaultValue={this.props.activity.ActionItems}
               value={this.state.ActionItems}
               onChange={(e) => this.updateActivity(e, 'ActionItems')}
+              readOnly={this.isReadOnly()}
               required
             />
           </Form.Group>
@@ -160,6 +187,7 @@ class EditActivityModal extends Component {
               defaultValue={this.props.activity.TextOPRs}
               value={this.state.TextOPRs}
               onChange={(e) => this.updateActivity(e, 'TextOPRs')}
+              readOnly={this.isReadOnly()}
               required
             />
             <Form.Control.Feedback type="invalid">

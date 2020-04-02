@@ -59,7 +59,7 @@ class ActivityAccordion extends Component {
               </Row>
               <Row>
                 <Col xs={12}>
-                  <Button disabled={this.props.disableNewButton} className="float-right" variant="primary" onClick={this.props.newButtonOnClick}>New</Button>
+                  {this.props.showNewButton && <Button disabled={this.props.disableNewButton} className="float-right" variant="primary" onClick={this.props.newButtonOnClick}>New</Button>}
                 </Col>
               </Row>
             </Card.Body>
