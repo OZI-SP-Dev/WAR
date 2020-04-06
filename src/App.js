@@ -28,7 +28,7 @@ class App extends Component {
                       <Route path="/WAR">
                         <WeeklyReport />
                       </Route>
-                      <Route path="/">
+                      <Route exact path="/">
                         <UserContext.Consumer>
                           {user => (
                             user.loading ?
@@ -36,6 +36,9 @@ class App extends Component {
                               <Activities user={user} />
                           )}
                         </UserContext.Consumer>
+                      </Route>
+                      <Route path="*">
+                        <NoMatch />
                       </Route>
                     </Switch>
                   </main>
@@ -49,4 +52,9 @@ class App extends Component {
   }
 }
 
+function NoMatch() {
+  return (
+    <div><h1>Page not found.</h1></div>
+  );
+}
 export default App;
