@@ -1,6 +1,7 @@
 import moment from 'moment';
 import React, { Component } from 'react';
 import { Button, Container, Row, Spinner } from 'react-bootstrap';
+import DateUtilities from '../../utilities/DateUtilities';
 import './Activities.css';
 import ActivitiesApi from './ActivitiesApi';
 import ActivitiesApiDev from './ActivitiesApiDev';
@@ -21,15 +22,14 @@ class Activities extends Component {
       saveError: false,
       minCreateDate: {}
     };
-    
+
     this.activitiesAPI = process.env.NODE_ENV === 'development' ? new ActivitiesApiDev() : new ActivitiesApi();
   }
 
   componentDidMount() {
-    let today = new Date();
-    let weekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
+    let weekStart = DateUtilities.getStartOfWeek(new Date());
     // TODO: this is the default, but different limits will be implemented after roles are added
-    this.setState({minCreateDate: weekStart});
+    this.setState({ minCreateDate: weekStart });
     this.fetchItems(4, weekStart);
   }
 
@@ -66,7 +66,7 @@ class Activities extends Component {
     };
 
     // Remove trailing period(s) from Title
-    while (activityToSubmit.Title.charAt(activityToSubmit.Title.length-1) === '.') {
+    while (activityToSubmit.Title.charAt(activityToSubmit.Title.length - 1) === '.') {
       activityToSubmit.Title = activityToSubmit.Title.slice(0, -1);
     }
 

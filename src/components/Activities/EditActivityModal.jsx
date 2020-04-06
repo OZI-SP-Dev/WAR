@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Form } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import DateUtilities from '../../utilities/DateUtilities';
 import ActivityModal from './ActivityModal';
 
 class EditActivityModal extends Component {
@@ -13,7 +14,7 @@ class EditActivityModal extends Component {
       activity: this.props.activity,
       validated: false,
       selectedDate: weekStart,
-      highlightDates: EditActivityModal.getWeek(weekStart),
+      highlightDates: DateUtilities.getWeek(weekStart),
       datePickerOpen: false
     }
   }
@@ -61,17 +62,9 @@ class EditActivityModal extends Component {
     }
   }
 
-  static getWeek(weekStart) {
-    let week = [];
-    for (let i = 0; i < 7; ++i) {
-      week.push(new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + i, 0, 0, 0, 0));
-    }
-    return week;
-  }
-
   onDateChange(date) {
-    let selectedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay(), 0, 0, 0, 0);
-    let highlightDates = EditActivityModal.getWeek(selectedDate);
+    let selectedDate = DateUtilities.getStartOfWeek(date);
+    let highlightDates = DateUtilities.getWeek(selectedDate);
     let activity = this.state.activity;
     activity.InputWeekOf = selectedDate;
     this.setState({ activity, selectedDate, highlightDates });
@@ -89,7 +82,7 @@ class EditActivityModal extends Component {
         <Form.Control
           type="text"
           value={value}
-          onClick={() => !this.isReadOnly() && this.setState({datePickerOpen: true})}
+          onClick={() => !this.isReadOnly() && this.setState({ datePickerOpen: true })}
           required
           readOnly={this.isReadOnly()}
         />
@@ -118,7 +111,7 @@ class EditActivityModal extends Component {
               maxDate={new Date()}
               customInput={<DatePickerCustomInput />}
               open={this.state.datePickerOpen}
-              onClickOutside={() => this.setState({datePickerOpen: false})}
+              onClickOutside={() => this.setState({ datePickerOpen: false })}
               shouldCloseOnSelect={false}
             />
           </Form.Group>
