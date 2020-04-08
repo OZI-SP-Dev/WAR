@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Accordion, Badge, Button, Card, Col, Row } from 'react-bootstrap';
-import ActivityCardsWeek from './ActivityCardsWeek'
+import DateUtilities from '../../utilities/DateUtilities';
+import ActivityCardsWeek from './ActivityCardsWeek';
 
 class ActivityAccordion extends Component {
 
@@ -12,8 +13,7 @@ class ActivityAccordion extends Component {
     this.startWeek = new Date(props.weekOf);
     this.endWeek = new Date(props.weekOf);
     this.endWeek.setDate(this.startWeek.getDate() + 6);
-    let now = new Date();
-    let currentWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay(), 0, 0, 0, 0);
+    let currentWeek = DateUtilities.getStartOfWeek(new Date());
     this.isThisWeek = this.datesAreEqual(this.startWeek, currentWeek);
     if (this.isThisWeek) {
       this.state.open = true;

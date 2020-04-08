@@ -23,7 +23,9 @@ function AppHeader() {
               <NavDropdown.Item>Activities</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />
-            <NavDropdown.Item>WAR</NavDropdown.Item>
+            <LinkContainer to="/WAR">
+              <NavDropdown.Item>WAR</NavDropdown.Item>
+            </LinkContainer>
             <NavDropdown.Item>Big Rocks</NavDropdown.Item>
             <NavDropdown.Item>Annual History</NavDropdown.Item>
           </NavDropdown>

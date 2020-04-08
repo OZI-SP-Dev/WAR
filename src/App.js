@@ -4,10 +4,10 @@ import './App.css';
 import Activities from './components/Activities/Activities';
 import AppHeader from './components/appHeader/AppHeader';
 import AppLeftNav from './components/appLeftNav/AppLeftNav';
-import Help from './components/Help/Help';
-import TestList from './components/testList/TestList';
-import { UserProvider, UserContext } from './providers/UserProvider';
 import { ContactUsProvider } from './components/ContactUs/ContactUsProvider';
+import Help from './components/Help/Help';
+import WeeklyReport from "./components/WeeklyReport/WeeklyReport";
+import { UserContext, UserProvider } from './providers/UserProvider';
 
 class App extends Component {
   render() {
@@ -25,7 +25,10 @@ class App extends Component {
                       <Route path="/Help">
                         <Help />
                       </Route>
-                      <Route path="/">
+                      <Route path="/WAR">
+                        <WeeklyReport />
+                      </Route>
+                      <Route exact path="/">
                         <UserContext.Consumer>
                           {user => (
                             user.loading ?
@@ -34,9 +37,9 @@ class App extends Component {
                           )}
                         </UserContext.Consumer>
                       </Route>
-                      <Router path="/TestLIst">
-                        <TestList />
-                      </Router>
+                      <Route path="*">
+                        <NoMatch />
+                      </Route>
                     </Switch>
                   </main>
                 </div>
@@ -44,9 +47,14 @@ class App extends Component {
             </ContactUsProvider>
           </UserProvider>
         </div>
-      </Router>
+      </Router >
     );
   }
 }
 
+function NoMatch() {
+  return (
+    <div><h1>Page not found.</h1></div>
+  );
+}
 export default App;

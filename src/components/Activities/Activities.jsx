@@ -1,9 +1,9 @@
 import moment from 'moment';
 import React, { Component } from 'react';
 import { Button, Container, Row, Spinner } from 'react-bootstrap';
+import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
+import DateUtilities from '../../utilities/DateUtilities';
 import './Activities.css';
-import ActivitiesApi from './ActivitiesApi';
-import ActivitiesApiDev from './ActivitiesApiDev';
 import ActivityAccordion from './ActivityAccordion';
 import EditActivityModal from './EditActivityModal';
 
@@ -21,20 +21,20 @@ class Activities extends Component {
       saveError: false,
       minCreateDate: {}
     };
-    
-    this.activitiesAPI = process.env.NODE_ENV === 'development' ? new ActivitiesApiDev() : new ActivitiesApi();
+
+    this.activitiesApi = ActivitiesApiConfig.activitiesApi;
+    console.log(ActivitiesApiConfig.activitiesApi)
   }
 
   componentDidMount() {
-    let today = new Date();
-    let weekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0, 0);
+    let weekStart = DateUtilities.getStartOfWeek(new Date());
     // TODO: this is the default, but different limits will be implemented after roles are added
-    this.setState({minCreateDate: weekStart});
+    this.setState({ minCreateDate: weekStart });
     this.fetchItems(4, weekStart);
   }
 
   fetchItems = (numWeeks, weekStart) => {
-    this.activitiesAPI.fetchActivities(numWeeks, weekStart, this.props.user.Id).then(r => {
+    this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id).then(r => {
       const listData = this.state.listData.concat(r);
       this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
       this.addNewWeeks(numWeeks, weekStart);
@@ -66,11 +66,11 @@ class Activities extends Component {
     };
 
     // Remove trailing period(s) from Title
-    while (activityToSubmit.Title.charAt(activityToSubmit.Title.length-1) === '.') {
+    while (activityToSubmit.Title.charAt(activityToSubmit.Title.length - 1) === '.') {
       activityToSubmit.Title = activityToSubmit.Title.slice(0, -1);
     }
 
-    this.activitiesAPI.submitActivity(activityToSubmit).then(r => {
+    this.activitiesApi.submitActivity(activityToSubmit).then(r => {
       // filter out the old activity, if it already existed
       let activityList = this.state.listData.filter(activity => activity.ID !== r.data.ID);
       activityList.push(r.data);
