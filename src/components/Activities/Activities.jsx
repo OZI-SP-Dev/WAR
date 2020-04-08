@@ -1,10 +1,9 @@
 import moment from 'moment';
 import React, { Component } from 'react';
 import { Button, Container, Row, Spinner } from 'react-bootstrap';
+import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import DateUtilities from '../../utilities/DateUtilities';
 import './Activities.css';
-import ActivitiesApi from './ActivitiesApi';
-import ActivitiesApiDev from './ActivitiesApiDev';
 import ActivityAccordion from './ActivityAccordion';
 import EditActivityModal from './EditActivityModal';
 
@@ -23,7 +22,8 @@ class Activities extends Component {
       minCreateDate: {}
     };
 
-    this.activitiesAPI = process.env.NODE_ENV === 'development' ? new ActivitiesApiDev() : new ActivitiesApi();
+    this.activitiesApi = ActivitiesApiConfig.activitiesApi;
+    console.log(ActivitiesApiConfig.activitiesApi)
   }
 
   componentDidMount() {
@@ -34,7 +34,7 @@ class Activities extends Component {
   }
 
   fetchItems = (numWeeks, weekStart) => {
-    this.activitiesAPI.fetchActivities(numWeeks, weekStart, this.props.user.Id).then(r => {
+    this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id).then(r => {
       const listData = this.state.listData.concat(r);
       this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
       this.addNewWeeks(numWeeks, weekStart);
@@ -70,7 +70,7 @@ class Activities extends Component {
       activityToSubmit.Title = activityToSubmit.Title.slice(0, -1);
     }
 
-    this.activitiesAPI.submitActivity(activityToSubmit).then(r => {
+    this.activitiesApi.submitActivity(activityToSubmit).then(r => {
       // filter out the old activity, if it already existed
       let activityList = this.state.listData.filter(activity => activity.ID !== r.data.ID);
       activityList.push(r.data);

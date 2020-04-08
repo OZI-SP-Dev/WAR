@@ -26,7 +26,7 @@ class EditActivityModal extends Component {
       return {
         activity: newProps.activity,
         selectedDate: weekStart,
-        highlightDates: EditActivityModal.getWeek(weekStart)
+        highlightDates: DateUtilities.getWeek(weekStart)
       };
     }
     return null;
