@@ -32,7 +32,10 @@ function AppHeader() {
             <LinkContainer to="/HistoryReport">
               <NavDropdown.Item>History</NavDropdown.Item>
             </LinkContainer>
-          </NavDropdown>
+					</NavDropdown>
+					<LinkContainer to="/RoleManagement">
+						<Nav.Link>Admin</Nav.Link>
+					</LinkContainer>
         </Nav>
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text className="mr-2">
