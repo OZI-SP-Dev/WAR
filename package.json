@@ -52,6 +52,7 @@
     ]
   },
   "devDependencies": {
+    "@types/jquery": "^3.3.34",
     "@types/react-datepicker": "^2.11.0"
   }
 }

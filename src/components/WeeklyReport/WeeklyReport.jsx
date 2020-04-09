@@ -5,6 +5,7 @@ import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import DateUtilities from '../../utilities/DateUtilities';
 import WeeklyReportActivity from './WeeklyReportActivity';
 import WeeklyReportForm from './WeeklyReportForm';
+import $ from 'jquery';
 
 class WeeklyReport extends Component {
 
@@ -32,8 +33,10 @@ class WeeklyReport extends Component {
         this.setState({ loadingReport: true });
         let endDate = new Date(this.state.endDate);
         endDate.setDate(endDate.getDate() + 1);
-        this.activitiesApi.fetchActivitiesByDates(this.state.startDate, endDate).then(r =>
-            this.setState({ accordionOpen: false, loadingReport: false, activities: r }), e =>
+        this.activitiesApi.fetchActivitiesByDates(this.state.startDate, endDate).then(r => {
+            this.setState({ loadingReport: false, activities: r });
+            $("#weekly-report-toggle").click();
+        }, e =>
             this.setState({ loadingReport: false, errorMessage: `Error while trying to fetch Activities. ${e}` })
         );
     }
@@ -48,8 +51,9 @@ class WeeklyReport extends Component {
                 <Accordion defaultActiveKey={"0"} className="mb-3">
                     <Card>
                         <Accordion.Toggle
+                            id="weekly-report-toggle"
                             as={Card.Header}
-                            eventKey="0"
+                            eventKey={"0"}
                             style={{ cursor: 'pointer' }}
                             onClick={() => this.setState({ accordionOpen: !this.state.accordionOpen })}>
                             Weekly Report Search
