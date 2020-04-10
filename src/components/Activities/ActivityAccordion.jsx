@@ -25,7 +25,6 @@ class ActivityAccordion extends Component {
   }
 
   getFilteredActions() {
-    console.log(this.props.actions);
     return this.props.actions.filter(action => this.datesAreEqual(new Date(action.WeekOf), this.startWeek));
   }
 
