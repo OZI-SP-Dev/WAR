@@ -90,10 +90,10 @@ class WeeklyReport extends Component {
                     </Card>
                 </Accordion>
                 {Object.keys(activitiesByBranch).map(branch =>
-                    (<Row>
-                        <h4><u>{branch} Activities</u>:</h4>
+                    (<>
+                        <Row><h4><u>{branch} Activities</u>:</h4></Row>
                         {activitiesByBranch[branch].map(activity => <WeeklyReportActivity activity={activity} />)}
-                    </Row>)
+                    </>)
                 )}
             </Container>
         );
