@@ -43,6 +43,14 @@ class WeeklyReport extends Component {
 
     render() {
 
+        let activitiesByBranch = {};
+        this.state.activities.forEach(activity => {
+            if (!activitiesByBranch[activity.Branch]) {
+                activitiesByBranch[activity.Branch] = []
+            }
+            activitiesByBranch[activity.Branch].push(activity);
+        });
+
         return (
             <Container>
                 <Row className="justify-content-center">
@@ -81,7 +89,12 @@ class WeeklyReport extends Component {
                         </Accordion.Collapse>
                     </Card>
                 </Accordion>
-                {this.state.activities.map(activity => <WeeklyReportActivity activity={activity} />)}
+                {Object.keys(activitiesByBranch).map(branch =>
+                    (<Row>
+                        <h4><u>{branch} Activities</u>:</h4>
+                        {activitiesByBranch[branch].map(activity => <WeeklyReportActivity activity={activity} />)}
+                    </Row>)
+                )}
             </Container>
         );
     }
