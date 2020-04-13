@@ -6,8 +6,7 @@ export interface IActivity {
   Title: string,
   WeekOf: string,
   Branch: string,
-  InterestItems: string,
-  ActionItems: string,
+  ActionTaken: string,
   TextOPRs: string
 }
 

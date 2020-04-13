@@ -11,7 +11,7 @@ class EditActivityModal extends Component {
     let weekStart = new Date(props.activity.WeekOf);
     weekStart.setDate(weekStart.getDate() - weekStart.getDay());
     this.state = {
-      activity: this.props.activity,
+      activity: { ...props.activity },
       validated: false,
       selectedDate: weekStart,
       highlightDates: DateUtilities.getWeek(weekStart),
@@ -20,11 +20,11 @@ class EditActivityModal extends Component {
   }
 
   static getDerivedStateFromProps(newProps, oldState) {
-    if (newProps.activity !== oldState.activity) {
+    if (oldState.activity === null) {
       let weekStart = new Date(newProps.activity.WeekOf);
       weekStart.setDate(weekStart.getDate() - weekStart.getDay());
       return {
-        activity: newProps.activity,
+        activity: { ...newProps.activity },
         selectedDate: weekStart,
         highlightDates: DateUtilities.getWeek(weekStart)
       };
@@ -35,7 +35,7 @@ class EditActivityModal extends Component {
   closeActivity(e) {
     //reset form fields
     this.setState({
-      activity: {},
+      activity: null,
       validated: false
     });
 
@@ -58,7 +58,7 @@ class EditActivityModal extends Component {
       this.setState({ validated: true });
     } else {
       this.props.submitEditActivity(e, this.state.activity)
-      this.setState({ validated: false, activity: {} })
+      this.setState({ validated: false, activity: null })
     }
   }
 
@@ -75,7 +75,6 @@ class EditActivityModal extends Component {
   }
 
   render() {
-    console.log(this.state.selectedDate);
     const DatePickerCustomInput = ({ value }) => (
       <>
         <Form.Label>Period of Accomplishment</Form.Label>
@@ -146,30 +145,18 @@ class EditActivityModal extends Component {
             </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="editActivityInterestItems">
-            <Form.Label>Specific items of interest</Form.Label>
+            <Form.Label>Action Taken/In Work</Form.Label>
             <Form.Control as="textarea" rows="5"
-              placeholder="Items of interest..."
-              defaultValue={this.props.activity.InterestItems}
-              value={this.state.InterestItems}
-              onChange={(e) => this.updateActivity(e, 'InterestItems')}
+              placeholder="Actions taken..."
+              defaultValue={this.props.activity.ActionTaken}
+              value={this.state.ActionTaken}
+              onChange={(e) => this.updateActivity(e, 'ActionTaken')}
               readOnly={this.isReadOnly()}
               required
             />
             <Form.Control.Feedback type="invalid">
-              Enter at least one item of interest.
+              Enter at least one action taken.
             </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group controlId="editActivityActionItems">
-            <Form.Label>Action items</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Informational."
-              defaultValue={this.props.activity.ActionItems}
-              value={this.state.ActionItems}
-              onChange={(e) => this.updateActivity(e, 'ActionItems')}
-              readOnly={this.isReadOnly()}
-              required
-            />
           </Form.Group>
           <Form.Group controlId="editActivityOPRs">
             {//TODO Convert to people picker

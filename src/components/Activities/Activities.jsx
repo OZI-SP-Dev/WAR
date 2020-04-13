@@ -23,7 +23,6 @@ class Activities extends Component {
     };
 
     this.activitiesApi = ActivitiesApiConfig.activitiesApi;
-    console.log(ActivitiesApiConfig.activitiesApi)
   }
 
   componentDidMount() {
@@ -47,7 +46,7 @@ class Activities extends Component {
   newItem = (date) => {
     const item = {
       ID: -1, Title: '', WeekOf: moment(date).day(0), InputWeekOf: moment(date).format("YYYY-MM-DD"),
-      Branch: 'OZIC', InterestItems: '', ActionItems: '', TextOPRs: this.props.user.Title
+      Branch: 'OZIC', ActionTaken: '', TextOPRs: this.props.user.Title
     }
     this.setState({ showEditModal: true, editActivity: item });
   }
@@ -60,8 +59,7 @@ class Activities extends Component {
       Title: newActivity.Title,
       WeekOf: moment(newActivity.InputWeekOf).day(0).toISOString(),
       Branch: newActivity.Branch,
-      InterestItems: newActivity.InterestItems,
-      ActionItems: newActivity.ActionItems,
+      ActionTaken: newActivity.ActionTaken,
       TextOPRs: newActivity.TextOPRs //TODO convert to peopler picker format...
     };
 

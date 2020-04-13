@@ -28,7 +28,7 @@ class App extends Component {
                       <Route path="/WAR">
                         <WeeklyReport />
                       </Route>
-                      <Route exact path="/">
+                      <Route exact path="/(Activities)?">
                         <UserContext.Consumer>
                           {user => (
                             user.loading ?
