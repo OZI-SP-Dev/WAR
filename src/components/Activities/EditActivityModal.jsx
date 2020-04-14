@@ -158,6 +158,7 @@ class EditActivityModal extends Component {
               Enter at least one action taken.
             </Form.Control.Feedback>
           </Form.Group>
+          {this.props.showBigRockCheck && 
           <Form.Group>
             <Form.Check 
               label="Big Rock?"
@@ -167,7 +168,7 @@ class EditActivityModal extends Component {
               onClick={(e) => this.updateActivity(e.target.checked, 'IsBigRock')}
               disabled={this.isReadOnly()}
             />
-          </Form.Group>
+          </Form.Group>}
           <Form.Group controlId="editActivityOPRs">
             {//TODO Convert to people picker
             }

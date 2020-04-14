@@ -128,6 +128,7 @@ class Activities extends Component {
           saving={this.state.isLoading}
           error={this.state.saveError}
           minCreateDate={this.state.minCreateDate}
+          showBigRockCheck //TODO: should be based on role
         />
         <Row className="justify-content-center"><h1>Activities</h1></Row>
         {this.state.loadedWeeks.map(date =>
