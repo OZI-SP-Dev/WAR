@@ -44,9 +44,9 @@ class EditActivityModal extends Component {
   }
 
   // Syncs fields between react state and form
-  updateActivity(e, field) {
+  updateActivity(value, field) {
     const activity = this.state.activity;
-    activity[field] = e.target.value;
+    activity[field] = value;
     this.setState({ activity });
   }
 
@@ -80,7 +80,7 @@ class EditActivityModal extends Component {
         <Form.Label>Period of Accomplishment</Form.Label>
         <Form.Control
           type="text"
-          value={value}
+          defaultValue={value}
           onClick={() => !this.isReadOnly() && this.setState({ datePickerOpen: true })}
           required
           readOnly={this.isReadOnly()}
@@ -119,7 +119,7 @@ class EditActivityModal extends Component {
             <Form.Control as="select"
               defaultValue={this.props.activity.Branch}
               value={this.state.Branch}
-              onChange={(e) => this.updateActivity(e, 'Branch')}
+              onChange={(e) => this.updateActivity(e.target.value, 'Branch')}
               disabled={this.isReadOnly()}
             >
               <option>--</option>
@@ -136,7 +136,7 @@ class EditActivityModal extends Component {
               placeholder="Title with no trailing period"
               defaultValue={this.props.activity.Title}
               value={this.state.Title}
-              onChange={(e) => this.updateActivity(e, 'Title')}
+              onChange={(e) => this.updateActivity(e.target.value, 'Title')}
               readOnly={this.isReadOnly()}
               required
             />
@@ -150,13 +150,23 @@ class EditActivityModal extends Component {
               placeholder="Actions taken..."
               defaultValue={this.props.activity.ActionTaken}
               value={this.state.ActionTaken}
-              onChange={(e) => this.updateActivity(e, 'ActionTaken')}
+              onChange={(e) => this.updateActivity(e.target.value, 'ActionTaken')}
               readOnly={this.isReadOnly()}
               required
             />
             <Form.Control.Feedback type="invalid">
               Enter at least one action taken.
             </Form.Control.Feedback>
+          </Form.Group>
+          <Form.Group>
+            <Form.Check 
+              label="Big Rock?"
+              type="checkbox"
+              defaultChecked={this.props.activity.IsBigRock}
+              value={this.state.IsBigRock}
+              onClick={(e) => this.updateActivity(e.target.checked, 'IsBigRock')}
+              disabled={this.isReadOnly()}
+            />
           </Form.Group>
           <Form.Group controlId="editActivityOPRs">
             {//TODO Convert to people picker
@@ -166,7 +176,7 @@ class EditActivityModal extends Component {
               type="text"
               defaultValue={this.props.activity.TextOPRs}
               value={this.state.TextOPRs}
-              onChange={(e) => this.updateActivity(e, 'TextOPRs')}
+              onChange={(e) => this.updateActivity(e.target.value, 'TextOPRs')}
               readOnly={this.isReadOnly()}
               required
             />

@@ -60,7 +60,8 @@ class Activities extends Component {
       WeekOf: moment(newActivity.InputWeekOf).day(0).toISOString(),
       Branch: newActivity.Branch,
       ActionTaken: newActivity.ActionTaken,
-      TextOPRs: newActivity.TextOPRs //TODO convert to peopler picker format...
+      TextOPRs: newActivity.TextOPRs, //TODO convert to peopler picker format...
+      IsBigRock: newActivity.IsBigRock
     };
 
     // Remove trailing period(s) from Title

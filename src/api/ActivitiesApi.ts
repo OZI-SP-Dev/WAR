@@ -7,7 +7,8 @@ export interface IActivity {
   WeekOf: string,
   Branch: string,
   ActionTaken: string,
-  TextOPRs: string
+  TextOPRs: string,
+  IsBigRock: boolean
 }
 
 export interface IActivityApi {
