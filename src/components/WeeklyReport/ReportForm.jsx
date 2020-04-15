@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
-import './WeeklyReport.css'
+import "react-datepicker/dist/react-datepicker.css";
+import './ReportForm.css';
 
-class WeeklyReportForm extends Component {
+class ReportForm extends Component {
 
     constructor(props) {
         super(props);
@@ -82,4 +83,4 @@ class WeeklyReportForm extends Component {
     }
 }
 
-export default WeeklyReportForm;
+export default ReportForm;

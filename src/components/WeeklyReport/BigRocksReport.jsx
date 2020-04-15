@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import Report from './Report';
 
-class WeeklyReport extends Component {
+class BigRocksReport extends Component {
 
     constructor(props) {
         super(props);
@@ -21,7 +21,7 @@ class WeeklyReport extends Component {
         this.setState({ loadingReport: true });
         let submitEndDate = new Date(endDate);
         submitEndDate.setDate(endDate.getDate() + 1);
-        this.activitiesApi.fetchActivitiesByDates(startDate, submitEndDate).then(r => {
+        this.activitiesApi.fetchBigRocksByDates(startDate, submitEndDate).then(r => {
             this.setState({ loadingReport: false, activities: r });
             $(".report-toggle").click();
         }, e =>
@@ -32,8 +32,8 @@ class WeeklyReport extends Component {
     render() {
         return (
             <Report
-                pageHeader="Weekly Activity Report"
-                searchCardHeader="Weekly Report Search"
+                pageHeader="Big Rocks Report"
+                searchCardHeader="Big Rocks Search"
                 submitSearch={(startDate, endDate) => this.submitSearch(startDate, endDate)}
                 loadingReport={this.state.loadingReport}
                 activities={this.state.activities}
@@ -42,4 +42,4 @@ class WeeklyReport extends Component {
     }
 }
 
-export default WeeklyReport;
+export default BigRocksReport;

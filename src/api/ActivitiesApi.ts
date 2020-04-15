@@ -14,6 +14,7 @@ export interface IActivity {
 export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any>,
   fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
+  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
   submitActivity(activity: IActivity): Promise<{ data: IActivity }>
 }
 
@@ -29,13 +30,19 @@ export default class ActivitiesApi implements IActivityApi {
     return this.fetchActivitiesByDates(minDate, maxDate, userId);
   }
 
-  fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
+  fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number, additionalFilter?: string): Promise<any> {
     let filterString = `WeekOf ge '${startDate.toISOString()}' and WeekOf le '${endDate.toISOString()}'`
     if (userId && userId != null) {
       filterString += ` and AuthorId eq ${userId}`;
     }
 
+    filterString += additionalFilter ? ` and ${additionalFilter}` : "";
+
     return this.activitiesList.items.filter(filterString).get();
+  }
+
+  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
+    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsBigRock eq 1");
   }
 
   /**

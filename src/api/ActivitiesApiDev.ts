@@ -32,6 +32,11 @@ export default class ActivitiesApiDev implements IActivityApi {
         return this.activities;
     }
 
+    async fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number) {
+        await this.sleep(3000);
+        return this.activities.filter(activity => activity.IsBigRock);
+    }
+
     async submitActivity(activity: IActivity): Promise<{data: IActivity}> {
         if (activity.ID < 0) {
             activity.ID = Math.max.apply(Math, this.activities.map(o => o.ID)) + 1;

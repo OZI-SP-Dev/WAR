@@ -2,7 +2,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import { Row } from 'react-bootstrap';
 
-class WeeklyReportActivity extends Component {
+class ReportActivity extends Component {
 
     render() {
         let activity = this.props.activity;
@@ -19,4 +19,4 @@ class WeeklyReportActivity extends Component {
     }
 }
 
-export default WeeklyReportActivity;
+export default ReportActivity;
