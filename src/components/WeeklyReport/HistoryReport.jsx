@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import Report from './Report';
 
-class BigRocksReport extends Component {
+class HistoryReport extends Component {
 
     constructor(props) {
         super(props);
@@ -21,19 +21,19 @@ class BigRocksReport extends Component {
         this.setState({ loadingReport: true });
         let submitEndDate = new Date(endDate);
         submitEndDate.setDate(endDate.getDate() + 1);
-        this.activitiesApi.fetchBigRocksByDates(startDate, submitEndDate).then(r => {
+        this.activitiesApi.fetchHistoryEntriesByDates(startDate, submitEndDate).then(r => {
             this.setState({ loadingReport: false, activities: r });
             $(".report-toggle").click();
         }, e =>
-            this.setState({ loadingReport: false, errorMessage: `Error while trying to fetch Big Rock Activities. ${e}` })
+            this.setState({ loadingReport: false, errorMessage: `Error while trying to fetch History Entries. ${e}` })
         );
     }
 
     render() {
         return (
             <Report
-                pageHeader="Big Rocks Report"
-                searchCardHeader="Big Rocks Search"
+                pageHeader="Historical Report"
+                searchCardHeader="History Entries Search"
                 submitSearch={(startDate, endDate) => this.submitSearch(startDate, endDate)}
                 loadingReport={this.state.loadingReport}
                 activities={this.state.activities}
@@ -42,4 +42,4 @@ class BigRocksReport extends Component {
     }
 }
 
-export default BigRocksReport;
+export default HistoryReport;

@@ -46,7 +46,7 @@ class Activities extends Component {
   newItem = (date) => {
     const item = {
       ID: -1, Title: '', WeekOf: moment(date).day(0), InputWeekOf: moment(date).format("YYYY-MM-DD"),
-      Branch: 'OZIC', ActionTaken: '', TextOPRs: this.props.user.Title
+      Branch: 'OZIC', ActionTaken: '', TextOPRs: this.props.user.Title, IsBigRock: false, IsHistoryEntry: false
     }
     this.setState({ showEditModal: true, editActivity: item });
   }
@@ -61,7 +61,8 @@ class Activities extends Component {
       Branch: newActivity.Branch,
       ActionTaken: newActivity.ActionTaken,
       TextOPRs: newActivity.TextOPRs, //TODO convert to peopler picker format...
-      IsBigRock: newActivity.IsBigRock
+      IsBigRock: newActivity.IsBigRock,
+      IsHistoryEntry: newActivity.IsHistoryEntry
     };
 
     // Remove trailing period(s) from Title
@@ -129,6 +130,7 @@ class Activities extends Component {
           error={this.state.saveError}
           minCreateDate={this.state.minCreateDate}
           showBigRockCheck //TODO: should be based on role
+          showHistoryCheck //TODO: should be based on role
         />
         <Row className="justify-content-center"><h1>Activities</h1></Row>
         {this.state.loadedWeeks.map(date =>

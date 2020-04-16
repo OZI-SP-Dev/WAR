@@ -8,13 +8,15 @@ export interface IActivity {
   Branch: string,
   ActionTaken: string,
   TextOPRs: string,
-  IsBigRock: boolean
+  IsBigRock: boolean,
+  IsHistoryEntry: boolean
 }
 
 export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any>,
   fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
+  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
   submitActivity(activity: IActivity): Promise<{ data: IActivity }>
 }
 
@@ -43,6 +45,10 @@ export default class ActivitiesApi implements IActivityApi {
 
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
     return this.fetchActivitiesByDates(startDate, endDate, userId, "IsBigRock eq 1");
+  }
+
+  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
+    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsHistoryEntry eq 1");
   }
 
   /**

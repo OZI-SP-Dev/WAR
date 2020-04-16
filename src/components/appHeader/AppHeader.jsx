@@ -29,7 +29,9 @@ function AppHeader() {
             <LinkContainer to="/BigRocks">
               <NavDropdown.Item>Big Rocks</NavDropdown.Item>
             </LinkContainer>
-            <NavDropdown.Item>Annual History</NavDropdown.Item>
+            <LinkContainer to="/HistoryReport">
+              <NavDropdown.Item>History</NavDropdown.Item>
+            </LinkContainer>
           </NavDropdown>
         </Nav>
         <Navbar.Collapse className="justify-content-end">

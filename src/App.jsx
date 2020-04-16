@@ -9,6 +9,7 @@ import Help from './components/Help/Help';
 import WeeklyReport from "./components/WeeklyReport/WeeklyReport";
 import { UserContext, UserProvider } from './providers/UserProvider';
 import BigRocksReport from './components/WeeklyReport/BigRocksReport';
+import HistoryReport from './components/WeeklyReport/HistoryReport';
 
 class App extends Component {
   render() {
@@ -28,6 +29,9 @@ class App extends Component {
                       </Route>
                       <Route path="/BigRocks">
                         <BigRocksReport />
+                      </Route>
+                      <Route path="/HistoryReport">
+                        <HistoryReport />
                       </Route>
                       <Route path="/WAR">
                         <WeeklyReport />

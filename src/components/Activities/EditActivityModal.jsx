@@ -158,17 +158,28 @@ class EditActivityModal extends Component {
               Enter at least one action taken.
             </Form.Control.Feedback>
           </Form.Group>
-          {this.props.showBigRockCheck && 
-          <Form.Group>
-            <Form.Check 
-              label="Big Rock?"
-              type="checkbox"
-              defaultChecked={this.props.activity.IsBigRock}
-              value={this.state.IsBigRock}
-              onClick={(e) => this.updateActivity(e.target.checked, 'IsBigRock')}
-              disabled={this.isReadOnly()}
-            />
-          </Form.Group>}
+          {this.props.showBigRockCheck &&
+            <Form.Group>
+              <Form.Check
+                label="Big Rock?"
+                type="checkbox"
+                defaultChecked={this.props.activity.IsBigRock}
+                value={this.state.IsBigRock}
+                onClick={(e) => this.updateActivity(e.target.checked, 'IsBigRock')}
+                disabled={this.isReadOnly()}
+              />
+            </Form.Group>}
+          {this.props.showHistoryCheck &&
+            <Form.Group>
+              <Form.Check
+                label="History Entry?"
+                type="checkbox"
+                defaultChecked={this.props.activity.IsHistoryEntry}
+                value={this.state.IsHistoryEntry}
+                onClick={(e) => this.updateActivity(e.target.checked, 'IsHistoryEntry')}
+                disabled={this.isReadOnly()}
+              />
+            </Form.Group>}
           <Form.Group controlId="editActivityOPRs">
             {//TODO Convert to people picker
             }
