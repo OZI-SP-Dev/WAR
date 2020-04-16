@@ -9,6 +9,7 @@ import TestList from './components/testList/TestList';
 import { Roles } from './components/Roles/Roles';
 import { UserProvider, UserContext } from './providers/UserProvider';
 import { ContactUsProvider } from './components/ContactUs/ContactUsProvider';
+import { RolesProvider } from "./components/Roles/RolesContext";
 
 class App extends Component {
 	render() {
@@ -31,7 +32,7 @@ class App extends Component {
 											</Route>
 											{/*//TODO Create ProtectedRoute component that will redirect away*/}
 											<Route path="/RoleManagement">
-												<Roles />
+												<RolesProvider><Roles /></RolesProvider>
 											</Route>
 											<Route path="/">
 												<UserContext.Consumer>
