@@ -1,10 +1,11 @@
 import { spWebContext } from '../../providers/SPWebContext';
-import { IPersonaSharedProps } from 'office-ui-fabric-react/lib/Persona';
+import { IPersonaProps, IPersonaSharedProps } from 'office-ui-fabric-react/lib/Persona';
 import { TestImages } from '@uifabric/example-data';
+import RolesApiDev from './RolesApiDev';
 
 export interface IRolesApi {
 	fetchRoles(): Promise<any>,
-	addRole(roleName: string, userId: string): Promise<any>,
+	addRole(roleName: string, persona: IPersonaProps): Promise<any>,
 	removeRole(roleId: number): Promise<any> 
 }
 
@@ -39,11 +40,16 @@ export default class RolesApi implements IRolesApi {
 		return roles;
 	}
 
-	addRole(roleName: string, userId: string): Promise<any> {
-		return this.rolesList.items.add({Title: roleName, User: userId});
+	addRole(roleName: string, persona: IPersonaProps): Promise<any> {
+		//return this.rolesList.items.add({Title: roleName, User: persona.userId});
+		return this.rolesList.items.add({Title: roleName, User: 1});
 	}
 
 	removeRole(roleId: number): Promise<any> {
 		return this.rolesList.items.getById(roleId).delete();
 	}
+}
+
+export class RolesApiConfig {
+	static rolesApi: IRolesApi = process.env.NODE_ENV === 'development' ? new RolesApiDev() : new RolesApi();
 }

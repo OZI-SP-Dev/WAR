@@ -3,6 +3,9 @@ import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
 import { IBasePickerSuggestionsProps, NormalPeoplePicker, ValidationState } from 'office-ui-fabric-react/lib/Pickers';
 import { people, mru } from '@uifabric/example-data';
 import { Button, ButtonGroup } from 'react-bootstrap';
+import { RolesApiConfig } from "./RolesApi";
+import { RolesContext } from "./RolesContext";
+
 
 const suggestionProps: IBasePickerSuggestionsProps = {
 	suggestionsHeaderText: 'Suggested People',
@@ -15,18 +18,37 @@ const suggestionProps: IBasePickerSuggestionsProps = {
 };
 
 export interface IRolePeoplePicker {
-	addPersonas: (newPersonas: IPersonaProps[]) => void
+	//addPersonas: (newPersonas: IPersonaProps[]) => void
+	roleType: string
 }
 
-export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ addPersonas }) => {
+export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ roleType }) => {
 	const [mostRecentlyUsed, setMostRecentlyUsed] = React.useState<IPersonaProps[]>(mru);
 	const [peopleList, setPeopleList] = React.useState<IPersonaProps[]>(people);
 	const [selectedItems, setSelectedItems] = React.useState<IPersonaProps[]>([]);
 
+	const rolesContext = React.useContext(RolesContext);
+	const { rolesList, setRolesList } = rolesContext;
+	const rolesApi = RolesApiConfig.rolesApi;
+
 	const picker = React.useRef(null);
 
 	const personasPicked = () => {
-		addPersonas(selectedItems);
+		console.log(rolesList);
+		if (rolesList && setRolesList !== undefined) {
+			let newRolesList = [...rolesList];
+			Promise.all(selectedItems.map(async (newpersona) => {
+				if (newpersona.text) {
+					//TODO change this to be some sort of identifier
+					//let newRole = await rolesApi.addRole(roleType, newpersona.personaIdentifier);
+					let newRole = await rolesApi.addRole(roleType, newpersona);
+					newRolesList.push(newRole);
+				}
+			})).then(() => {
+				setRolesList(newRolesList);
+				setSelectedItems([]);
+			});
+		}
 	}
 	
 	const itemSelected = (selectedItem?: IPersonaProps | undefined): IPersonaProps | null => {
@@ -91,8 +113,6 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ a
 				onValidateInput={validateInput}
 				removeButtonAriaLabel={'Remove'}
 				inputProps={{
-					onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
-					onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
 					'aria-label': 'People Picker',
 				}}
 				componentRef={picker}
@@ -102,7 +122,7 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ a
 				onItemSelected={itemSelected}
 				
 			/>
-			<Button className="float-right" onClick={personasPicked}>Add admin</Button>
+			<Button className="float-right" onClick={personasPicked}>Add {roleType}</Button>
 		</ButtonGroup>
 	);
 };
