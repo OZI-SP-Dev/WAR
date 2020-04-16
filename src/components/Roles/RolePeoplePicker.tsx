@@ -18,7 +18,6 @@ const suggestionProps: IBasePickerSuggestionsProps = {
 };
 
 export interface IRolePeoplePicker {
-	//addPersonas: (newPersonas: IPersonaProps[]) => void
 	roleType: string
 }
 
