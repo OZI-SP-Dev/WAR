@@ -14,6 +14,7 @@ class Activities extends Component {
     this.state = {
       listData: [],
       isLoading: true,
+      isDeleting: false,
       showEditModal: false,
       editActivity: {},
       loadedWeeks: [],
@@ -81,6 +82,19 @@ class Activities extends Component {
     });
   }
 
+  deleteActivity = (activity) => {
+    this.setState({ isDeleting: true })
+    this.activitiesApi.deleteActivity(activity)
+      .then((res) => this.setState({
+        isDeleting: false,
+        showEditModal: false,
+        listData: this.state.listData.filter(a => a.ID !== res.data.ID)
+      }), e => {
+        console.error(e);
+        this.setState({ isDeleting: false, showEditModal: false });
+      });
+  }
+
   addNewWeeks = (numWeeks, weekStart) => {
     let newWeeks = this.state.loadedWeeks;
     for (let i = 0; i < numWeeks; ++i) {
@@ -124,8 +138,10 @@ class Activities extends Component {
           key={this.state.editActivity.ID}
           showEditModal={this.state.showEditModal}
           submitEditActivity={this.submitActivity}
+          handleDelete={this.deleteActivity}
           closeEditActivity={this.closeEditActivity}
           activity={this.state.editActivity}
+          deleting={this.state.isDeleting}
           saving={this.state.isLoading}
           error={this.state.saveError}
           minCreateDate={this.state.minCreateDate}

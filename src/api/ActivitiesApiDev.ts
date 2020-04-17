@@ -20,7 +20,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 
     sleep(m: number) {
         return new Promise(r => setTimeout(r, m));
-    } 
+    }
 
     async fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any> {
         await this.sleep(3000);
@@ -42,13 +42,19 @@ export default class ActivitiesApiDev implements IActivityApi {
         return this.activities.filter(activity => activity.IsHistoryEntry);
     }
 
-    async submitActivity(activity: IActivity): Promise<{data: IActivity}> {
+    async deleteActivity(activity: IActivity): Promise<any> {
+        await this.sleep(3000);
+        this.activities = this.activities.filter(a => a.ID !== activity.ID);
+        return { data: { ...activity, IsDeleted: true } };
+    }
+
+    async submitActivity(activity: IActivity): Promise<{ data: IActivity }> {
         if (activity.ID < 0) {
             activity.ID = Math.max.apply(Math, this.activities.map(o => o.ID)) + 1;
         }
         this.activities.push(activity);
         await this.sleep(3000);
-        return {data: activity};
+        return { data: { ...activity } };
     }
 
 }

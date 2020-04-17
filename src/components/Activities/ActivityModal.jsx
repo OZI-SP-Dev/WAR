@@ -25,9 +25,18 @@ class ActivityModal extends Component {
           <Button disabled={this.props.saving} variant="secondary" onClick={this.props.handleClose}>
             Close
           </Button>
+          {!this.props.readOnly && this.props.showDeleteButton &&
+            <Button
+              disabled={this.props.deleting}
+              variant="danger"
+              onClick={this.props.handleDelete}
+            >
+              {this.props.deleting && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
+              {' '}Delete
+            </Button>}
           {!this.props.readOnly &&
             <Button
-              disabled={this.props.saving}
+              disabled={this.props.saving || this.props.deleting}
               variant={this.props.submitButtonVariant || "primary"}
               onClick={this.props.handleSubmit}
             >
