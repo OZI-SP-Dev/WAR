@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Modal, Spinner, Alert, Col } from 'react-bootstrap';
+import { Alert, Button, Col, Modal, OverlayTrigger, Popover, Spinner } from 'react-bootstrap';
 
 class ActivityModal extends Component {
   constructor(props) {
@@ -24,15 +24,36 @@ class ActivityModal extends Component {
         <Modal.Footer>
           <Col style={{ paddingLeft: 0 }}>
             {!this.props.readOnly && this.props.showDeleteButton &&
-              <Button
-                className="float-left"
-                disabled={this.props.saving || this.props.deleting}
-                variant="danger"
-                onClick={this.props.handleDelete}
+              <OverlayTrigger
+                trigger="click"
+                placement="auto"
+                overlay={
+                  <Popover id={"delete-popover"}>
+                    <Popover.Title as="h3">Confirm Delete</Popover.Title>
+                    <Popover.Content>
+                      <p>Are you sure you would like to delete this Activity?</p>
+                      <Button
+                        style={{marginBottom: "2.5%"}}
+                        className="float-right"
+                        disabled={this.props.saving || this.props.deleting}
+                        variant="danger"
+                        onClick={this.props.handleDelete}
+                      >
+                        {this.props.deleting && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
+                        {' '}Delete
+                      </Button>
+                    </Popover.Content>
+                  </Popover>
+                }
               >
-                {this.props.deleting && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
-                {' '}Delete
-              </Button>}
+                <Button
+                  className="float-left"
+                  disabled={this.props.saving || this.props.deleting}
+                  variant="danger"
+                >
+                  Delete
+                </Button>
+              </OverlayTrigger>}
           </Col>
           <Col style={{ paddingRight: 0 }}>
             {!this.props.readOnly &&
