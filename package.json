@@ -33,7 +33,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build:war-dev": "env-cmd -f ./.env.war-dev.json react-scripts build&&npm run rename",
-    "build:war-test": "env-cmd -f ./.env.war-test.json react-scripts build&&npm run rename",
+		"build:war-test": "env-cmd -f ./.env.war-test.json react-scripts build&&npm run rename",
+		"build:rob-test": "env-cmd -f ./.env.rob-test.json react-scripts build&&npm run rename",
     "rename": "node -e \"require('fs').rename('build/index.html', 'build/index.aspx', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\"",
     "test": "react-scripts test"
   },
