@@ -94,8 +94,11 @@ class EditActivityModal extends Component {
         show={this.props.showEditModal}
         handleClose={e => this.closeActivity(e)}
         handleSubmit={e => this.validateActivity(e)}
+        handleDelete={() => this.props.handleDelete(this.state.activity)}
+        deleting={this.props.deleting}
         saving={this.props.saving}
         readOnly={this.isReadOnly()}
+        showDeleteButton={this.props.activity.ID > -1}
         error={this.props.error}
       >
         <Form disabled={this.props.saving} id="EditActivityModal" noValidate validated={this.state.validated}

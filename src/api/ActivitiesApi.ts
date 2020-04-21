@@ -9,7 +9,8 @@ export interface IActivity {
   ActionTaken: string,
   TextOPRs: string,
   IsBigRock: boolean,
-  IsHistoryEntry: boolean
+  IsHistoryEntry: boolean,
+  IsDeleted?: boolean
 }
 
 export interface IActivityApi {
@@ -17,6 +18,7 @@ export interface IActivityApi {
   fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
   fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
+  deleteActivity(activity: IActivity): Promise<any>,
   submitActivity(activity: IActivity): Promise<{ data: IActivity }>
 }
 
@@ -33,7 +35,7 @@ export default class ActivitiesApi implements IActivityApi {
   }
 
   fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number, additionalFilter?: string): Promise<any> {
-    let filterString = `WeekOf ge '${startDate.toISOString()}' and WeekOf le '${endDate.toISOString()}'`
+    let filterString = `IsDeleted ne 1 and WeekOf ge '${startDate.toISOString()}' and WeekOf le '${endDate.toISOString()}'`
     if (userId && userId != null) {
       filterString += ` and AuthorId eq ${userId}`;
     }
@@ -51,6 +53,11 @@ export default class ActivitiesApi implements IActivityApi {
     return this.fetchActivitiesByDates(startDate, endDate, userId, "IsHistoryEntry eq 1");
   }
 
+  deleteActivity(activity: IActivity): Promise<any> {
+    let deletedActivity: IActivity = { ...activity, IsDeleted: true};
+    return this.updateActivity(deletedActivity);
+  }
+  
   /**
    * This will either submit a new Activity or it will update an 
    * existing one. Both will return the Activity as {data: activity}

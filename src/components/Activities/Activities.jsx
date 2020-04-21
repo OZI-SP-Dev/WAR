@@ -14,6 +14,7 @@ class Activities extends Component {
     this.state = {
       listData: [],
       isLoading: true,
+      isDeleting: false,
       showEditModal: false,
       editActivity: {},
       loadedWeeks: [],
@@ -51,19 +52,23 @@ class Activities extends Component {
     this.setState({ showEditModal: true, editActivity: item });
   }
 
+  buildActivity = (activity) => {
+    return {
+      ID: activity.ID,
+      Title: activity.Title,
+      WeekOf: moment(activity.InputWeekOf).day(0).toISOString(),
+      Branch: activity.Branch,
+      ActionTaken: activity.ActionTaken,
+      TextOPRs: activity.TextOPRs, //TODO convert to peopler picker format...
+      IsBigRock: activity.IsBigRock,
+      IsHistoryEntry: activity.IsHistoryEntry
+    }
+  }
+
   submitActivity = (event, newActivity) => {
     this.setState({ isLoading: true });
     //build object to save
-    let activityToSubmit = {
-      ID: newActivity.ID,
-      Title: newActivity.Title,
-      WeekOf: moment(newActivity.InputWeekOf).day(0).toISOString(),
-      Branch: newActivity.Branch,
-      ActionTaken: newActivity.ActionTaken,
-      TextOPRs: newActivity.TextOPRs, //TODO convert to peopler picker format...
-      IsBigRock: newActivity.IsBigRock,
-      IsHistoryEntry: newActivity.IsHistoryEntry
-    };
+    let activityToSubmit = this.buildActivity(newActivity);
 
     // Remove trailing period(s) from Title
     while (activityToSubmit.Title.charAt(activityToSubmit.Title.length - 1) === '.') {
@@ -79,6 +84,19 @@ class Activities extends Component {
       console.error(e);
       this.setState({ saveError: true, isLoading: false });
     });
+  }
+
+  deleteActivity = (activity) => {
+    this.setState({ isDeleting: true })
+    this.activitiesApi.deleteActivity(this.buildActivity(activity))
+      .then((res) => this.setState({
+        isDeleting: false,
+        showEditModal: false,
+        listData: this.state.listData.filter(a => a.ID !== res.data.ID)
+      }), e => {
+        console.error(e);
+        this.setState({ isDeleting: false, showEditModal: false });
+      });
   }
 
   addNewWeeks = (numWeeks, weekStart) => {
@@ -124,8 +142,10 @@ class Activities extends Component {
           key={this.state.editActivity.ID}
           showEditModal={this.state.showEditModal}
           submitEditActivity={this.submitActivity}
+          handleDelete={this.deleteActivity}
           closeEditActivity={this.closeEditActivity}
           activity={this.state.editActivity}
+          deleting={this.state.isDeleting}
           saving={this.state.isLoading}
           error={this.state.saveError}
           minCreateDate={this.state.minCreateDate}
