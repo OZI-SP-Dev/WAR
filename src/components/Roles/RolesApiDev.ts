@@ -1,36 +1,21 @@
 import { IRole, IRolesApi } from "./RolesApi";
-import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
 import { TestImages } from '@uifabric/example-data';
 
 export default class RolesApiDev implements IRolesApi {
 	roles: IRole[] = [
 		{
-			item: {
-				Id: 1,
-				roleName: 'Admin'
-			},
-			persona: {
-				imageUrl: TestImages.personaFemale,
-				imageInitials: 'AL',
-				text: 'Annie Lindqvist',
-				secondaryText: 'Software Engineer',
-				tertiaryText: 'In a meeting',
-				optionalText: 'Available at 4:00pm'
-			}
+			ItemID: 1,
+			RoleName: 'Admin',
+			imageUrl: TestImages.personaFemale,
+			imageInitials: 'AL',
+			text: 'Annie Lindqvist'			
 		},
 		{
-			item: {
-				Id: 2,
-				roleName: 'Reviewer'
-			},
-			persona: {
-				imageUrl: TestImages.personaMale,
-				imageInitials: 'JS',
-				text: 'John Smith',
-				secondaryText: 'Software Engineer',
-				tertiaryText: 'In a meeting',
-				optionalText: 'Available at 4:00pm',
-			}
+			ItemID: 2,
+			RoleName: 'Reviewer',
+			imageUrl: TestImages.personaMale,
+			imageInitials: 'JS',
+			text: 'John Smith',
 		}
 	];
 
@@ -46,22 +31,15 @@ export default class RolesApiDev implements IRolesApi {
 		return this.roles;
 	}
 
-	async addRole(roleName: string, persona: IPersonaProps): Promise<any> {
-		console.log("New role being added...");
-		const newRole = {
-			item: {
-				Id: this.nextId++,
-				roleName: roleName
-			},
-			persona: persona
-		}
-		await this.sleep(1500);
-		return newRole;
+	async addRole(role: IRole): Promise<any> {
+		console.log("New role being added with ID " + this.nextId);
+		role.ItemID = this.nextId++;
+		return new Promise<IRole>((resolve, reject) => setTimeout(() => resolve(role), 1500));
 	}
 
 	async removeRole(roleId: number): Promise<any> {
 		let filteredRoles = this.roles.filter(function (role) {
-			return role.item.Id !== roleId;
+			return role.ItemID !== roleId;
 		});
 		await this.sleep(1500);
 		this.roles = filteredRoles;
