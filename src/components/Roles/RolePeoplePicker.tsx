@@ -3,9 +3,11 @@ import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
 import { IBasePickerSuggestionsProps, NormalPeoplePicker, ValidationState } from 'office-ui-fabric-react/lib/Pickers';
 import { people, mru } from '@uifabric/example-data';
 import { Button, ButtonGroup } from 'react-bootstrap';
-import { RolesApiConfig } from "./RolesApi";
+import { IRole, RolesApiConfig } from "./RolesApi";
 import { RolesContext } from "./RolesContext";
-
+import { sp } from "@pnp/sp";
+import "@pnp/sp/profiles";
+import { IPeoplePickerEntity } from '@pnp/sp/profiles';
 
 const suggestionProps: IBasePickerSuggestionsProps = {
 	suggestionsHeaderText: 'Suggested People',
@@ -33,14 +35,15 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 	const picker = React.useRef(null);
 
 	const personasPicked = () => {
-		console.log(rolesList);
+		//TODO Need a spinner while we add/save new roles
 		if (rolesList && setRolesList !== undefined) {
 			let newRolesList = [...rolesList];
 			Promise.all(selectedItems.map(async (newpersona) => {
 				if (newpersona.text) {
-					//TODO change this to be some sort of identifier
-					//let newRole = await rolesApi.addRole(roleType, newpersona.personaIdentifier);
-					let newRole = await rolesApi.addRole(roleType, newpersona);
+					let newRole: IRole = { ...newpersona };
+					newRole.RoleName = roleType;
+					let updatedRole = await rolesApi.addRole(newRole);
+					newRole.ItemID = updatedRole.Id;
 					newRolesList.push(newRole);
 				}
 			})).then(() => {
@@ -61,13 +64,43 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 		}
 	}
 
-	const onFilterChanged = (
+	const onFilterChanged = async (
 		filterText: string,
 		currentPersonas: IPersonaProps[] | undefined,
-	): IPersonaProps[] | Promise<IPersonaProps[]> => {
+	): Promise<IPersonaProps[]> => {
+		console.log('New filter: ' + filterText);
 		if (filterText) {
-			let filteredPersonas: IPersonaProps[] = filterPersonasByText(filterText);
-			return filterPromise(filteredPersonas);
+			let filteredPersonas: IPersonaProps[] | Promise<IPersonaProps[]>;
+			if (process.env.NODE_ENV === 'development') {
+				filteredPersonas = filterPromise(filterPersonasByText(filterText));
+			} else {
+				sp.setup({
+					sp: {
+						baseUrl: process.env.REACT_APP_API_URL
+					}
+				});
+				const results = await sp.profiles.clientPeoplePickerSearchUser({
+					AllowEmailAddresses: true,
+					AllowMultipleEntities: false,
+					MaximumEntitySuggestions: 25,
+					QueryString: filterText
+				});
+				let newPersonas: IPersonaProps[] = [];
+				results.forEach((person: IPeoplePickerEntity) => {
+					console.log(person);
+					const persona: IRole = {
+						text: person.DisplayText,
+						secondaryText: person.EntityData.Title,
+						imageInitials: person.DisplayText.substr(person.DisplayText.indexOf(' ') + 1, 1) + person.DisplayText.substr(0, 1),
+						RoleName: roleType,
+						Email: person.EntityData.Email
+					}
+					newPersonas.push(persona); 
+				});
+				filteredPersonas = newPersonas;
+			}
+
+			return filteredPersonas;
 		} else {
 			return [];
 		}
@@ -100,6 +133,12 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 		}
 	};
 
+	const onItemsChange = (items: any[] | void): void => {
+		if (items) {
+			setSelectedItems(items);
+		}
+	};
+
 	return (
 		<ButtonGroup>
 			<NormalPeoplePicker
@@ -107,8 +146,7 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 				getTextFromItem={getTextFromItem}
 				pickerSuggestionsProps={suggestionProps}
 				className={'ms-PeoplePicker'}
-				key={'normal'}
-				onRemoveSuggestion={onRemoveSuggestion}
+				key={'controlled'}
 				onValidateInput={validateInput}
 				removeButtonAriaLabel={'Remove'}
 				inputProps={{
@@ -119,7 +157,7 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 				resolveDelay={300}
 				selectedItems={selectedItems}
 				onItemSelected={itemSelected}
-				
+				onChange={onItemsChange}
 			/>
 			<Button className="float-right" onClick={personasPicked}>Add {roleType}</Button>
 		</ButtonGroup>

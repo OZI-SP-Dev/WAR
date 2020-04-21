@@ -19,9 +19,13 @@ export const PersonaList: React.FunctionComponent<IPersonaList> = ({ roleType })
 		if (rolesList && setRolesList !== undefined) {
 			let array = [...rolesList];
 			const index = array.indexOf(role);
+			console.log("Deleting item: " + role.ItemID);
+			if (role.ItemID) {
+				await rolesApi.removeRole(role.ItemID);
+			}
+			console.log("Index of deleted item: " + index);
 			if (index > -1) {
-				array.splice(index, 1);
-				await rolesApi.removeRole(role.item.Id);
+				array.splice(index, 1);	
 				setRolesList(array);
 			}
 		}
@@ -33,10 +37,10 @@ export const PersonaList: React.FunctionComponent<IPersonaList> = ({ roleType })
 		rolesList ? 
 		<Stack tokens={{ childrenGap: 10 }}>
 			{rolesList.map((role, index) => (
-				role.item.roleName === roleType ? 
-				<div key={role.item.Id}>
+				role.RoleName === roleType ? 
+					<div key={role.ItemID}>
 					<Persona className="float-left"
-						{...role.persona}
+						{...role}
 					/>
 					<ActionButton iconProps={deleteIcon} onClick={() => deleteRole(role)} />
 				</div> : null
