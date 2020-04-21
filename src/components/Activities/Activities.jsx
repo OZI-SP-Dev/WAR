@@ -52,19 +52,23 @@ class Activities extends Component {
     this.setState({ showEditModal: true, editActivity: item });
   }
 
+  buildActivity = (activity) => {
+    return {
+      ID: activity.ID,
+      Title: activity.Title,
+      WeekOf: moment(activity.InputWeekOf).day(0).toISOString(),
+      Branch: activity.Branch,
+      ActionTaken: activity.ActionTaken,
+      TextOPRs: activity.TextOPRs, //TODO convert to peopler picker format...
+      IsBigRock: activity.IsBigRock,
+      IsHistoryEntry: activity.IsHistoryEntry
+    }
+  }
+
   submitActivity = (event, newActivity) => {
     this.setState({ isLoading: true });
     //build object to save
-    let activityToSubmit = {
-      ID: newActivity.ID,
-      Title: newActivity.Title,
-      WeekOf: moment(newActivity.InputWeekOf).day(0).toISOString(),
-      Branch: newActivity.Branch,
-      ActionTaken: newActivity.ActionTaken,
-      TextOPRs: newActivity.TextOPRs, //TODO convert to peopler picker format...
-      IsBigRock: newActivity.IsBigRock,
-      IsHistoryEntry: newActivity.IsHistoryEntry
-    };
+    let activityToSubmit = this.buildActivity(newActivity);
 
     // Remove trailing period(s) from Title
     while (activityToSubmit.Title.charAt(activityToSubmit.Title.length - 1) === '.') {
@@ -84,7 +88,7 @@ class Activities extends Component {
 
   deleteActivity = (activity) => {
     this.setState({ isDeleting: true })
-    this.activitiesApi.deleteActivity(activity)
+    this.activitiesApi.deleteActivity(this.buildActivity(activity))
       .then((res) => this.setState({
         isDeleting: false,
         showEditModal: false,
