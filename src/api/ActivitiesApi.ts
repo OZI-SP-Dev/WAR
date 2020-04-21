@@ -7,12 +7,18 @@ export interface IActivity {
   WeekOf: string,
   Branch: string,
   ActionTaken: string,
-  TextOPRs: string
+  TextOPRs: string,
+  IsBigRock: boolean,
+  IsHistoryEntry: boolean,
+  IsDeleted?: boolean
 }
 
 export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any>,
   fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
+  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
+  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
+  deleteActivity(activity: IActivity): Promise<any>,
   submitActivity(activity: IActivity): Promise<{ data: IActivity }>
 }
 
@@ -28,13 +34,28 @@ export default class ActivitiesApi implements IActivityApi {
     return this.fetchActivitiesByDates(minDate, maxDate, userId);
   }
 
-  fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
-    let filterString = `WeekOf ge '${startDate.toISOString()}' and WeekOf le '${endDate.toISOString()}'`
+  fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number, additionalFilter?: string): Promise<any> {
+    let filterString = `IsDeleted ne 1 and WeekOf ge '${startDate.toISOString()}' and WeekOf le '${endDate.toISOString()}'`
     if (userId && userId != null) {
       filterString += ` and AuthorId eq ${userId}`;
     }
 
+    filterString += additionalFilter ? ` and ${additionalFilter}` : "";
+
     return this.activitiesList.items.filter(filterString).get();
+  }
+
+  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
+    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsBigRock eq 1");
+  }
+
+  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
+    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsHistoryEntry eq 1");
+  }
+
+  deleteActivity(activity: IActivity): Promise<any> {
+    let deletedActivity: IActivity = { ...activity, IsDeleted: true};
+    return this.updateActivity(deletedActivity);
   }
 
   /**
