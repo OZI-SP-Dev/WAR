@@ -57,7 +57,7 @@ export default class ActivitiesApi implements IActivityApi {
     let deletedActivity: IActivity = { ...activity, IsDeleted: true};
     return this.updateActivity(deletedActivity);
   }
-
+  
   /**
    * This will either submit a new Activity or it will update an 
    * existing one. Both will return the Activity as {data: activity}
