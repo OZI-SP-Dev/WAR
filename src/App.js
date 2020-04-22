@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import './App.css';
 import Activities from './components/Activities/Activities';
 import AppHeader from './components/appHeader/AppHeader';
@@ -11,7 +11,7 @@ import { UserProvider, UserContext } from './providers/UserProvider';
 import { ContactUsProvider } from './components/ContactUs/ContactUsProvider';
 import { RolesProvider } from "./components/Roles/RolesContext";
 
-class App extends Component {
+class App extends Component {		
 	render() {
 		return (
 			<Router>
@@ -32,7 +32,15 @@ class App extends Component {
 											</Route>
 											{/*//TODO Create ProtectedRoute component that will redirect away*/}
 											<Route path="/RoleManagement">
-												<RolesProvider><Roles /></RolesProvider>
+												<UserContext.Consumer>
+													{user => (
+														user.loading ?
+															<>Loading...</> :
+															user.UsersRoles && user.UsersRoles.indexOf('Admin') >= 0 ?
+																<RolesProvider><Roles /></RolesProvider> :
+																<Redirect to={{ pathname: "/" }} />		
+													)}
+												</UserContext.Consumer>										
 											</Route>
 											<Route path="/">
 												<UserContext.Consumer>
