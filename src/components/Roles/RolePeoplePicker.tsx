@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
 import { IBasePickerSuggestionsProps, NormalPeoplePicker, ValidationState } from 'office-ui-fabric-react/lib/Pickers';
-import { people, mru } from '@uifabric/example-data';
+import { people } from '@uifabric/example-data';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { IRole, RolesApiConfig } from "./RolesApi";
 import { RolesContext } from "./RolesContext";
@@ -24,15 +24,12 @@ export interface IRolePeoplePicker {
 }
 
 export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ roleType }) => {
-	const [mostRecentlyUsed, setMostRecentlyUsed] = React.useState<IPersonaProps[]>(mru);
-	const [peopleList, setPeopleList] = React.useState<IPersonaProps[]>(people);
+	const [peopleList] = React.useState<IPersonaProps[]>(people);
 	const [selectedItems, setSelectedItems] = React.useState<IPersonaProps[]>([]);
 
 	const rolesContext = React.useContext(RolesContext);
 	const { rolesList, setRolesList } = rolesContext;
 	const rolesApi = RolesApiConfig.rolesApi;
-
-	const picker = React.useRef(null);
 
 	const personasPicked = () => {
 		//TODO Need a spinner while we add/save new roles
@@ -43,7 +40,7 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 					let newRole: IRole = { ...newpersona };
 					newRole.RoleName = roleType;
 					let updatedRole = await rolesApi.addRole(newRole);
-					newRole.ItemID = updatedRole.Id;
+					newRole.ItemID = updatedRole.Id || updatedRole.ItemID;
 					newRolesList.push(newRole);
 				}
 			})).then(() => {
@@ -114,25 +111,6 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 		return convertResultsToPromise(personasToReturn);
 	};
 
-	const onRemoveSuggestion = (item: IPersonaProps): void => {
-		const indexPeopleList: number = peopleList.indexOf(item);
-		const indexMostRecentlyUsed: number = mostRecentlyUsed.indexOf(item);
-
-		if (indexPeopleList >= 0) {
-			const newPeople: IPersonaProps[] = peopleList
-				.slice(0, indexPeopleList)
-				.concat(peopleList.slice(indexPeopleList + 1));
-			setPeopleList(newPeople);
-		}
-
-		if (indexMostRecentlyUsed >= 0) {
-			const newSuggestedPeople: IPersonaProps[] = mostRecentlyUsed
-				.slice(0, indexMostRecentlyUsed)
-				.concat(mostRecentlyUsed.slice(indexMostRecentlyUsed + 1));
-			setMostRecentlyUsed(newSuggestedPeople);
-		}
-	};
-
 	const onItemsChange = (items: any[] | void): void => {
 		if (items) {
 			setSelectedItems(items);
@@ -152,7 +130,6 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 				inputProps={{
 					'aria-label': 'People Picker',
 				}}
-				componentRef={picker}
 				onInputChange={onInputChange}
 				resolveDelay={300}
 				selectedItems={selectedItems}

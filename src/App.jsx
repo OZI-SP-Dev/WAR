@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import './App.css';
 import Activities from './components/Activities/Activities';
 import AppHeader from './components/appHeader/AppHeader';
 import AppLeftNav from './components/appLeftNav/AppLeftNav';
 import Help from './components/Help/Help';
 import { Roles } from './components/Roles/Roles';
+import { RolesProvider } from "./components/Roles/RolesContext";
 import { UserProvider, UserContext } from './providers/UserProvider';
 import { ContactUsProvider } from './components/ContactUs/ContactUsProvider';
 import WeeklyReport from "./components/WeeklyReport/WeeklyReport";
@@ -38,7 +39,15 @@ class App extends Component {
                         <WeeklyReport />
 											</Route>
 											<Route path="/RoleManagement">
-												<Roles />
+												<UserContext.Consumer>
+													{user => (
+														user.loading ?
+															<>Loading...</> :
+															user.UsersRoles && user.UsersRoles.indexOf('Admin') >= 0 ?
+																<RolesProvider><Roles /></RolesProvider> :
+																<Redirect to={{ pathname: "/" }} />
+													)}
+												</UserContext.Consumer>
 											</Route>
                       <Route exact path="/(Activities)?">
                         <UserContext.Consumer>
