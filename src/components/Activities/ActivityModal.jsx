@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Alert, Button, Col, Modal, OverlayTrigger, Popover, Spinner } from 'react-bootstrap';
+import { Alert, Button, Col, Modal, Overlay, Popover, Spinner } from 'react-bootstrap';
 
 class ActivityModal extends Component {
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {
+      showDeletePopover: false,
+      deletePopoverTarget: null
+    }
   }
 
   onHide() {
@@ -24,16 +27,26 @@ class ActivityModal extends Component {
         <Modal.Footer>
           <Col style={{ paddingLeft: 0 }}>
             {!this.props.readOnly && this.props.showDeleteButton &&
-              <OverlayTrigger
-                trigger="click"
-                placement="top"
-                overlay={
+              <>
+                <Overlay
+                  show={this.state.showDeletePopover}
+                  placement="top"
+                  target={this.state.deletePopoverTarget}
+                >
                   <Popover id={"delete-popover"}>
                     <Popover.Title as="h3">Confirm Delete</Popover.Title>
                     <Popover.Content>
                       <p>Are you sure you would like to delete this Activity?</p>
                       <Button
-                        style={{marginBottom: "2.5%"}}
+                        style={{ marginBottom: "2.5%" }}
+                        className="float-left"
+                        variant="secondary"
+                        onClick={() => this.setState({ showDeletePopover: false })}
+                      >
+                        Close
+                      </Button>
+                      <Button
+                        style={{ marginBottom: "2.5%" }}
                         className="float-right"
                         disabled={this.props.saving || this.props.deleting}
                         variant="danger"
@@ -44,16 +57,20 @@ class ActivityModal extends Component {
                       </Button>
                     </Popover.Content>
                   </Popover>
-                }
-              >
+                </Overlay>
                 <Button
                   className="float-left"
+                  onClick={(event) =>
+                    this.setState({
+                      showDeletePopover: !this.state.showDeletePopover,
+                      deletePopoverTarget: event.target
+                    })}
                   disabled={this.props.saving || this.props.deleting}
                   variant="danger"
                 >
                   Delete
                 </Button>
-              </OverlayTrigger>}
+              </>}
           </Col>
           <Col style={{ paddingRight: 0 }}>
             {!this.props.readOnly &&
