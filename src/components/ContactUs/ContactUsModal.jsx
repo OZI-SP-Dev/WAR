@@ -62,11 +62,9 @@ export const ContactUsModal = (props) => {
 
 	const addAdditionalDetails = (body) => {
 		let today = new Date().toLocaleString();
-		console.log(body);
 		body = body + "<br><hr><br>Message sent by " + props.user +
 			"<br>On " + today +
 			"<br>From route " + location;
-		console.log(body);
 		return body;
 	}
 
