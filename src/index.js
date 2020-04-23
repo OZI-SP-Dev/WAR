@@ -5,6 +5,8 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-datepicker/dist/react-datepicker.css";
+import { initializeIcons } from '@uifabric/icons';
+initializeIcons();
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

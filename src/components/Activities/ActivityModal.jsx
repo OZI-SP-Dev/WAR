@@ -26,7 +26,7 @@ class ActivityModal extends Component {
             {!this.props.readOnly && this.props.showDeleteButton &&
               <OverlayTrigger
                 trigger="click"
-                placement="auto"
+                placement="top"
                 overlay={
                   <Popover id={"delete-popover"}>
                     <Popover.Title as="h3">Confirm Delete</Popover.Title>

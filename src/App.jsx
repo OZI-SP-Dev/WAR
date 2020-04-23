@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import './App.css';
 import Activities from './components/Activities/Activities';
 import AppHeader from './components/appHeader/AppHeader';
 import AppLeftNav from './components/appLeftNav/AppLeftNav';
-import { ContactUsProvider } from './components/ContactUs/ContactUsProvider';
 import Help from './components/Help/Help';
+import { Roles } from './components/Roles/Roles';
+import { RolesProvider } from "./components/Roles/RolesContext";
+import { UserProvider, UserContext } from './providers/UserProvider';
+import { ContactUsProvider } from './components/ContactUs/ContactUsProvider';
 import WeeklyReport from "./components/WeeklyReport/WeeklyReport";
-import { UserContext, UserProvider } from './providers/UserProvider';
 import BigRocksReport from './components/WeeklyReport/BigRocksReport';
 import HistoryReport from './components/WeeklyReport/HistoryReport';
 
@@ -35,7 +37,18 @@ class App extends Component {
                       </Route>
                       <Route path="/WAR">
                         <WeeklyReport />
-                      </Route>
+											</Route>
+											<Route path="/RoleManagement">
+												<UserContext.Consumer>
+													{user => (
+														user.loading ?
+															<>Loading...</> :
+															user.UsersRoles && user.UsersRoles.indexOf('Admin') >= 0 ?
+																<RolesProvider><Roles /></RolesProvider> :
+																<Redirect to={{ pathname: "/" }} />
+													)}
+												</UserContext.Consumer>
+											</Route>
                       <Route exact path="/(Activities)?">
                         <UserContext.Consumer>
                           {user => (
