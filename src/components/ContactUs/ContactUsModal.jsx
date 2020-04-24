@@ -68,7 +68,7 @@ export const ContactUsModal = (props) => {
 		return body;
 	}
 
-	const validateActivity = (e) => {
+	const validateForm = (e) => {
 		const form = document.getElementById("ContactUs");
 		if (form.checkValidity() === false) {
 			e.preventDefault();
@@ -99,7 +99,7 @@ export const ContactUsModal = (props) => {
 			</Modal.Header>
 			<Modal.Body>
 				<Form id="ContactUs" noValidate validated={validated}
-					onSubmit={validateActivity}
+					onSubmit={validateForm}
 				>
 					<Form.Group>
 						<Form.Label>What can we help with?</Form.Label>
@@ -120,7 +120,7 @@ export const ContactUsModal = (props) => {
 				<Button disabled={sending} variant="secondary" onClick={onHide}>
 					Cancel
           </Button>
-				<Button disabled={sending} variant="primary" onClick={validateActivity}>
+				<Button disabled={sending} variant="primary" onClick={validateForm}>
 					{sending && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
 					{' '}Submit
           </Button>
