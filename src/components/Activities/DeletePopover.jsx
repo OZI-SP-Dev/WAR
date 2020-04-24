@@ -37,23 +37,21 @@ class DeletePopover extends Component {
                     <Popover.Content>
                         <p>Are you sure you would like to delete this Activity?</p>
                         <Button
-                            style={{ marginBottom: "2.5%" }}
-                            className="float-left"
+                            className="float-left mb-2"
                             variant="secondary"
                             onClick={this.props.handleClosePopoverClick}
                         >
                             Close
-                      </Button>
+                        </Button>
                         <Button
-                            style={{ marginBottom: "2.5%" }}
-                            className="float-right"
+                            className="float-right mb-2"
                             disabled={this.props.saving || this.props.deleting}
                             variant="danger"
                             onClick={this.props.handleDelete}
                         >
                             {this.props.deleting && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
                             {' '}Delete
-                      </Button>
+                        </Button>
                     </Popover.Content>
                 </Popover>
             </Overlay>
