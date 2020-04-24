@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { spWebContext } from '../../providers/SPWebContext';
 import ContactUsModal from './ContactUsModal';
+import { UserContext } from '../../providers/UserProvider';
 
 export const ContactUsContext = React.createContext();
 export const ContactUsProvider = ({ children }) => {
@@ -37,15 +38,20 @@ export const ContactUsProvider = ({ children }) => {
     })
   }, [])
 
-  return (
-    <ContactUsContext.Provider value={{ setShowContactUs }}>
-      {!loading && <ContactUsModal
-        showContactUsModal={showContactUs}
-        hideContactUs={hideContactUs}
-        contactEmails={contactEmails}
-        loading={loading}
-      />}
-      {children}
-    </ContactUsContext.Provider>
+	return (
+		<UserContext.Consumer>
+			{user =>
+				<ContactUsContext.Provider value={{ setShowContactUs }}>
+					{!loading && <ContactUsModal
+						showContactUsModal={showContactUs}
+						hideContactUs={hideContactUs}
+						contactEmails={contactEmails}
+						loading={loading}
+						user={user.Title}
+					/>}
+					{children}
+				</ContactUsContext.Provider>
+			}
+		</UserContext.Consumer>
   )
 }
