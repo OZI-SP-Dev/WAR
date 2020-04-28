@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { RolesApiConfig, IRole } from "./RolesApi";
+import { RolesApiConfig, IRole } from "../../api/RolesApi";
 
 export type RolesContext = {
 	rolesList: IRole[],

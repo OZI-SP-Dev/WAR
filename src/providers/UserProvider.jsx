@@ -8,11 +8,11 @@ export const UserProvider = ({ children }) => {
   const [Id, setId] = useState(null);
   const [Title, setTitle] = useState('Default User');
 	const [Email, setEmail] = useState(null);
-	const [UsersRoles, setUsersRoles] = useState([]);
+  const [UsersRoles, setUsersRoles] = useState([]);
 
   const getUser = async () => {
 		if (process.env.NODE_ENV === 'development') {
-			setUsersRoles(['Admin']);
+			setUsersRoles([{role: 'Admin', deparment: undefined}]);
       setLoading(false);
     } else {
       try {
@@ -26,7 +26,7 @@ export const UserProvider = ({ children }) => {
 				const myRoles = await web.lists.getByTitle("Roles").items.filter(filterstring).get();
 				let roleNames = [];
 				myRoles.forEach(element => {
-					roleNames.push(element.Title);
+					roleNames.push({role: element.Title, department: element.Department});
 				});
 				setUsersRoles(roleNames);
         setLoading(false);

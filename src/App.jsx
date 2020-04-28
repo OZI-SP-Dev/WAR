@@ -12,6 +12,7 @@ import { ContactUsProvider } from './components/ContactUs/ContactUsProvider';
 import WeeklyReport from "./components/WeeklyReport/WeeklyReport";
 import BigRocksReport from './components/WeeklyReport/BigRocksReport';
 import HistoryReport from './components/WeeklyReport/HistoryReport';
+import RoleUtilities from './utilities/RoleUtilities';
 
 class App extends Component {
   render() {
@@ -43,8 +44,8 @@ class App extends Component {
 													{user => (
 														user.loading ?
 															<>Loading...</> :
-															user.UsersRoles && user.UsersRoles.indexOf('Admin') >= 0 ?
-																<RolesProvider><Roles /></RolesProvider> :
+															RoleUtilities.userCanAccessAdminPage(user) ?
+																<RolesProvider><Roles user={user} /></RolesProvider> :
 																<Redirect to={{ pathname: "/" }} />
 													)}
 												</UserContext.Consumer>

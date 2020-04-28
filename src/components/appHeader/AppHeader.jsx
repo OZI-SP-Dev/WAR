@@ -3,6 +3,7 @@ import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { UserContext } from '../../providers/UserProvider';
 import './AppHeader.css';
+import RoleUtilities from '../../utilities/RoleUtilities';
 
 function AppHeader() {
   const user = useContext(UserContext);
@@ -32,10 +33,11 @@ function AppHeader() {
             <LinkContainer to="/HistoryReport">
               <NavDropdown.Item>History</NavDropdown.Item>
             </LinkContainer>
-					</NavDropdown>
-					<LinkContainer to="/RoleManagement">
-						<Nav.Link>Admin</Nav.Link>
-					</LinkContainer>
+          </NavDropdown>
+          {RoleUtilities.userCanAccessAdminPage(user) &&
+            <LinkContainer to="/RoleManagement">
+              <Nav.Link>Admin</Nav.Link>
+            </LinkContainer>}
         </Nav>
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text className="mr-2">

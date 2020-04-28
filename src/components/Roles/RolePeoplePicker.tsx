@@ -2,8 +2,8 @@ import * as React from 'react';
 import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
 import { IBasePickerSuggestionsProps, NormalPeoplePicker, ValidationState } from 'office-ui-fabric-react/lib/Pickers';
 import { people } from '@uifabric/example-data';
-import { Button, ButtonGroup } from 'react-bootstrap';
-import { IRole, RolesApiConfig } from "./RolesApi";
+import { Button, ButtonGroup, Row, Form, Col } from 'react-bootstrap';
+import { IRole, RolesApiConfig } from "../../api/RolesApi";
 import { RolesContext } from "./RolesContext";
 import { sp } from "@pnp/sp";
 import "@pnp/sp/profiles";
@@ -26,6 +26,7 @@ export interface IRolePeoplePicker {
 export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ roleType }) => {
 	const [peopleList] = React.useState<IPersonaProps[]>(people);
 	const [selectedItems, setSelectedItems] = React.useState<IPersonaProps[]>([]);
+	const [selectedDepartment, setSelectedDepartment] = React.useState<string>("OZI");
 
 	const rolesContext = React.useContext(RolesContext);
 	const { rolesList, setRolesList } = rolesContext;
@@ -39,6 +40,8 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 				if (newpersona.text) {
 					let newRole: IRole = { ...newpersona };
 					newRole.RoleName = roleType;
+					newRole.Department = selectedDepartment;
+					newRole.text = `${newpersona.text}${roleType !== "Admin" && newRole.Department !== null ? " for Department " + newRole.Department : ""}`;
 					let updatedRole = await rolesApi.addRole(newRole);
 					newRole.ItemID = updatedRole.Id || updatedRole.ItemID;
 					newRolesList.push(newRole);
@@ -49,7 +52,7 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 			});
 		}
 	}
-	
+
 	const itemSelected = (selectedItem?: IPersonaProps | undefined): IPersonaProps | null => {
 		if (selectedItem) {
 			let items = selectedItems.slice();
@@ -92,7 +95,7 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 						RoleName: roleType,
 						Email: person.EntityData.Email
 					}
-					newPersonas.push(persona); 
+					newPersonas.push(persona);
 				});
 				filteredPersonas = newPersonas;
 			}
@@ -118,26 +121,47 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 	};
 
 	return (
-		<ButtonGroup>
-			<NormalPeoplePicker
-				onResolveSuggestions={onFilterChanged}
-				getTextFromItem={getTextFromItem}
-				pickerSuggestionsProps={suggestionProps}
-				className={'ms-PeoplePicker'}
-				key={'controlled'}
-				onValidateInput={validateInput}
-				removeButtonAriaLabel={'Remove'}
-				inputProps={{
-					'aria-label': 'People Picker',
-				}}
-				onInputChange={onInputChange}
-				resolveDelay={300}
-				selectedItems={selectedItems}
-				onItemSelected={itemSelected}
-				onChange={onItemsChange}
-			/>
-			<Button className="float-right" onClick={personasPicked}>Add {roleType}</Button>
-		</ButtonGroup>
+		<Row>
+			<Col md='5'>
+				<Form>
+					<Form.Group>
+						<Form.Label>New {roleType}</Form.Label>
+						<NormalPeoplePicker
+							onResolveSuggestions={onFilterChanged}
+							getTextFromItem={getTextFromItem}
+							pickerSuggestionsProps={suggestionProps}
+							className={'ms-PeoplePicker'}
+							key={'controlled'}
+							onValidateInput={validateInput}
+							removeButtonAriaLabel={'Remove'}
+							inputProps={{
+								'aria-label': 'People Picker',
+							}}
+							onInputChange={onInputChange}
+							resolveDelay={300}
+							selectedItems={selectedItems}
+							onItemSelected={itemSelected}
+							onChange={onItemsChange}
+						/>
+					</Form.Group>
+					{roleType !== "Admin" &&
+						<Form.Group>
+							<Form.Label>New {roleType}'s Department</Form.Label>
+							<Form.Control as="select"
+								value={selectedDepartment}
+								onChange={(e) => setSelectedDepartment(e.currentTarget.value)}
+							>
+								<option>--</option>
+								{roleType !== "Reviewer" && <option>OZI</option>}
+								<option>OZIC</option>
+								<option>OZIF</option>
+								<option>OZIP</option>
+							</Form.Control>
+						</Form.Group>}
+					<Button className="float-right" onClick={personasPicked}>Add {roleType}</Button>
+				</Form>
+			</Col>
+		</Row>
 	);
 };
 
