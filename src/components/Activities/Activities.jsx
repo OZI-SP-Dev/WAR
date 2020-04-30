@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Button, Container, Row, Spinner } from 'react-bootstrap';
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import DateUtilities from '../../utilities/DateUtilities';
+import RoleUtilities from '../../utilities/RoleUtilities';
 import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
 import EditActivityModal from './EditActivityModal';
@@ -27,10 +28,8 @@ class Activities extends Component {
   }
 
   componentDidMount() {
-    let weekStart = DateUtilities.getStartOfWeek(new Date());
-    // TODO: this is the default, but different limits will be implemented after roles are added
-    this.setState({ minCreateDate: weekStart });
-    this.fetchItems(4, weekStart);
+    this.setState({ minCreateDate: RoleUtilities.getMinActivityCreateDate(this.props.user) });
+    this.fetchItems(4, DateUtilities.getStartOfWeek(new Date()));
   }
 
   fetchItems = (numWeeks, weekStart) => {
@@ -149,8 +148,8 @@ class Activities extends Component {
           saving={this.state.isLoading}
           error={this.state.saveError}
           minCreateDate={this.state.minCreateDate}
-          showBigRockCheck //TODO: should be based on role
-          showHistoryCheck //TODO: should be based on role
+          showBigRockCheck={(org) => RoleUtilities.userCanSetBigRock(this.props.user, org)}
+          showHistoryCheck={(org) => RoleUtilities.userCanSetHistory(this.props.user, org)}
         />
         <Row className="justify-content-center"><h1>Activities</h1></Row>
         {this.state.loadedWeeks.map(date =>

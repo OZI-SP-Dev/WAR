@@ -130,6 +130,7 @@ class EditActivityModal extends Component {
               <option>OZIC</option>
               <option>OZIF</option>
               <option>OZIP</option>
+              <option>OTHER</option>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="editActivityTitle">
@@ -161,7 +162,7 @@ class EditActivityModal extends Component {
               Enter at least one action taken.
             </Form.Control.Feedback>
           </Form.Group>
-          {this.props.showBigRockCheck &&
+          {this.props.showBigRockCheck(this.state.activity.Branch) &&
             <Form.Group>
               <Form.Check
                 label="Big Rock?"
@@ -172,7 +173,7 @@ class EditActivityModal extends Component {
                 disabled={this.isReadOnly()}
               />
             </Form.Group>}
-          {this.props.showHistoryCheck &&
+          {this.props.showHistoryCheck(this.state.activity.Branch) &&
             <Form.Group>
               <Form.Check
                 label="History Entry?"
