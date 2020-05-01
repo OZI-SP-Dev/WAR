@@ -9,7 +9,12 @@ export interface IUserRole {
 
 export default class RoleUtilities {
 
-    static allRoles = ["Admin", "Branch Chief", "Div Chief", "Reviewer"];
+    static ADMIN: string = "Admin";
+    static BRANCH_CHIEF: string = "Branch Chief";
+    static DIV_CHIEF: string = "Div Chief";
+    static REVIEWER: string = "Reviewer";
+
+    static allRoles = [RoleUtilities.ADMIN, RoleUtilities.BRANCH_CHIEF, RoleUtilities.DIV_CHIEF, RoleUtilities.REVIEWER];
 
     static userHasAnyRole(user: IUserRole): boolean {
         return user.UsersRoles.some((role) => this.allRoles.includes(role.role));
@@ -17,9 +22,12 @@ export default class RoleUtilities {
 
     static userIsBranchChiefOrHigher(user: IUserRole, org?: string): boolean {
         return org === undefined ?
-            user.UsersRoles.some(role => ["Admin", "Branch Chief", "Div Chief"].includes(role.role))
+            user.UsersRoles.some(role =>
+                [RoleUtilities.ADMIN, RoleUtilities.BRANCH_CHIEF, RoleUtilities.DIV_CHIEF].includes(role.role))
             : user.UsersRoles.some((role) =>
-                role.role === "Admin" || (["Branch Chief", "Div Chief"].includes(role.role) && org.includes(role.department)));
+                role.role === RoleUtilities.ADMIN
+                || ([RoleUtilities.BRANCH_CHIEF, RoleUtilities.DIV_CHIEF].includes(role.role)
+                    && org.includes(role.department)));
     }
 
     static userCanAccessAdminPage(user: IUserRole): boolean {
@@ -37,10 +45,10 @@ export default class RoleUtilities {
     static getEditableRoles(user: IUserRole): string[] {
         let userRoles: string[] = user.UsersRoles.map(userRole => userRole.role);
         let editableRoles: string[] = [];
-        if (userRoles.includes("Admin")) {
+        if (userRoles.includes(RoleUtilities.ADMIN)) {
             editableRoles = this.allRoles;
-        } else if (userRoles.includes("Branch Chief") || userRoles.includes("Div Chief")) {
-            editableRoles = ["Reviewer"];
+        } else if (userRoles.includes(RoleUtilities.BRANCH_CHIEF) || userRoles.includes(RoleUtilities.DIV_CHIEF)) {
+            editableRoles = [RoleUtilities.REVIEWER];
         }
         return editableRoles;
     }

@@ -2,6 +2,7 @@ import { spWebContext } from '../providers/SPWebContext';
 import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
 import RolesApiDev from './RolesApiDev';
 import "@pnp/sp/site-users/web";
+import RoleUtilities from '../utilities/RoleUtilities';
 
 export interface IRolesApi {
 	fetchRoles(): Promise<any>,
@@ -45,7 +46,7 @@ export default class RolesApi implements IRolesApi {
 		console.log(ensuredUser);
 		role.SPUserId = ensuredUser.data.Id;
 		// Let the Department field be null if it is for an Admin role, otherwise the roles should have a Department
-		return this.rolesList.items.add({ Title: role.RoleName, UserId: role.SPUserId, Department: role.RoleName === "Admin" ? null : role.Department });
+		return this.rolesList.items.add({ Title: role.RoleName, UserId: role.SPUserId, Department: role.RoleName === RoleUtilities.ADMIN ? null : role.Department });
 	}
 
 	removeRole(roleId: number): Promise<any> {

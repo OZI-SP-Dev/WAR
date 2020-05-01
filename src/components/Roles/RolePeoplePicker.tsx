@@ -7,6 +7,7 @@ import { IBasePickerSuggestionsProps, NormalPeoplePicker, ValidationState } from
 import * as React from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { IRole, RolesApiConfig } from "../../api/RolesApi";
+import RoleUtilities from '../../utilities/RoleUtilities';
 import { RolesContext } from "./RolesContext";
 
 const suggestionProps: IBasePickerSuggestionsProps = {
@@ -43,7 +44,7 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 					let newRole: IRole = { ...newpersona };
 					newRole.RoleName = roleType;
 					newRole.Department = selectedDepartment;
-					newRole.text = `${newpersona.text}${roleType !== "Admin" && newRole.Department !== null ? " for Department " + newRole.Department : ""}`;
+					newRole.text = `${newpersona.text}${roleType !== RoleUtilities.ADMIN && newRole.Department !== null ? " for Department " + newRole.Department : ""}`;
 					let updatedRole = await rolesApi.addRole(newRole);
 					newRole.ItemID = updatedRole.Id || updatedRole.ItemID;
 					newRolesList.push(newRole);
@@ -123,7 +124,7 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 	};
 
 	const departmentFieldValid = (): boolean => {
-		return roleType === "Admin" || (selectedDepartment !== undefined && selectedDepartment !== "" && selectedDepartment !== "--");
+		return roleType === RoleUtilities.ADMIN || (selectedDepartment !== undefined && selectedDepartment !== "" && selectedDepartment !== "--");
 	}
 
 	return (
@@ -151,7 +152,7 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 							onChange={onItemsChange}
 						/>
 					</Form.Group>
-					{roleType !== "Admin" &&
+					{roleType !== RoleUtilities.ADMIN &&
 						<Form.Group>
 							<Form.Label>New {roleType}'s Department</Form.Label>
 							<Form.Control as="select"
@@ -160,10 +161,10 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 								isInvalid={didUserSubmit && !departmentFieldValid()}
 							>
 								<option>--</option>
-								{roleType !== "Reviewer" && <option>OZI</option>}
-								{roleType === "Reviewer" && <option>OZIC</option>}
-								{roleType === "Reviewer" && <option>OZIF</option>}
-								{roleType === "Reviewer" && <option>OZIP</option>}
+								{roleType !== RoleUtilities.REVIEWER && <option>OZI</option>}
+								{roleType === RoleUtilities.REVIEWER && <option>OZIC</option>}
+								{roleType === RoleUtilities.REVIEWER && <option>OZIF</option>}
+								{roleType === RoleUtilities.REVIEWER && <option>OZIP</option>}
 							</Form.Control>
 							<Form.Control.Feedback type='invalid'>Please provide a department for the {roleType}</Form.Control.Feedback>
 						</Form.Group>}
