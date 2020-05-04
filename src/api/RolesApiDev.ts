@@ -15,7 +15,8 @@ export default class RolesApiDev implements IRolesApi {
 			RoleName: 'Reviewer',
 			imageUrl: TestImages.personaMale,
 			imageInitials: 'JS',
-			text: 'John Smith for Department OZIC',
+			text: 'John Smith',
+			secondaryText: 'OZIF',
 			Department: "OZIC"
 		}
 	];
