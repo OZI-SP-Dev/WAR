@@ -6,6 +6,7 @@ import DateUtilities from '../../utilities/DateUtilities';
 import RoleUtilities from '../../utilities/RoleUtilities';
 import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
+import ActivitySpinner from './ActivitySpinner';
 import EditActivityModal from './EditActivityModal';
 
 //TODO consider moving away from datetime and going to ISO weeks
@@ -128,12 +129,6 @@ class Activities extends Component {
 
   render() {
     const { isLoading, loadingMoreWeeks } = this.state;
-    const MySpinner = () =>
-      <div className="spinner">
-        <Spinner animation="border" role="status">
-          <span className="sr-only">Fetching activities...</span>
-        </Spinner>
-      </div>
 
     return (
       <Container>
@@ -151,7 +146,7 @@ class Activities extends Component {
           showBigRockCheck={(org) => RoleUtilities.userCanSetBigRock(this.props.user, org)}
           showHistoryCheck={(org) => RoleUtilities.userCanSetHistory(this.props.user, org)}
         />
-        <Row className="justify-content-center"><h1>Activities</h1></Row>
+        <Row className="justify-content-center"><h1>My Activities</h1></Row>
         {this.state.loadedWeeks.map(date =>
           <ActivityAccordion
             key={date}
@@ -166,7 +161,7 @@ class Activities extends Component {
           {loadingMoreWeeks && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
           {' '}Load More Activities
         </Button>
-        {isLoading && <MySpinner />}
+        <ActivitySpinner show={isLoading} displayText="Fetching activities..." />
       </Container>
     );
   }
