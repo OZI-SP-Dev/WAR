@@ -2,7 +2,7 @@ import React from 'react';
 import { Persona } from 'office-ui-fabric-react/lib/Persona';
 import { Stack } from 'office-ui-fabric-react/lib/Stack';
 import { ActionButton, IIconProps } from 'office-ui-fabric-react';
-import { RolesApiConfig, IRole } from "./RolesApi";
+import { RolesApiConfig, IRole } from "../../api/RolesApi";
 import { RolesContext } from "./RolesContext";
 
 export interface IPersonaList {
@@ -25,7 +25,7 @@ export const PersonaList: React.FunctionComponent<IPersonaList> = ({ roleType })
 			}
 			console.log("Index of deleted item: " + index);
 			if (index > -1) {
-				array.splice(index, 1);	
+				array.splice(index, 1);
 				setRolesList(array);
 			}
 		}
@@ -34,17 +34,17 @@ export const PersonaList: React.FunctionComponent<IPersonaList> = ({ roleType })
 	const deleteIcon: IIconProps = { iconName: 'Delete' };
 
 	return (
-		rolesList ? 
-		<Stack tokens={{ childrenGap: 10 }}>
-			{rolesList.map((role, index) => (
-				role.RoleName === roleType ? 
-					<div key={role.ItemID}>
-					<Persona className="float-left"
-						{...role}
-					/>
-					<ActionButton iconProps={deleteIcon} onClick={() => deleteRole(role)} />
-				</div> : null
-			))}
-		</Stack> : <>No {roleType}s set</>
+		rolesList ?
+			<Stack tokens={{ childrenGap: 10 }}>
+				{rolesList.map((role, index) => (
+					role.RoleName === roleType ?
+						<div key={role.ItemID}>
+							<Persona className="float-left"
+								{...role}
+							/>
+							<ActionButton iconProps={deleteIcon} onClick={() => deleteRole(role)} />
+						</div> : null
+				))}
+			</Stack> : <>No {roleType}s set</>
 	);
 };

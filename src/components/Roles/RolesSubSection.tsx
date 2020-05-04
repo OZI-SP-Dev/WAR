@@ -7,13 +7,13 @@ export interface IRolesSubSection {
 	roleType: string
 }
 
-export const RolesSubSection: React.FunctionComponent<IRolesSubSection> = ({ roleType }) => {	
+export const RolesSubSection: React.FunctionComponent<IRolesSubSection> = ({ roleType }) => {
 	return (
 		<Card>
 			<Card.Header>WAR {roleType}s</Card.Header>
 			<Card.Body>
 				<Card.Title>
-					<RolePeoplePicker	roleType={roleType} />
+					<RolePeoplePicker roleType={roleType} />
 				</Card.Title>
 				<PersonaList roleType={roleType} />
 			</Card.Body>
