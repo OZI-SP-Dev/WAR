@@ -1,16 +1,30 @@
 import { spWebContext } from '../providers/SPWebContext';
 import ActivitiesApiDev from './ActivitiesApiDev';
 
+export interface UserInfo {
+	Id: string,
+	Title: string
+}
+
+export interface UserList {
+	results: UserInfo[]
+}
+
+export interface UserIdList {
+	results: number[]
+}
+
 export interface IActivity {
   ID: number,
   Title: string,
   WeekOf: string,
   Branch: string,
   ActionTaken: string,
-  TextOPRs: string,
   IsBigRock: boolean,
   IsHistoryEntry: boolean,
-  IsDeleted?: boolean
+	IsDeleted?: boolean,
+	OPRs?: UserList,
+	OPRsId?: UserIdList
 }
 
 export interface IActivityApi {
@@ -42,7 +56,7 @@ export default class ActivitiesApi implements IActivityApi {
 
     filterString += additionalFilter ? ` and ${additionalFilter}` : "";
 
-    return this.activitiesList.items.filter(filterString).get();
+		return this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "ActionItems", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsBigRock", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString).get();
   }
 
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {

@@ -15,9 +15,8 @@ class ActivityCardsWeek extends Component {
                             <Card.Text as="div">
                                 <strong>Action Taken/In Work</strong> <span style={{whiteSpace: 'pre-line'}} ref="InterestItems">{action.ActionTaken}</span><br />
                                 <strong>Branch: </strong><span>{action.Branch}</span><br />
-                                <strong>OPRs:</strong> <span >{action.TextOPRs}</span>
-                                {//TODO Change to people picker
-                                }
+                                <strong>OPRs:</strong> {action.OPRs && action.OPRs.map((OPR) =>
+																	(<span key={ OPR.SPUserId }> { OPR.text }; </span>))}
                             </Card.Text>
                         </Card.Body>
                     </Card>

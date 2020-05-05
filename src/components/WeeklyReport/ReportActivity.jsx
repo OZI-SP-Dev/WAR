@@ -12,7 +12,8 @@ class ReportActivity extends Component {
                     <strong>Week of:</strong> {moment(activity.WeekOf).format("DD/MM/YYYY")}<br />
                     <strong>Activity/Purpose:</strong> {activity.Title}<br />
                     <strong>Action Taken/In Work:</strong> {activity.ActionTaken}<br />
-                    <strong>OPR:</strong> {activity.TextOPRs}<br />
+                    <strong>OPRs:</strong> {activity.OPRs && activity.OPRs.map((OPR) =>
+                      (<span key={OPR.text}> {OPR.text}; </span>))}
                 </p>
             </Row>
         );

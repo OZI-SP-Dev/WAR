@@ -6,6 +6,8 @@ import DateUtilities from '../../utilities/DateUtilities';
 import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
 import EditActivityModal from './EditActivityModal';
+import { spWebContext } from '../../providers/SPWebContext';
+import "@pnp/sp/site-users/web";
 
 //TODO consider moving away from datetime and going to ISO weeks
 class Activities extends Component {
@@ -23,7 +25,12 @@ class Activities extends Component {
       minCreateDate: {}
     };
 
-    this.activitiesApi = ActivitiesApiConfig.activitiesApi;
+		this.activitiesApi = ActivitiesApiConfig.activitiesApi;
+		this.Me = {
+			text: this.props.user.Title,
+			imageInitials: this.props.user.Title.substr(this.props.user.Title.indexOf(' ') + 1, 1) + this.props.user.Title.substr(0, 1),
+			SPUserId: this.props.user.Id
+		}
   }
 
   componentDidMount() {
@@ -31,10 +38,27 @@ class Activities extends Component {
     // TODO: this is the default, but different limits will be implemented after roles are added
     this.setState({ minCreateDate: weekStart });
     this.fetchItems(4, weekStart);
-  }
+	}
+	
+	convertOPRsToPersonas = (OPRs) => {
+		let newOPRs = [];
+		if (OPRs.results) {
+			newOPRs = OPRs.results.map(OPR => {
+				return {
+					text: OPR.Title,
+					imageInitials: OPR.Title.substr(OPR.Title.indexOf(' ') + 1, 1) + OPR.Title.substr(0, 1),
+					SPUserId: OPR.Id
+				}
+			})
+		}
+		return newOPRs;
+	}
 
   fetchItems = (numWeeks, weekStart) => {
-    this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id).then(r => {
+		this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id).then(r => {
+			r.forEach(activity => {
+				activity.OPRs = this.convertOPRsToPersonas(activity.OPRs);
+			})
       const listData = this.state.listData.concat(r);
       this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
       this.addNewWeeks(numWeeks, weekStart);
@@ -47,38 +71,69 @@ class Activities extends Component {
   newItem = (date) => {
     const item = {
       ID: -1, Title: '', WeekOf: moment(date).day(0), InputWeekOf: moment(date).format("YYYY-MM-DD"),
-      Branch: 'OZIC', ActionTaken: '', TextOPRs: this.props.user.Title, IsBigRock: false, IsHistoryEntry: false
+			Branch: 'OZIC', ActionTaken: '', IsBigRock: false, IsHistoryEntry: false, OPRs: [this.Me]
     }
     this.setState({ showEditModal: true, editActivity: item });
   }
 
-  buildActivity = (activity) => {
-    return {
-      ID: activity.ID,
-      Title: activity.Title,
-      WeekOf: moment(activity.InputWeekOf).day(0).toISOString(),
-      Branch: activity.Branch,
-      ActionTaken: activity.ActionTaken,
-      TextOPRs: activity.TextOPRs, //TODO convert to peopler picker format...
-      IsBigRock: activity.IsBigRock,
-      IsHistoryEntry: activity.IsHistoryEntry
-    }
+	buildActivity = async (activity) => {
+		let builtActivity = {
+			ID: activity.ID,
+			Title: activity.Title,
+			WeekOf: moment(activity.InputWeekOf).day(0).toISOString(),
+			Branch: activity.Branch,
+			ActionTaken: activity.ActionTaken,
+			IsBigRock: activity.IsBigRock,
+			IsHistoryEntry: activity.IsHistoryEntry,
+			OPRsId: { results: [] }
+		};
+
+		//Fetch Id's for new OPRs
+		let userIdPromises = activity.OPRs.map(async (OPR) => {
+			if (OPR.SPUserId) {
+				return OPR.SPUserId;
+			} else if (OPR.Email) {
+				let ensuredUser = await spWebContext.ensureUser(OPR.Email);
+				return ensuredUser.data.Id;
+			}
+		});
+
+		//wait for all UserIds to be fetched
+		await Promise.all(userIdPromises).then(OPRsId => {
+			builtActivity.OPRsId.results = OPRsId;
+		});
+		return builtActivity;
   }
 
-  submitActivity = (event, newActivity) => {
+  submitActivity = async (event, newActivity) => {
     this.setState({ isLoading: true });
     //build object to save
-    let activityToSubmit = this.buildActivity(newActivity);
+    let activityToSubmit = await this.buildActivity(newActivity);
 
     // Remove trailing period(s) from Title
     while (activityToSubmit.Title.charAt(activityToSubmit.Title.length - 1) === '.') {
       activityToSubmit.Title = activityToSubmit.Title.slice(0, -1);
     }
 
-    this.activitiesApi.submitActivity(activityToSubmit).then(r => {
-      // filter out the old activity, if it already existed
-      let activityList = this.state.listData.filter(activity => activity.ID !== r.data.ID);
-      activityList.push(r.data);
+		this.activitiesApi.submitActivity(activityToSubmit).then(r => {
+			newActivity.ID = r.data.ID;
+			newActivity.WeekOf = r.data.WeekOf;
+
+			//newActivity.etag = r.data.__metadata.etag; // etag location for new items
+
+			// rather than filter out the old activity, update if it already existed
+			// this prevents the activity display from re-ordering the existing items
+			let activityList = [...this.state.listData];
+			if (activityToSubmit.ID > 0) {
+				activityList = activityList.map(item => {
+					if (item.ID === activityToSubmit.ID) {
+						item = newActivity;
+					}
+					return item;
+				})
+			} else {
+				activityList.push(newActivity);
+			}
       this.setState({ isLoading: false, showEditModal: false, saveError: false, listData: activityList });
     }, e => {
       console.error(e);
@@ -86,9 +141,9 @@ class Activities extends Component {
     });
   }
 
-  deleteActivity = (activity) => {
+  deleteActivity = async (activity) => {
     this.setState({ isDeleting: true })
-    this.activitiesApi.deleteActivity(this.buildActivity(activity))
+    this.activitiesApi.deleteActivity(await this.buildActivity(activity))
       .then((res) => this.setState({
         isDeleting: false,
         showEditModal: false,
