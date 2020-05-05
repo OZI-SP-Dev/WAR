@@ -6,7 +6,6 @@ class ReportActivity extends Component {
 
     render() {
 			let activity = this.props.activity;
-			console.log(activity);
         return (
             <Row>
                 <p>
