@@ -72,7 +72,7 @@ class EditActivityModal extends Component {
   }
 
   isReadOnly() {
-    return this.props.activity.ID > -1 && new Date(this.props.activity.WeekOf) < this.props.minCreateDate;
+    return this.props.activity.Id > -1 && new Date(this.props.activity.WeekOf) < this.props.minCreateDate;
   }
 
   render() {
@@ -99,7 +99,7 @@ class EditActivityModal extends Component {
         deleting={this.props.deleting}
         saving={this.props.saving}
         readOnly={this.isReadOnly()}
-        showDeleteButton={this.props.activity.ID > -1}
+        showDeleteButton={this.props.activity.Id > -1}
         error={this.props.error}
       >
         <Form disabled={this.props.saving} id="EditActivityModal" noValidate validated={this.state.validated}

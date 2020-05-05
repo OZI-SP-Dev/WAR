@@ -15,7 +15,7 @@ export interface UserIdList {
 }
 
 export interface IActivity {
-  ID: number,
+  Id: number,
   Title: string,
   WeekOf: string,
   Branch: string,
@@ -24,7 +24,10 @@ export interface IActivity {
   IsHistoryEntry: boolean,
 	IsDeleted?: boolean,
 	OPRs?: UserList,
-	OPRsId?: UserIdList
+	OPRsId?: UserIdList,
+	__metadata?: {
+		etag: string
+	}
 }
 
 export interface IActivityApi {
@@ -78,7 +81,7 @@ export default class ActivitiesApi implements IActivityApi {
    * @param activity The IActivity to be submitted
    */
   submitActivity(activity: IActivity): Promise<{ data: IActivity }> {
-    return activity.ID < 0 ? this.addActivity(activity) : this.updateActivity(activity);
+    return activity.Id < 0 ? this.addActivity(activity) : this.updateActivity(activity);
   }
 
   /**
@@ -87,11 +90,10 @@ export default class ActivitiesApi implements IActivityApi {
    * @param activity The IActivity to be submitted
    */
   async updateActivity(activity: IActivity): Promise<{ data: IActivity }> {
-    console.log(`Submitting updated item ${activity.Title}!`);
-    //TODO Include ETag checks/handling, this returns the new ETag
-    let newEtag = await this.activitiesList.items.getById(activity.ID).update(activity);
-    // when ETag handling is implemented, we may have some more complex logic than just returning the activity
-    return { data: activity }
+		console.log(`Submitting updated item ${activity.Title}!`);
+		let etag = activity.__metadata?.etag;
+		console.log(`Using etag ${etag}`);
+    return this.activitiesList.items.getById(activity.Id).update(activity, etag);
   }
 
   addActivity(activity: IActivity): Promise<{ data: IActivity }> {

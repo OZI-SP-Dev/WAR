@@ -55,6 +55,7 @@ class Activities extends Component {
 
   fetchItems = (numWeeks, weekStart) => {
 		this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id).then(r => {
+			console.log(r);
 			r.forEach(activity => {
 				activity.OPRs = this.convertOPRsToPersonas(activity.OPRs);
 			})
@@ -69,7 +70,7 @@ class Activities extends Component {
 
   newItem = (date) => {
     const item = {
-      ID: -1, Title: '', WeekOf: moment(date).day(0), InputWeekOf: moment(date).format("YYYY-MM-DD"),
+      Id: -1, Title: '', WeekOf: moment(date).day(0), InputWeekOf: moment(date).format("YYYY-MM-DD"),
 			Branch: 'OZIC', ActionTaken: '', IsBigRock: false, IsHistoryEntry: false, OPRs: [this.Me]
     }
     this.setState({ showEditModal: true, editActivity: item });
@@ -77,7 +78,7 @@ class Activities extends Component {
 
 	buildActivity = async (activity) => {
 		let builtActivity = {
-			ID: activity.ID,
+			Id: activity.Id,
 			Title: activity.Title,
 			WeekOf: moment(activity.InputWeekOf).day(0).toISOString(),
 			Branch: activity.Branch,
@@ -86,6 +87,10 @@ class Activities extends Component {
 			IsHistoryEntry: activity.IsHistoryEntry,
 			OPRsId: { results: [] }
 		};
+
+		if (activity.__metadata && activity.__metadata.etag) {
+			builtActivity.__metadata = { etag: activity.__metadata.etag };
+		}
 
 		//Fetch Id's for new OPRs
 		let userIdPromises = activity.OPRs.map(async (OPR) => {
@@ -106,8 +111,8 @@ class Activities extends Component {
 
   submitActivity = async (event, newActivity) => {
     this.setState({ isLoading: true });
-    //build object to save
-    let activityToSubmit = await this.buildActivity(newActivity);
+		//build object to save
+		let activityToSubmit = await this.buildActivity(newActivity);
 
     // Remove trailing period(s) from Title
     while (activityToSubmit.Title.charAt(activityToSubmit.Title.length - 1) === '.') {
@@ -115,17 +120,19 @@ class Activities extends Component {
     }
 
 		this.activitiesApi.submitActivity(activityToSubmit).then(r => {
-			newActivity.ID = r.data.ID;
+			console.log('Results from update');
+			console.log(r);
+			newActivity.Id = r.data.Id;
 			newActivity.WeekOf = r.data.WeekOf;
-
-			//newActivity.etag = r.data.__metadata.etag; // etag location for new items
+			//newActivity.__metadata = { etag: r.data.__metadata.etag };
+			//console.log(`New etag: ${newActivity.__metadata.etag}`);
 
 			// rather than filter out the old activity, update if it already existed
 			// this prevents the activity display from re-ordering the existing items
 			let activityList = [...this.state.listData];
-			if (activityToSubmit.ID > 0) {
+			if (activityToSubmit.Id > 0) {
 				activityList = activityList.map(item => {
-					if (item.ID === activityToSubmit.ID) {
+					if (item.Id === activityToSubmit.Id) {
 						item = newActivity;
 					}
 					return item;
@@ -146,7 +153,7 @@ class Activities extends Component {
       .then((res) => this.setState({
         isDeleting: false,
         showEditModal: false,
-        listData: this.state.listData.filter(a => a.ID !== res.data.ID)
+        listData: this.state.listData.filter(a => a.Id !== res.data.Id)
       }), e => {
         console.error(e);
         this.setState({ isDeleting: false, showEditModal: false });
@@ -193,7 +200,7 @@ class Activities extends Component {
     return (
       <Container>
         <EditActivityModal
-          key={this.state.editActivity.ID}
+          key={this.state.editActivity.Id}
           showEditModal={this.state.showEditModal}
           submitEditActivity={this.submitActivity}
           handleDelete={this.deleteActivity}
