@@ -92,6 +92,9 @@ export default class ActivitiesApi implements IActivityApi {
   async updateActivity(activity: IActivity): Promise<{ data: IActivity }> {
 		console.log(`Submitting updated item ${activity.Title}!`);
 		let etag = activity.__metadata?.etag;
+		if (etag) {
+			delete activity.__metadata;
+		}
 		console.log(`Using etag ${etag}`);
     return this.activitiesList.items.getById(activity.Id).update(activity, etag);
   }

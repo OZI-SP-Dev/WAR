@@ -120,26 +120,34 @@ class Activities extends Component {
     }
 
 		this.activitiesApi.submitActivity(activityToSubmit).then(r => {
-			console.log('Results from update');
-			console.log(r);
-			newActivity.Id = r.data.Id;
-			newActivity.WeekOf = r.data.WeekOf;
-			//newActivity.__metadata = { etag: r.data.__metadata.etag };
-			//console.log(`New etag: ${newActivity.__metadata.etag}`);
+			// On updates we get an 'odata.etag' prop, not an odata object with an etag prop
+			if (r.data['odata.etag']) {
+				//updated item, get etag
+				newActivity.__metadata = { etag: ('"' + r.data['odata.etag'].split(',')[1]) };
+				console.log('New etag: ' + newActivity.__metadata.etag);
+			} else {
+				//new item, get Id and etag
+				newActivity.Id = r.data.Id;
+				newActivity.WeekOf = r.data.WeekOf;
+				newActivity.__metadata = { etag: r.data.__metadata.etag };
+			}
 
 			// rather than filter out the old activity, update if it already existed
 			// this prevents the activity display from re-ordering the existing items
 			let activityList = [...this.state.listData];
 			if (activityToSubmit.Id > 0) {
 				activityList = activityList.map(item => {
-					if (item.Id === activityToSubmit.Id) {
-						item = newActivity;
+					if (item.Id === newActivity.Id) {
+						console.log('Replacing old activity');
+						console.log(newActivity);
+						return(newActivity);
 					}
 					return item;
 				})
 			} else {
 				activityList.push(newActivity);
 			}
+			console.log(activityList);
       this.setState({ isLoading: false, showEditModal: false, saveError: false, listData: activityList });
     }, e => {
       console.error(e);
@@ -153,7 +161,7 @@ class Activities extends Component {
       .then((res) => this.setState({
         isDeleting: false,
         showEditModal: false,
-        listData: this.state.listData.filter(a => a.Id !== res.data.Id)
+        listData: this.state.listData.filter(a => a.Id !== activity.Id)
       }), e => {
         console.error(e);
         this.setState({ isDeleting: false, showEditModal: false });
