@@ -8,7 +8,7 @@ export default class RolesApiDev implements IRolesApi {
 			RoleName: 'Admin',
 			imageUrl: TestImages.personaFemale,
 			imageInitials: 'AL',
-			text: 'Annie Lindqvist'			
+			text: 'Annie Lindqvist'
 		},
 		{
 			ItemID: 2,
@@ -16,6 +16,8 @@ export default class RolesApiDev implements IRolesApi {
 			imageUrl: TestImages.personaMale,
 			imageInitials: 'JS',
 			text: 'John Smith',
+			secondaryText: 'OZIC',
+			Department: "OZIC"
 		}
 	];
 

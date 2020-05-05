@@ -3,12 +3,17 @@ import { Row, Col, ListGroup, ListGroupItem, TabContent, TabPane, TabContainer }
 import { LinkContainer } from 'react-router-bootstrap';
 import { RolesSubSection } from "./RolesSubSection";
 import { RolesContext } from "./RolesContext";
+import RoleUtilities, { IUserRole } from '../../utilities/RoleUtilities';
 
-export const Roles: React.FunctionComponent = () => {
+export interface IRolesProps {
+	user: IUserRole
+}
+
+export const Roles: React.FunctionComponent<IRolesProps> = ({ user }) => {
 	//TODO: Only display items if they belong to roles TBD
 	const rolesContext = React.useContext(RolesContext);
 	const { loading } = rolesContext;
-	const roles = ["Admin", "Branch Chief", "Div Chief", "Reviewer"];
+	const roles = RoleUtilities.getEditableRoles(user);
 
 	return (
 		<TabContainer id="role-list" defaultActiveKey={"#/RoleManagement/" + roles[0]}>
@@ -18,7 +23,7 @@ export const Roles: React.FunctionComponent = () => {
 						{roles.map((role) => (
 							<LinkContainer key={role} to={"/RoleManagement/" + role}>
 								<ListGroupItem action>
-									{role}s	
+									{role}s
 								</ListGroupItem>
 							</LinkContainer>
 						))}
