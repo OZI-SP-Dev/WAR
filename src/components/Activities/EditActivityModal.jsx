@@ -57,7 +57,7 @@ class EditActivityModal extends Component {
       e.stopPropagation();
       this.setState({ validated: true });
     } else {
-      this.props.submitEditActivity(e, this.state.activity)
+      this.props.submitEditActivity(this.state.activity)
       this.setState({ validated: false, activity: null })
     }
   }
@@ -80,7 +80,7 @@ class EditActivityModal extends Component {
         <Form.Label>Period of Accomplishment</Form.Label>
         <Form.Control
           type="text"
-          defaultValue={value}
+          value={value}
           onClick={() => !this.isReadOnly() && this.setState({ datePickerOpen: true })}
           required
           readOnly={this.isReadOnly()}

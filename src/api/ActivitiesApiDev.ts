@@ -51,6 +51,8 @@ export default class ActivitiesApiDev implements IActivityApi {
     async submitActivity(activity: IActivity): Promise<{ data: IActivity }> {
         if (activity.ID < 0) {
             activity.ID = Math.max.apply(Math, this.activities.map(o => o.ID)) + 1;
+        } else  {
+            this.activities = this.activities.filter(a => a.ID !== activity.ID);
         }
         this.activities.push(activity);
         await this.sleep(3000);

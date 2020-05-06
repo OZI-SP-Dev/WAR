@@ -1,29 +1,21 @@
 import React, { Component } from 'react';
-import { Card, Col } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
+import { ActivityCard } from './ActivityCard';
 
 class ActivityCardsWeek extends Component {
     render() {
         const actions = this.props.actions;
         return (
             actions.length ?
-            actions.map((action, index) => (
-                <Col xl={6} className="mb-3" key={action.ID}>
-                    <Card className="activity"
-                        onClick={() => this.props.onClick(action)}>
-                        <Card.Body>
-                            <Card.Title>Activity/Purpose: <span ref="Title">{action.Title}</span></Card.Title>
-                            <Card.Text as="div">
-                                <strong>Action Taken/In Work</strong> <span style={{whiteSpace: 'pre-line'}} ref="InterestItems">{action.ActionTaken}</span><br />
-                                <strong>Branch: </strong><span>{action.Branch}</span><br />
-                                <strong>OPRs:</strong> <span >{action.TextOPRs}</span>
-                                {//TODO Change to people picker
-                                }
-                            </Card.Text>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            )) 
-            : <Col>You have no saved items for this period of accomplishment.</Col>);
+                actions.map((activity, index) => (
+                    <Col xl={6} className="mb-3" key={activity.ID}>
+                        <ActivityCard
+                            activity={activity}
+                            onClick={this.props.onClick}
+                        />
+                    </Col>
+                ))
+                : <Col>You have no saved items for this period of accomplishment.</Col>);
     }
 }
 

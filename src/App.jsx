@@ -61,10 +61,12 @@ class App extends Component {
                         </UserContext.Consumer>
                       </Route>
                       <Route path="/Review">
-                        {user => (
-                          user.loading ?
-                            <>Loading...</> :
-                            <Review user={user} />)}
+                        <UserContext.Consumer>
+                          {user => (
+                            user.loading ?
+                              <>Loading...</> :
+                              <Review user={user} />)}
+                        </UserContext.Consumer>
                       </Route>
                       <Route path="*">
                         <NoMatch />

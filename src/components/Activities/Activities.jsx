@@ -2,6 +2,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import { Button, Container, Row, Spinner } from 'react-bootstrap';
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
+import ActivityUtilities from '../../utilities/ActivityUtilities';
 import DateUtilities from '../../utilities/DateUtilities';
 import RoleUtilities from '../../utilities/RoleUtilities';
 import './Activities.css';
@@ -46,53 +47,43 @@ class Activities extends Component {
 
   newItem = (date) => {
     const item = {
-      ID: -1, Title: '', WeekOf: moment(date).day(0), InputWeekOf: moment(date).format("YYYY-MM-DD"),
-      Branch: 'OZIC', ActionTaken: '', TextOPRs: this.props.user.Title, IsBigRock: false, IsHistoryEntry: false
+      ID: -1,
+      Title: '',
+      WeekOf: moment(date).day(0),
+      InputWeekOf: moment(date).format("YYYY-MM-DD"),
+      Branch: 'OZIC',
+      ActionTaken: '',
+      TextOPRs: this.props.user.Title,
+      IsBigRock: false,
+      IsHistoryEntry: false
     }
     this.setState({ showEditModal: true, editActivity: item });
   }
 
-  buildActivity = (activity) => {
-    return {
-      ID: activity.ID,
-      Title: activity.Title,
-      WeekOf: moment(activity.InputWeekOf).day(0).toISOString(),
-      Branch: activity.Branch,
-      ActionTaken: activity.ActionTaken,
-      TextOPRs: activity.TextOPRs, //TODO convert to peopler picker format...
-      IsBigRock: activity.IsBigRock,
-      IsHistoryEntry: activity.IsHistoryEntry
-    }
-  }
-
-  submitActivity = (event, newActivity) => {
+  submitActivity = (newActivity) => {
     this.setState({ isLoading: true });
     //build object to save
-    let activityToSubmit = this.buildActivity(newActivity);
+    let activityToSubmit = ActivityUtilities.buildActivity(newActivity);
 
-    // Remove trailing period(s) from Title
-    while (activityToSubmit.Title.charAt(activityToSubmit.Title.length - 1) === '.') {
-      activityToSubmit.Title = activityToSubmit.Title.slice(0, -1);
-    }
-
-    this.activitiesApi.submitActivity(activityToSubmit).then(r => {
-      // filter out the old activity, if it already existed
-      let activityList = this.state.listData.filter(activity => activity.ID !== r.data.ID);
-      activityList.push(r.data);
-      this.setState({ isLoading: false, showEditModal: false, saveError: false, listData: activityList });
-    }, e => {
-      console.error(e);
-      this.setState({ saveError: true, isLoading: false });
-    });
+    this.activitiesApi.submitActivity(activityToSubmit).then(r =>
+      this.setState({
+        isLoading: false,
+        showEditModal: false,
+        saveError: false,
+        listData: ActivityUtilities.replaceActivity(this.state.listData, r.data)
+      }), e => {
+        console.error(e);
+        this.setState({ saveError: true, isLoading: false });
+      });
   }
 
   deleteActivity = (activity) => {
     this.setState({ isDeleting: true })
-    this.activitiesApi.deleteActivity(this.buildActivity(activity))
+    this.activitiesApi.deleteActivity(ActivityUtilities.buildActivity(activity))
       .then((res) => this.setState({
         isDeleting: false,
         showEditModal: false,
-        listData: this.state.listData.filter(a => a.ID !== res.data.ID)
+        listData: ActivityUtilities.filterActivity(this.state.listData, res.data)
       }), e => {
         console.error(e);
         this.setState({ isDeleting: false, showEditModal: false });
