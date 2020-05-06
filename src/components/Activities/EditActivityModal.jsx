@@ -8,8 +8,7 @@ import ActivityModal from './ActivityModal';
 class EditActivityModal extends Component {
   constructor(props) {
     super(props);
-    let weekStart = new Date(props.activity.WeekOf);
-    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    let weekStart = DateUtilities.getStartOfWeek(new Date(this.props.activity.WeekOf));
     this.state = {
       activity: { ...props.activity },
       validated: false,
@@ -20,7 +19,7 @@ class EditActivityModal extends Component {
   }
 
   handleOpen = () => {
-    let weekStart = DateUtilities.getStartOfWeek(this.props.activity.WeekOf);
+    let weekStart = DateUtilities.getStartOfWeek(new Date(this.props.activity.WeekOf));
     this.setState({
       activity: { ...this.props.activity },
       validated: false,
@@ -78,7 +77,7 @@ class EditActivityModal extends Component {
       <ActivityModal
         modalDisplayName="Activity"
         show={this.props.showEditModal}
-        handleOpen={() => this.handleOpen()}
+        handleShow={() => this.handleOpen()}
         handleClose={this.props.closeEditActivity}
         handleSubmit={e => this.validateActivity(e)}
         handleDelete={() => this.props.handleDelete(this.state.activity)}

@@ -1,5 +1,7 @@
 import { spWebContext } from '../providers/SPWebContext';
+import "@pnp/sp/search";
 import ActivitiesApiDev from './ActivitiesApiDev';
+import { ICamlQuery } from '@pnp/sp/lists';
 
 export interface IActivity {
   ID: number,
@@ -15,7 +17,8 @@ export interface IActivity {
 
 export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any>,
-  fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number): Promise<any>,
+  fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string): Promise<any>,
+  fetchActivitiesByQueryString(query: string): Promise<any>,
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
   fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
   deleteActivity(activity: IActivity): Promise<any>,
@@ -40,8 +43,44 @@ export default class ActivitiesApi implements IActivityApi {
     filterString += endDate ? ` and WeekOf le '${endDate.toISOString()}'` : "";
     filterString += userId && userId !== null ? ` and AuthorId eq ${userId}` : "";
     filterString += additionalFilter ? ` and ${additionalFilter}` : "";
+    
+    return this.activitiesList.items.filter(filterString).orderBy("WeekOf", false).get();
+  }
 
-    return this.activitiesList.items.filter(filterString).get();
+  fetchActivitiesByQueryString(query: string): Promise<any> {
+    const caml: ICamlQuery = {
+      ViewXml: `<View>
+                  <ViewFields>
+                    <FieldRef Name='ID' />
+                    <FieldRef Name='Title' />
+                    <FieldRef Name='WeekOf' />
+                    <FieldRef Name='Branch' />
+                    <FieldRef Name='ActionTaken' />
+                    <FieldRef Name='TextOPRs' />
+                    <FieldRef Name='IsBigRock' />
+                    <FieldRef Name='IsHistoryEntry' />
+                    <FieldRef Name='IsDeleted' />
+                  </ViewFields>
+                  <Query>
+                    <Where>
+                      <And>
+                        <Neq>
+                          <FieldRef Name='IsDeleted' />
+                          <Value Type='Integer'>1</Value>
+                        </Neq>
+                        <Contains>
+                          <FieldRef Name='ActionTaken' />
+                          <Value Type='Text'>${query}</Value>
+                        </Contains>
+                      </And>
+                    </Where>
+                    <OrderBy>
+                      <FieldRef Name='WeekOf' Ascending='FALSE'/>
+                    </OrderBy>
+                  </Query>
+                </View>`,
+    };
+    return this.activitiesList.getItemsByCAMLQuery(caml)
   }
 
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
