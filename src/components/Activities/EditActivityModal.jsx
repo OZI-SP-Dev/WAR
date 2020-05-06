@@ -19,28 +19,14 @@ class EditActivityModal extends Component {
     }
   }
 
-  static getDerivedStateFromProps(newProps, oldState) {
-    if (oldState.activity === null) {
-      let weekStart = new Date(newProps.activity.WeekOf);
-      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-      return {
-        activity: { ...newProps.activity },
-        selectedDate: weekStart,
-        highlightDates: DateUtilities.getWeek(weekStart)
-      };
-    }
-    return null;
-  }
-
-  closeActivity(e) {
-    //reset form fields
+  handleOpen = () => {
+    let weekStart = DateUtilities.getStartOfWeek(this.props.activity.WeekOf);
     this.setState({
-      activity: null,
-      validated: false
-    });
-
-    //callback parent
-    this.props.closeEditActivity(e);
+      activity: { ...this.props.activity },
+      validated: false,
+      selectedDate: weekStart,
+      highlightDates: DateUtilities.getWeek(weekStart)
+    })
   }
 
   // Syncs fields between react state and form
@@ -58,7 +44,7 @@ class EditActivityModal extends Component {
       this.setState({ validated: true });
     } else {
       this.props.submitEditActivity(this.state.activity)
-      this.setState({ validated: false, activity: null })
+      this.setState({ validated: false })
     }
   }
 
@@ -92,7 +78,8 @@ class EditActivityModal extends Component {
       <ActivityModal
         modalDisplayName="Activity"
         show={this.props.showEditModal}
-        handleClose={e => this.closeActivity(e)}
+        handleOpen={() => this.handleOpen()}
+        handleClose={this.props.closeEditActivity}
         handleSubmit={e => this.validateActivity(e)}
         handleDelete={() => this.props.handleDelete(this.state.activity)}
         deleting={this.props.deleting}

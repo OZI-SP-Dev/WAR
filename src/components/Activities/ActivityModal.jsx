@@ -20,7 +20,7 @@ class ActivityModal extends Component {
 
   render() {
     return (
-      <Modal show={this.props.show} onHide={() => this.onHide()}>
+      <Modal show={this.props.show} onShow={this.props.handleShow} onHide={() => this.onHide()}>
         <Modal.Header closeButton>
           <Modal.Title>{this.props.modalDisplayName || "Pop-up"}</Modal.Title>
         </Modal.Header>
