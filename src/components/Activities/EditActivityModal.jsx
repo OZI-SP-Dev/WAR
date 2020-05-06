@@ -29,9 +29,12 @@ class EditActivityModal extends Component {
         selectedDate: weekStart,
         highlightDates: DateUtilities.getWeek(weekStart)
       };
-    }
+		} else if (oldState.activity.__metadata?.etag !== newProps.activity.__metadata?.etag) {
+			//A new etag means this item has been succesfully updated - reload
+			return { activity: { ...newProps.activity } };
+		}
     return null;
-  }
+	}
 
   closeActivity(e) {
     //reset form fields

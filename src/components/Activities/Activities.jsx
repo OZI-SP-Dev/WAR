@@ -55,7 +55,6 @@ class Activities extends Component {
 
   fetchItems = (numWeeks, weekStart) => {
 		this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id).then(r => {
-			console.log(r);
 			r.forEach(activity => {
 				activity.OPRs = this.convertOPRsToPersonas(activity.OPRs);
 			})
@@ -88,11 +87,14 @@ class Activities extends Component {
 			OPRsId: { results: [] }
 		};
 
+		//include etag if it exists - new items will not have an etag
 		if (activity.__metadata && activity.__metadata.etag) {
 			builtActivity.__metadata = { etag: activity.__metadata.etag };
 		}
 
 		//Fetch Id's for new OPRs
+		// items fetched from the list will already have an SPUserId
+		// newly added OPRs will only have an email that must be converted
 		let userIdPromises = activity.OPRs.map(async (OPR) => {
 			if (OPR.SPUserId) {
 				return OPR.SPUserId;
@@ -102,15 +104,15 @@ class Activities extends Component {
 			}
 		});
 
-		//wait for all UserIds to be fetched
+		//wait for all promises to fetch UserIds to complete then add array of IDs to activity
 		await Promise.all(userIdPromises).then(OPRsId => {
 			builtActivity.OPRsId.results = OPRsId;
 		});
 		return builtActivity;
   }
 
-  submitActivity = async (event, newActivity) => {
-    this.setState({ isLoading: true });
+	submitActivity = async (event, newActivity) => {
+		this.setState({ isLoading: true });
 		//build object to save
 		let activityToSubmit = await this.buildActivity(newActivity);
 
@@ -120,13 +122,15 @@ class Activities extends Component {
     }
 
 		this.activitiesApi.submitActivity(activityToSubmit).then(r => {
-			// On updates we get an 'odata.etag' prop, not an odata object with an etag prop
+			// Newly created list items return the complete item
+			// Updated list items only return an 'odata.etag' prop
+			//  !! not an odata object with an etag prop !!
+
 			if (r.data['odata.etag']) {
-				//updated item, get etag
+				// Updated item - set etag on the activity
 				newActivity.__metadata = { etag: ('"' + r.data['odata.etag'].split(',')[1]) };
-				console.log('New etag: ' + newActivity.__metadata.etag);
 			} else {
-				//new item, get Id and etag
+				// New item - set Id, WeekOf, and etag
 				newActivity.Id = r.data.Id;
 				newActivity.WeekOf = r.data.WeekOf;
 				newActivity.__metadata = { etag: r.data.__metadata.etag };
@@ -138,8 +142,6 @@ class Activities extends Component {
 			if (activityToSubmit.Id > 0) {
 				activityList = activityList.map(item => {
 					if (item.Id === newActivity.Id) {
-						console.log('Replacing old activity');
-						console.log(newActivity);
 						return(newActivity);
 					}
 					return item;
@@ -147,7 +149,6 @@ class Activities extends Component {
 			} else {
 				activityList.push(newActivity);
 			}
-			console.log(activityList);
       this.setState({ isLoading: false, showEditModal: false, saveError: false, listData: activityList });
     }, e => {
       console.error(e);
@@ -191,9 +192,9 @@ class Activities extends Component {
   }
 
   cardOnClick(action) {
-    let editActivity = action;
-    editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
-    this.setState({ showEditModal: true, editActivity });
+		let editActivity = action;
+		editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
+		this.setState({ showEditModal: true, editActivity });
   }
 
   render() {
