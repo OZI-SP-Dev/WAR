@@ -26,11 +26,11 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
     const activitiesApi = ActivitiesApiConfig.activitiesApi;
 
-    let searchParams = useQuery();
+    let query = useQuery().get("query");
 
     const fetchActivities = async () => {
         try {
-            let query = searchParams.get("query");
+            setLoading(true);
             let newActivities = query !== null
                 ? await activitiesApi.fetchActivitiesByQueryString(query)
                 : await activitiesApi.fetchActivitiesByDates(undefined, undefined, parseInt(user.Id));
@@ -74,7 +74,8 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
     useEffect(() => {
         fetchActivities();
-    }, []);
+        // eslint-disable-next-line
+    }, [query]);
 
     const closeModal = () => {
         setModalActivityId(-1);
@@ -90,7 +91,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
             <Row className="justify-content-center"><h1>Review Activities</h1></Row>
             {activities.map(activity =>
                 <>
-                    <ActivityCard key={activity.ID} activity={activity} onClick={cardOnClick} />
+                    <ActivityCard className={"mb-3"} key={activity.ID} activity={activity} onClick={cardOnClick} />
                     <EditActivityModal
                         showEditModal={modalActivityId === activity.ID}
                         submitEditActivity={submitActivity}

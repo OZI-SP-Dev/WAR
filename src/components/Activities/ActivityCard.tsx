@@ -5,13 +5,14 @@ import moment from "moment";
 
 export interface IActivityCardProps {
     activity: IActivity,
+    className: string,
     onClick: Function
 }
 
-export const ActivityCard: React.FunctionComponent<IActivityCardProps> = ({ activity, onClick }) => {
+export const ActivityCard: React.FunctionComponent<IActivityCardProps> = ({ activity, className, onClick }) => {
 
     return (
-        <Card className="activity"
+        <Card className={`activity ${className}`}
             onClick={() => onClick(activity)}>
             <Card.Body>
                 <Card.Title>Activity/Purpose: <span>{activity.Title}</span></Card.Title>

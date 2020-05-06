@@ -1,12 +1,21 @@
-import React, { useContext } from 'react';
-import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import React, { useContext, useState } from 'react';
+import { Button, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { useHistory } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
-import './AppHeader.css';
 import RoleUtilities from '../../utilities/RoleUtilities';
+import './AppHeader.css';
 
 function AppHeader() {
+  const [query, setQuery] = useState(null);
+
   const user = useContext(UserContext);
+  const history = useHistory();
+
+  const updateQuery = (value) => {
+    setQuery(value);
+  }
+
   return (
     <Navbar fixed="top" expand="lg" variant="dark" bg="dark" className="p-0 shadow">
       <Navbar.Brand className="col-sm-3 col-md-2 mr-0">Weekly Activity Report</Navbar.Brand>
@@ -40,6 +49,15 @@ function AppHeader() {
             </LinkContainer>}
         </Nav>
         <Navbar.Collapse className="justify-content-end">
+          <Form inline>
+            <Form.Control type="text" placeholder="Search" className="mr-sm-1" value={query}
+              onChange={(e) => updateQuery(e.target.value)}
+            />
+            <Button variant="outline-primary" className="mr-sm-3"
+              onClick={() => {
+                if (query !== null) history.push(`/Review?query=${query}`)
+              }} >Search</Button>
+          </Form>
           <Navbar.Text className="mr-2">
             Welcome {user.Title}
           </Navbar.Text>
