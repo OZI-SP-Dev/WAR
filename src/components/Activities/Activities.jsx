@@ -9,6 +9,8 @@ import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
 import ActivitySpinner from './ActivitySpinner';
 import EditActivityModal from './EditActivityModal';
+import { spWebContext } from '../../providers/SPWebContext';
+import "@pnp/sp/site-users/web";
 
 //TODO consider moving away from datetime and going to ISO weeks
 class Activities extends Component {
@@ -27,6 +29,11 @@ class Activities extends Component {
     };
 
     this.activitiesApi = ActivitiesApiConfig.activitiesApi;
+    this.Me = {
+      text: this.props.user.Title,
+      imageInitials: this.props.user.Title.substr(this.props.user.Title.indexOf(' ') + 1, 1) + this.props.user.Title.substr(0, 1),
+      SPUserId: this.props.user.Id
+    }
   }
 
   componentDidMount() {
@@ -34,8 +41,25 @@ class Activities extends Component {
     this.fetchItems(4, DateUtilities.getStartOfWeek(new Date()));
   }
 
+  convertOPRsToPersonas = (OPRs) => {
+    let newOPRs = [];
+    if (OPRs.results) {
+      newOPRs = OPRs.results.map(OPR => {
+        return {
+          text: OPR.Title,
+          imageInitials: OPR.Title.substr(OPR.Title.indexOf(' ') + 1, 1) + OPR.Title.substr(0, 1),
+          SPUserId: OPR.Id
+        }
+      })
+    }
+    return newOPRs;
+  }
+
   fetchItems = (numWeeks, weekStart) => {
     this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id).then(r => {
+      r.forEach(activity => {
+        activity.OPRs = this.convertOPRsToPersonas(activity.OPRs);
+      })
       const listData = this.state.listData.concat(r);
       this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
       this.addNewWeeks(numWeeks, weekStart);
@@ -47,39 +71,47 @@ class Activities extends Component {
 
   newItem = (date) => {
     const item = {
-      ID: -1,
-      Title: '',
-      WeekOf: moment(date).day(0),
+      Id: -1, 
+      Title: '', 
+      WeekOf: moment(date).day(0), 
       InputWeekOf: moment(date).format("YYYY-MM-DD"),
-      Branch: 'OZIC',
-      ActionTaken: '',
-      TextOPRs: this.props.user.Title,
-      IsBigRock: false,
-      IsHistoryEntry: false
+      Branch: 'OZIC', 
+      ActionTaken: '', 
+      IsBigRock: false, 
+      IsHistoryEntry: false, 
+      OPRs: [this.Me]
     }
     this.setState({ showEditModal: true, editActivity: item });
   }
 
-  submitActivity = (newActivity) => {
-    this.setState({ isLoading: true });
-    //build object to save
-    let activityToSubmit = ActivityUtilities.buildActivity(newActivity);
 
-    this.activitiesApi.submitActivity(activityToSubmit).then(r =>
+	submitActivity = async (newActivity) => {
+		this.setState({ isLoading: true });
+		//build object to save
+		let activityToSubmit = await ActivityUtilities.buildActivity(newActivity);
+
+		this.activitiesApi.submitActivity(activityToSubmit).then(r => {
+			// Newly created list items return the complete item
+			// Updated list items only return an 'odata.etag' prop
+			//  !! not an odata object with an etag prop !!
+
+			newActivity = ActivityUtilities.updateActivityEtagFromResponse(r, newActivity);
+
       this.setState({
         isLoading: false,
         showEditModal: false,
         saveError: false,
-        listData: ActivityUtilities.replaceActivity(this.state.listData, r.data)
-      }), e => {
-        console.error(e);
-        this.setState({ saveError: true, isLoading: false });
+        listData: ActivityUtilities.replaceActivity(this.state.listData, activityToSubmit, newActivity) 
       });
+    }, e => {
+      console.error(e);
+      this.setState({ saveError: true, isLoading: false });
+    });
   }
 
-  deleteActivity = (activity) => {
+  deleteActivity = async (activity) => {
     this.setState({ isDeleting: true })
-    this.activitiesApi.deleteActivity(ActivityUtilities.buildActivity(activity))
+    this.activitiesApi.deleteActivity(await ActivityUtilities.buildActivity(activity))
       .then((res) => this.setState({
         isDeleting: false,
         showEditModal: false,
@@ -124,7 +156,7 @@ class Activities extends Component {
     return (
       <Container>
         <EditActivityModal
-          key={this.state.editActivity.ID}
+          key={this.state.editActivity.Id}
           showEditModal={this.state.showEditModal}
           submitEditActivity={this.submitActivity}
           handleDelete={this.deleteActivity}

@@ -45,8 +45,12 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     const submitActivity = async (activity: any) => {
         try {
             setLoading(true);
-            let submittedActivity = (await activitiesApi.submitActivity(ActivityUtilities.buildActivity(activity))).data;
-            setActivities(ActivityUtilities.replaceActivity(activities, submittedActivity));
+            let response = (
+                await activitiesApi.submitActivity(await ActivityUtilities.buildActivity(activity)));
+
+            activity = ActivityUtilities.updateActivityEtagFromResponse(response, activity);
+
+            setActivities(ActivityUtilities.replaceActivity(activities, response.data, activity));
             setLoading(false);
             setModalActivityId(-1);
         } catch (e) {
@@ -60,7 +64,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     const deleteActivity = async (activity: any) => {
         try {
             setDeleting(true);
-            let deletedActivity = (await activitiesApi.deleteActivity(ActivityUtilities.buildActivity(activity))).data;
+            let deletedActivity = (await activitiesApi.deleteActivity(await ActivityUtilities.buildActivity(activity))).data;
             setActivities(ActivityUtilities.filterActivity(activities, deletedActivity));
             setDeleting(false);
             setModalActivityId(-1);

@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import DateUtilities from '../../utilities/DateUtilities';
 import ActivityModal from './ActivityModal';
+import { ActivityPeoplePicker } from './ActivityPeoplePicker';
 
 class EditActivityModal extends Component {
   constructor(props) {
@@ -56,7 +57,7 @@ class EditActivityModal extends Component {
   }
 
   isReadOnly() {
-    return this.props.activity.ID > -1 && new Date(this.props.activity.WeekOf) < this.props.minCreateDate;
+    return this.props.activity.Id > -1 && new Date(this.props.activity.WeekOf) < this.props.minCreateDate;
   }
 
   render() {
@@ -84,7 +85,7 @@ class EditActivityModal extends Component {
         deleting={this.props.deleting}
         saving={this.props.saving}
         readOnly={this.isReadOnly()}
-        showDeleteButton={this.props.activity.ID > -1}
+        showDeleteButton={this.props.activity.Id > -1}
         error={this.props.error}
       >
         <Form disabled={this.props.saving} id="EditActivityModal" noValidate validated={this.state.validated}
@@ -170,22 +171,21 @@ class EditActivityModal extends Component {
                 disabled={this.isReadOnly()}
               />
             </Form.Group>}
-          <Form.Group controlId="editActivityOPRs">
-            {//TODO Convert to people picker
-            }
-            <Form.Label>OPRs</Form.Label>
-            <Form.Control
-              type="text"
-              defaultValue={this.props.activity.TextOPRs}
-              value={this.state.TextOPRs}
-              onChange={(e) => this.updateActivity(e.target.value, 'TextOPRs')}
-              readOnly={this.isReadOnly()}
-              required
-            />
-            <Form.Control.Feedback type="invalid">
-              You must have at least one OPR.
+					<Form.Group controlId="editActivityOPRs">
+						<Form.Label>OPRs</Form.Label>
+						<Form.Control
+							as={ActivityPeoplePicker}
+							defaultValue={this.props.activity.OPRs}
+							updateOPRs={(e) => this.updateActivity(e, 'OPRs')}
+							readOnly={this.isReadOnly()}
+							required
+						>
+						</Form.Control>
+						<Form.Control.Feedback type="invalid">
+							You must have at least one OPR.
             </Form.Control.Feedback>
-          </Form.Group>
+					</Form.Group>
+
         </Form>
       </ActivityModal>
     );

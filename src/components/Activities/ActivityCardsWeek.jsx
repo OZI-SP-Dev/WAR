@@ -7,7 +7,7 @@ class ActivityCardsWeek extends Component {
         const actions = this.props.actions;
         return (
             actions.length ?
-                actions.map((activity, index) => (
+                actions.map((activity) => (
                     <Col xl={6} className="mb-3" key={activity.ID}>
                         <ActivityCard
                             activity={activity}
