@@ -5,20 +5,6 @@ import { spWebContext } from "../providers/SPWebContext";
 
 export default class ActivityUtilities {
 
-    static getEmptyActivity(date: Date, user: IUserRole): any {
-        return {
-            ID: -1,
-            Title: '',
-            WeekOf: moment(date).day(0),
-            InputWeekOf: moment(date).format("YYYY-MM-DD"),
-            Branch: 'OZIC',
-            ActionTaken: '',
-            TextOPRs: user.Title,
-            IsBigRock: false,
-            IsHistoryEntry: false
-        }
-    }
-
     static async buildActivity(activity: any): Promise<IActivity> {
         let builtActivity: any = {
             Id: activity.Id,
@@ -74,7 +60,7 @@ export default class ActivityUtilities {
     }
 
     static filterActivity(activityList: any[], activity: any): any[] {
-        return activityList.filter(act => act.ID !== activity.ID);
+        return activityList.filter(act => act.Id !== activity.Id);
     }
 
     static replaceActivity(activityList: any[], oldActivity: any, newActivity: any): any[] {

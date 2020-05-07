@@ -8,7 +8,7 @@ class ActivityCardsWeek extends Component {
         return (
             actions.length ?
                 actions.map((activity) => (
-                    <Col xl={6} className="mb-3" key={activity.ID}>
+                    <Col xl={6} className="mb-3" key={activity.Id}>
                         <ActivityCard
                             activity={activity}
                             onClick={this.props.onClick}

@@ -3,7 +3,7 @@
 export default class DateUtilities {
 
   static getStartOfWeek(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay(), 0, 0, 0, 0);
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay(), 6, 0, 0, 0);
   }
 
   static getWeek(date: Date) {

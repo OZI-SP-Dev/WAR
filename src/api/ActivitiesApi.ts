@@ -70,7 +70,7 @@ export default class ActivitiesApi implements IActivityApi {
     const caml: ICamlQuery = {
       ViewXml: `<View>
                   <ViewFields>
-                    <FieldRef Name='ID' />
+                    <FieldRef Name='Id' />
                     <FieldRef Name='Title' />
                     <FieldRef Name='WeekOf' />
                     <FieldRef Name='Branch' />
