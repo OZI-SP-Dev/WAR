@@ -29,9 +29,12 @@ class EditActivityModal extends Component {
         selectedDate: weekStart,
         highlightDates: DateUtilities.getWeek(weekStart)
       };
-    }
+		} else if (oldState.activity.__metadata?.etag !== newProps.activity.__metadata?.etag) {
+			//A new etag means this item has been succesfully updated - reload
+			return { activity: { ...newProps.activity } };
+		}
     return null;
-  }
+	}
 
   closeActivity(e) {
     //reset form fields
@@ -72,7 +75,7 @@ class EditActivityModal extends Component {
   }
 
   isReadOnly() {
-    return this.props.activity.ID > -1 && new Date(this.props.activity.WeekOf) < this.props.minCreateDate;
+    return this.props.activity.Id > -1 && new Date(this.props.activity.WeekOf) < this.props.minCreateDate;
   }
 
   render() {
@@ -99,7 +102,7 @@ class EditActivityModal extends Component {
         deleting={this.props.deleting}
         saving={this.props.saving}
         readOnly={this.isReadOnly()}
-        showDeleteButton={this.props.activity.ID > -1}
+        showDeleteButton={this.props.activity.Id > -1}
         error={this.props.error}
       >
         <Form disabled={this.props.saving} id="EditActivityModal" noValidate validated={this.state.validated}

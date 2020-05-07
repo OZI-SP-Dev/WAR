@@ -69,7 +69,7 @@ class Activities extends Component {
 
   newItem = (date) => {
     const item = {
-      ID: -1, Title: '', WeekOf: moment(date).day(0), InputWeekOf: moment(date).format("YYYY-MM-DD"),
+      Id: -1, Title: '', WeekOf: moment(date).day(0), InputWeekOf: moment(date).format("YYYY-MM-DD"),
 			Branch: 'OZIC', ActionTaken: '', IsBigRock: false, IsHistoryEntry: false, OPRs: [this.Me]
     }
     this.setState({ showEditModal: true, editActivity: item });
@@ -77,7 +77,7 @@ class Activities extends Component {
 
 	buildActivity = async (activity) => {
 		let builtActivity = {
-			ID: activity.ID,
+			Id: activity.Id,
 			Title: activity.Title,
 			WeekOf: moment(activity.InputWeekOf).day(0).toISOString(),
 			Branch: activity.Branch,
@@ -87,7 +87,14 @@ class Activities extends Component {
 			OPRsId: { results: [] }
 		};
 
+		//include etag if it exists - new items will not have an etag
+		if (activity.__metadata && activity.__metadata.etag) {
+			builtActivity.__metadata = { etag: activity.__metadata.etag };
+		}
+
 		//Fetch Id's for new OPRs
+		// items fetched from the list will already have an SPUserId
+		// newly added OPRs will only have an email that must be converted
 		let userIdPromises = activity.OPRs.map(async (OPR) => {
 			if (OPR.SPUserId) {
 				return OPR.SPUserId;
@@ -97,17 +104,17 @@ class Activities extends Component {
 			}
 		});
 
-		//wait for all UserIds to be fetched
+		//wait for all promises to fetch UserIds to complete then add array of IDs to activity
 		await Promise.all(userIdPromises).then(OPRsId => {
 			builtActivity.OPRsId.results = OPRsId;
 		});
 		return builtActivity;
   }
 
-  submitActivity = async (event, newActivity) => {
-    this.setState({ isLoading: true });
-    //build object to save
-    let activityToSubmit = await this.buildActivity(newActivity);
+	submitActivity = async (event, newActivity) => {
+		this.setState({ isLoading: true });
+		//build object to save
+		let activityToSubmit = await this.buildActivity(newActivity);
 
     // Remove trailing period(s) from Title
     while (activityToSubmit.Title.charAt(activityToSubmit.Title.length - 1) === '.') {
@@ -115,18 +122,27 @@ class Activities extends Component {
     }
 
 		this.activitiesApi.submitActivity(activityToSubmit).then(r => {
-			newActivity.ID = r.data.ID;
-			newActivity.WeekOf = r.data.WeekOf;
+			// Newly created list items return the complete item
+			// Updated list items only return an 'odata.etag' prop
+			//  !! not an odata object with an etag prop !!
 
-			//newActivity.etag = r.data.__metadata.etag; // etag location for new items
+			if (r.data['odata.etag']) {
+				// Updated item - set etag on the activity
+				newActivity.__metadata = { etag: ('"' + r.data['odata.etag'].split(',')[1]) };
+			} else {
+				// New item - set Id, WeekOf, and etag
+				newActivity.Id = r.data.Id;
+				newActivity.WeekOf = r.data.WeekOf;
+				newActivity.__metadata = { etag: r.data.__metadata.etag };
+			}
 
 			// rather than filter out the old activity, update if it already existed
 			// this prevents the activity display from re-ordering the existing items
 			let activityList = [...this.state.listData];
-			if (activityToSubmit.ID > 0) {
+			if (activityToSubmit.Id > 0) {
 				activityList = activityList.map(item => {
-					if (item.ID === activityToSubmit.ID) {
-						item = newActivity;
+					if (item.Id === newActivity.Id) {
+						return(newActivity);
 					}
 					return item;
 				})
@@ -146,7 +162,7 @@ class Activities extends Component {
       .then((res) => this.setState({
         isDeleting: false,
         showEditModal: false,
-        listData: this.state.listData.filter(a => a.ID !== res.data.ID)
+        listData: this.state.listData.filter(a => a.Id !== activity.Id)
       }), e => {
         console.error(e);
         this.setState({ isDeleting: false, showEditModal: false });
@@ -176,9 +192,9 @@ class Activities extends Component {
   }
 
   cardOnClick(action) {
-    let editActivity = action;
-    editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
-    this.setState({ showEditModal: true, editActivity });
+		let editActivity = action;
+		editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
+		this.setState({ showEditModal: true, editActivity });
   }
 
   render() {
@@ -193,7 +209,7 @@ class Activities extends Component {
     return (
       <Container>
         <EditActivityModal
-          key={this.state.editActivity.ID}
+          key={this.state.editActivity.Id}
           showEditModal={this.state.showEditModal}
           submitEditActivity={this.submitActivity}
           handleDelete={this.deleteActivity}

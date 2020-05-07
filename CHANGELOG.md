@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [0.1.2] - 2020-05-06
+### Changed
+- Activities now utilize etags; Updating an activity that has since been updated by someone else will now display an error
+
 ## [0.1.1] - 2020-05-05
 ### Changed
 - Activities now use 'OPRs' instead of 'TextOPRs' field
