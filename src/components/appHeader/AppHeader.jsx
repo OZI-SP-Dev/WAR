@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
 import RoleUtilities from '../../utilities/RoleUtilities';
 import './AppHeader.css';
+import RoleUtilities from '../../utilities/RoleUtilities';
 
 function AppHeader() {
   const [query, setQuery] = useState(null);
