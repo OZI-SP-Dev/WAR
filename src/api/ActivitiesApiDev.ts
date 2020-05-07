@@ -14,7 +14,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 			IsBigRock: false, 
 			IsHistoryEntry: true,
 			OPRs: { results: [{ Id: '1', Title: 'Robert Porterfield' }, { Id: '2', Title: 'Jeremy Clark' }] },
-			__metadata: {etag: "etag"}
+			__metadata: {etag: '"1"'}
 		},
 		{
 			Id: 2, 
@@ -25,7 +25,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 			IsBigRock: false, 
 			IsHistoryEntry: false,
 			OPRs: { results: [{ Id: '1', Title: 'Robert Porterfield' }] },
-			__metadata: { etag: "etag" }
+			__metadata: { etag: '"1"' }
 		},
 		{
 			Id: 3, 
@@ -36,7 +36,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 			IsBigRock: true, 
 			IsHistoryEntry: true,
 			OPRs: { results: [{ Id: '2', Title: 'Jeremy Clark' }] },
-			__metadata: { etag: "etag" }
+			__metadata: { etag: '"1"' }
 		}
 	];
 

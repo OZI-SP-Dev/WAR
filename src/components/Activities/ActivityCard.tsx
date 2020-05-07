@@ -4,7 +4,7 @@ import { IActivity } from "../../api/ActivitiesApi";
 import moment from "moment";
 
 export interface IActivityCardProps {
-    activity: any,
+    activity: IActivity,
     className: string,
     onClick: Function
 }
@@ -19,9 +19,9 @@ export const ActivityCard: React.FunctionComponent<IActivityCardProps> = ({ acti
                 <Card.Text as="div">
                     <strong>Week of:</strong> {moment(activity.WeekOf).format("DD/MM/YYYY")}<br />
                     <strong>Action Taken/In Work</strong> <span style={{ whiteSpace: 'pre-line' }}>{activity.ActionTaken}</span><br />
-                    <strong>Branch: </strong><span>{activity.Branch}</span><br />
-                    <strong>OPRs:</strong> {activity.OPRs && activity.OPRs.map((OPR: any) =>
-                        (<span key={OPR.SPUserId}> {OPR.text}; </span>))}
+										<strong>Branch: </strong><span>{activity.Branch}</span><br />
+										<strong>OPRs:</strong> {activity.OPRs && activity.OPRs.results && activity.OPRs.results.map((OPR: any) =>
+											(<span key={OPR.Id}> {OPR.Title}; </span>))}
                 </Card.Text>
             </Card.Body>
         </Card>

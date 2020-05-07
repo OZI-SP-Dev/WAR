@@ -17,7 +17,21 @@ class EditActivityModal extends Component {
       highlightDates: DateUtilities.getWeek(weekStart),
       datePickerOpen: false
     }
-  }
+	}
+	
+	convertOPRsToPersonas = (OPRs) => {
+		let newOPRs = [];
+		if (OPRs && OPRs.results) {
+			newOPRs = OPRs.results.map(OPR => {
+				return {
+					text: OPR.Title,
+					imageInitials: OPR.Title.substr(OPR.Title.indexOf(' ') + 1, 1) + OPR.Title.substr(0, 1),
+					SPUserId: OPR.Id
+				}
+			})
+		}
+		return newOPRs;
+	}
 
   handleOpen = () => {
     let weekStart = DateUtilities.getStartOfWeek(new Date(this.props.activity.WeekOf));
@@ -34,7 +48,15 @@ class EditActivityModal extends Component {
     const activity = this.state.activity;
     activity[field] = value;
     this.setState({ activity });
-  }
+	}
+	
+	updateOPRs(value) {
+		const activity = this.state.activity;
+		activity.OPRs.results = value.map((newOPR) => {
+			return {Id: newOPR.SPUserId, Title: newOPR.text}
+		});
+		this.setState({ activity });
+	}
 
   validateActivity(e) {
     const form = document.getElementById("EditActivityModal");
@@ -175,8 +197,8 @@ class EditActivityModal extends Component {
 						<Form.Label>OPRs</Form.Label>
 						<Form.Control
 							as={ActivityPeoplePicker}
-							defaultValue={this.props.activity.OPRs}
-							updateOPRs={(e) => this.updateActivity(e, 'OPRs')}
+							defaultValue={this.convertOPRsToPersonas(this.props.activity.OPRs)}
+							updateOPRs={(newOPRs) => this.updateOPRs(newOPRs)}
 							readOnly={this.isReadOnly()}
 							required
 						>

@@ -38,18 +38,11 @@ export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker>
 	React.useEffect(() => {
 		let personas: SPPersona[] = [];
 		if (defaultValue) {
-			defaultValue.forEach(person => {
-				const persona: SPPersona = { 
-					imageInitials: person.imageInitials,
-					text: person.text,
-					SPUserId: person.SPUserId
-				 };
-				personas.push(persona);
-			});
+			personas = [...defaultValue];
 		}
 		setSelectedItems(personas);
 		// eslint-disable-next-line
-	}, defaultValue)
+	}, [])
 
 	const onFilterChanged = async (
 		filterText: string,

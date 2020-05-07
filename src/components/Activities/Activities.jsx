@@ -9,8 +9,8 @@ import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
 import ActivitySpinner from './ActivitySpinner';
 import EditActivityModal from './EditActivityModal';
-import { spWebContext } from '../../providers/SPWebContext';
-import "@pnp/sp/site-users/web";
+// import { spWebContext } from '../../providers/SPWebContext';
+// import "@pnp/sp/site-users/web";
 
 //TODO consider moving away from datetime and going to ISO weeks
 class Activities extends Component {
@@ -41,25 +41,8 @@ class Activities extends Component {
     this.fetchItems(4, DateUtilities.getStartOfWeek(new Date()));
   }
 
-  convertOPRsToPersonas = (OPRs) => {
-    let newOPRs = [];
-    if (OPRs.results) {
-      newOPRs = OPRs.results.map(OPR => {
-        return {
-          text: OPR.Title,
-          imageInitials: OPR.Title.substr(OPR.Title.indexOf(' ') + 1, 1) + OPR.Title.substr(0, 1),
-          SPUserId: OPR.Id
-        }
-      })
-    }
-    return newOPRs;
-  }
-
   fetchItems = (numWeeks, weekStart) => {
     this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id).then(r => {
-      r.forEach(activity => {
-        activity.OPRs = this.convertOPRsToPersonas(activity.OPRs);
-      })
       const listData = this.state.listData.concat(r);
       this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
       this.addNewWeeks(numWeeks, weekStart);
