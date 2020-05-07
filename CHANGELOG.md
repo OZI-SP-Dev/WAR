@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [0.1.1] - 2020-05-05
+### Changed
+- Activities now use 'OPRs' instead of 'TextOPRs' field
+
+### Removed
+- Activities list 'TextOPRs' field
+
 ## [0.1.0] - 2020-04-27
 ### Added
 - This CHANGELOG file.

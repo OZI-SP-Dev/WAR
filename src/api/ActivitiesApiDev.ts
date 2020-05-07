@@ -1,60 +1,71 @@
-import { IActivity, IActivityApi } from "./ActivitiesApi";
+import { IActivity, IActivityApi, UserInfo } from "./ActivitiesApi";
+import DateUtilities from "../utilities/DateUtilities";
 
 
 export default class ActivitiesApiDev implements IActivityApi {
 
-    activities: IActivity[] = [
-        {
-            ID: 1, Title: 'SP BAC', WeekOf: '2020-04-19T06:00:00Z', Branch: 'OZI',
-            ActionTaken: 'Lorem\n ipsum\n dolor sit amet, consectetur adipiscing elit.\n Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.', TextOPRs: 'Robert Porterfield; Jeremy Clark', IsBigRock: false, IsHistoryEntry: true
-        },
-        {
-            ID: 2, Title: 'SP Support', WeekOf: '2020-03-29T06:00:00Z', Branch: 'OZI',
-            ActionTaken: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.', TextOPRs: 'Robert Porterfield', IsBigRock: false, IsHistoryEntry: false
-        },
-        {
-            ID: 3, Title: 'SP Support', WeekOf: '2020-03-29T06:00:00Z', Branch: 'OZIC',
-            ActionTaken: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.', TextOPRs: 'Robert Porterfield', IsBigRock: true, IsHistoryEntry: true
-        }
-    ];
+	activities: IActivity[] = [
+		{
+			ID: 1, Title: 'SP BAC', WeekOf: DateUtilities.getStartOfWeek(new Date()).toISOString(), Branch: 'OZI',
+			ActionTaken: 'Lorem\n ipsum\n dolor sit amet, consectetur adipiscing elit.\n Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.', IsBigRock: false, IsHistoryEntry: true,
+			OPRs: { results: [{ Id: '1', Title: 'Robert Porterfield' }, { Id: '2', Title: 'Jeremy Clark' }]}
+		},
+		{
+			ID: 2, Title: 'SP Support', WeekOf: DateUtilities.getStartOfWeek(new Date()).toISOString(), Branch: 'OZI',
+			ActionTaken: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.', IsBigRock: false, IsHistoryEntry: false,
+			OPRs: { results: [{ Id: '1', Title: 'Robert Porterfield' }] }
+		},
+		{
+			ID: 3, Title: 'SP Support', WeekOf: DateUtilities.getStartOfWeek(new Date()).toISOString(), Branch: 'OZIC',
+			ActionTaken: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.', IsBigRock: true, IsHistoryEntry: true,
+			OPRs: { results: [{ Id: '2', Title: 'Jeremy Clark' }] }
+		}
+	];
 
-    sleep(m: number) {
-        return new Promise(r => setTimeout(r, m));
-    }
+	sleep() {
+		return new Promise(r => setTimeout(r, 1500));
+	}
 
-    async fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any> {
-        await this.sleep(3000);
-        return this.activities;
-    }
+	async fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any> {
+		await this.sleep();
+		return this.activities;
+	}
 
-    async fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
-        await this.sleep(3000);
-        return this.activities;
-    }
+	async fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
+		await this.sleep();
+		return this.activities;
+	}
 
-    async fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number) {
-        await this.sleep(3000);
-        return this.activities.filter(activity => activity.IsBigRock);
-    }
+	async fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number) {
+		await this.sleep();
+		return this.activities.filter(activity => activity.IsBigRock);
+	}
 
-    async fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number) {
-        await this.sleep(3000);
-        return this.activities.filter(activity => activity.IsHistoryEntry);
-    }
+	async fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number) {
+		await this.sleep();
+		return this.activities.filter(activity => activity.IsHistoryEntry);
+	}
 
-    async deleteActivity(activity: IActivity): Promise<any> {
-        await this.sleep(3000);
-        this.activities = this.activities.filter(a => a.ID !== activity.ID);
-        return { data: { ...activity, IsDeleted: true } };
-    }
+	async deleteActivity(activity: IActivity): Promise<any> {
+		await this.sleep();
+		this.activities = this.activities.filter(a => a.ID !== activity.ID);
+		return { data: { ...activity, IsDeleted: true } };
+	}
 
-    async submitActivity(activity: IActivity): Promise<{ data: IActivity }> {
-        if (activity.ID < 0) {
-            activity.ID = Math.max.apply(Math, this.activities.map(o => o.ID)) + 1;
-        }
-        this.activities.push(activity);
-        await this.sleep(3000);
-        return { data: { ...activity } };
-    }
+	async submitActivity(activity: IActivity): Promise<{ data: IActivity }> {
+		if (activity.ID < 0) {
+			activity.ID = Math.max.apply(Math, this.activities.map(o => o.ID)) + 1;
+		}
+		if (activity.OPRsId) {
+			let results: UserInfo[] = activity.OPRsId.results.map((OPRId, index) => {
+				return { Id: index.toString(), Title: "Some Title" }
+			});
+			activity.OPRs = { results: results };
+		}
+		
+		this.activities.push(activity);
+		await this.sleep();
+		return { data: { ...activity } };
+	}
 
 }
