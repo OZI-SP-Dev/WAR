@@ -16,6 +16,10 @@ function AppHeader() {
     setQuery(value);
   }
 
+  const handleSubmit = () => {
+    if (query !== null && query !== "") history.push(`/Review?query=${query}`);
+  }
+
   return (
     <Navbar fixed="top" expand="lg" variant="dark" bg="dark" className="p-0 shadow">
       <Navbar.Brand className="col-sm-3 col-md-2 mr-0">Weekly Activity Report</Navbar.Brand>
@@ -52,14 +56,14 @@ function AppHeader() {
             </LinkContainer>}
         </Nav>
         <Navbar.Collapse className="justify-content-end">
-          <Form inline>
+          <Form inline onSubmit={handleSubmit}>
             <Form.Control type="text" placeholder="Search" className="mr-sm-1" value={query}
               onChange={(e) => updateQuery(e.target.value)}
             />
             <Button variant="outline-primary" className="mr-sm-3"
-              onClick={() => {
-                if (query !== null && query !== "") history.push(`/Review?query=${query}`)
-              }} >Search</Button>
+              onClick={handleSubmit} >
+                Search
+            </Button>
           </Form>
           <Navbar.Text className="mr-2">
             Welcome {user.Title}
