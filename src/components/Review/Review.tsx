@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Form, FormCheck, Row, Col } from "react-bootstrap";
+import { Container, Form, FormCheck, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import ActivityUtilities from "../../utilities/ActivityUtilities";
