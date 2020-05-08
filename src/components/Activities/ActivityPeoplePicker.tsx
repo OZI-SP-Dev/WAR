@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
-import { IBasePickerSuggestionsProps, NormalPeoplePicker, ValidationState } from 'office-ui-fabric-react/lib/Pickers';
+import { IBasePickerSuggestionsProps, NormalPeoplePicker } from 'office-ui-fabric-react/lib/Pickers';
 import { people } from '@uifabric/example-data';
 import { sp } from "@pnp/sp";
 import "@pnp/sp/profiles";
@@ -101,11 +101,6 @@ export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker>
 		return selectedItems.length ? false : true;
 	}
 
-	const validateInput = (input: string): ValidationState => {
-		console.log('validateInput called');
-		return ValidationState.invalid;
-	}
-
 	return (
 		<NormalPeoplePicker
 			onResolveSuggestions={onFilterChanged}
@@ -116,7 +111,6 @@ export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker>
 			selectedItems={selectedItems}
 			onChange={onItemsChange}
 			resolveDelay={300}
-			onValidateInput={validateInput}
 		/>
 	);
 };

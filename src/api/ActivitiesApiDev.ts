@@ -78,6 +78,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 	async submitActivity(activity: IActivity): Promise<{ data: IActivity }> {
 		if (activity.Id < 0) {
 			activity.Id = Math.max.apply(Math, this.activities.map(o => o.Id)) + 1;
+			activity.__metadata = { etag: '"1"' }
 		} else {
 			this.activities = this.activities.filter(a => a.Id !== activity.Id);
 		}

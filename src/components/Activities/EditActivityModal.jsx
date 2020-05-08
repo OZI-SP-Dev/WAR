@@ -20,9 +20,9 @@ class EditActivityModal extends Component {
 	}
 	
 	convertOPRsToPersonas = (OPRs) => {
-		let newOPRs = [];
+		let personas = [];
 		if (OPRs && OPRs.results) {
-			newOPRs = OPRs.results.map(OPR => {
+			personas = OPRs.results.map(OPR => {
 				return {
 					text: OPR.Title,
 					imageInitials: OPR.Title.substr(OPR.Title.indexOf(' ') + 1, 1) + OPR.Title.substr(0, 1),
@@ -30,7 +30,7 @@ class EditActivityModal extends Component {
 				}
 			})
 		}
-		return newOPRs;
+		return personas;
 	}
 
   handleOpen = () => {

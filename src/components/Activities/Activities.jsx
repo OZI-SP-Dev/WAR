@@ -30,9 +30,8 @@ class Activities extends Component {
 
     this.activitiesApi = ActivitiesApiConfig.activitiesApi;
     this.Me = {
-      text: this.props.user.Title,
-      imageInitials: this.props.user.Title.substr(this.props.user.Title.indexOf(' ') + 1, 1) + this.props.user.Title.substr(0, 1),
-      SPUserId: this.props.user.Id
+      Title: this.props.user.Title,
+      Id: this.props.user.Id | 1
     }
   }
 
@@ -62,7 +61,7 @@ class Activities extends Component {
       ActionTaken: '', 
       IsBigRock: false, 
       IsHistoryEntry: false, 
-      OPRs: [this.Me]
+			OPRs: { results: [this.Me] }
     }
     this.setState({ showEditModal: true, editActivity: item });
   }
@@ -80,7 +79,7 @@ class Activities extends Component {
 
 			newActivity = ActivityUtilities.updateActivityEtagFromResponse(r, newActivity);
 
-      this.setState({
+			this.setState({
         isLoading: false,
         showEditModal: false,
         saveError: false,
@@ -128,8 +127,8 @@ class Activities extends Component {
   }
 
   cardOnClick(action) {
-    let editActivity = action;
-    editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
+		let editActivity = action;
+		editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
     this.setState({ showEditModal: true, editActivity });
   }
 
