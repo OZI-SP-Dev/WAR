@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
-import { IBasePickerSuggestionsProps, NormalPeoplePicker } from 'office-ui-fabric-react/lib/Pickers';
+import { IBasePickerSuggestionsProps, NormalPeoplePicker, ValidationState } from 'office-ui-fabric-react/lib/Pickers';
 import { people } from '@uifabric/example-data';
 import { sp } from "@pnp/sp";
 import "@pnp/sp/profiles";
@@ -31,7 +31,7 @@ type ActivityPeoplePicker = {
 	updateOPRs: (p: SPPersona[]) => VoidFunction
 }
 
-export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker> = ({ defaultValue, updateOPRs }) => {
+export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker> = ({ defaultValue, updateOPRs, required }) => {
 	const [peopleList] = React.useState<IPersonaProps[]>(people);
 	const [selectedItems, setSelectedItems] = React.useState<IPersonaProps[]>([]);
 
@@ -97,17 +97,27 @@ export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker>
 		}
 	};
 
+	const isInvalid = (): boolean => {
+		return selectedItems.length ? false : true;
+	}
+
+	const validateInput = (input: string): ValidationState => {
+		console.log('validateInput called');
+		return ValidationState.invalid;
+	}
+
 	return (
-			<NormalPeoplePicker
-				onResolveSuggestions={onFilterChanged}
-				getTextFromItem={getTextFromItem}
-				pickerSuggestionsProps={suggestionProps}
-				className={'ms-PeoplePicker'}
-				key={'controlled'}
-				selectedItems={selectedItems}
-				onChange={onItemsChange}
-				resolveDelay={300}
-			/>
+		<NormalPeoplePicker
+			onResolveSuggestions={onFilterChanged}
+			getTextFromItem={getTextFromItem}
+			pickerSuggestionsProps={suggestionProps}
+			className={isInvalid() ? 'ms-PeoplePicker is-invalid' : 'ms-PeoplePicker'}
+			key={'controlled'}
+			selectedItems={selectedItems}
+			onChange={onItemsChange}
+			resolveDelay={300}
+			onValidateInput={validateInput}
+		/>
 	);
 };
 

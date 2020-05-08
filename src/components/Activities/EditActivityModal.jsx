@@ -34,9 +34,14 @@ class EditActivityModal extends Component {
 	}
 
   handleOpen = () => {
-    let weekStart = DateUtilities.getStartOfWeek(new Date(this.props.activity.WeekOf));
-    this.setState({
-      activity: { ...this.props.activity },
+		let weekStart = DateUtilities.getStartOfWeek(new Date(this.props.activity.WeekOf));
+		// Deep copy activity
+		let { OPRs, ...editActivity } = this.props.activity;
+		editActivity.OPRs = {
+			results: [...OPRs.results]
+		};
+		this.setState({
+			activity: editActivity,
       validated: false,
       selectedDate: weekStart,
       highlightDates: DateUtilities.getWeek(weekStart)
@@ -58,9 +63,13 @@ class EditActivityModal extends Component {
 		this.setState({ activity });
 	}
 
+	isOPRInvalid() {
+		return this.state.activity.OPRs?.results.length ? false : true;
+	}
+
   validateActivity(e) {
-    const form = document.getElementById("EditActivityModal");
-    if (form.checkValidity() === false) {
+		const form = document.getElementById("EditActivityModal");
+    if (form.checkValidity() === false || this.isOPRInvalid()) {
       e.preventDefault();
       e.stopPropagation();
       this.setState({ validated: true });
@@ -200,7 +209,9 @@ class EditActivityModal extends Component {
 							defaultValue={this.convertOPRsToPersonas(this.props.activity.OPRs)}
 							updateOPRs={(newOPRs) => this.updateOPRs(newOPRs)}
 							readOnly={this.isReadOnly()}
-							required
+							required={true}
+							isInvalid={this.isOPRInvalid()}
+							isValid={!this.isOPRInvalid()}
 						>
 						</Form.Control>
 						<Form.Control.Feedback type="invalid">
