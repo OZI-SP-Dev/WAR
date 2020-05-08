@@ -64,7 +64,7 @@ class EditActivityModal extends Component {
 	}
 
 	isOPRInvalid() {
-		return this.state.activity.OPRs?.results.length ? false : true;
+    return this.state.activity.OPRs && this.state.activity.OPRs.results && this.state.activity.OPRs.results.length ? false : true;
 	}
 
   validateActivity(e) {
