@@ -2,6 +2,7 @@ import { spWebContext } from '../providers/SPWebContext';
 import "@pnp/sp/search";
 import ActivitiesApiDev from './ActivitiesApiDev';
 import { ICamlQuery } from '@pnp/sp/lists';
+import { IItems } from '@pnp/sp/items';
 
 export interface UserInfo {
 	Id: string,
@@ -36,7 +37,7 @@ export interface IActivity {
 
 export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any>,
-  fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string): Promise<any>,
+  fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any>,
   fetchActivitiesByQueryString(query: string, userId?: number): Promise<any>,
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
   fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
@@ -56,14 +57,16 @@ export default class ActivitiesApi implements IActivityApi {
     return this.fetchActivitiesByDates(minDate, maxDate, userId);
   }
 
-  fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string): Promise<any> {
+  fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any> {
     let filterString = "IsDeleted ne 1"
     filterString += startDate ? ` and WeekOf ge '${startDate.toISOString()}'` : "";
     filterString += endDate ? ` and WeekOf le '${endDate.toISOString()}'` : "";
     filterString += userId && userId !== null ? ` and AuthorId eq ${userId}` : "";
     filterString += additionalFilter ? ` and ${additionalFilter}` : "";
     
-    return this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsBigRock", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString).get();
+    let items: IItems = this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsBigRock", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString);
+    items = orderBy && orderBy !== null && orderBy !== "" ? items.orderBy(orderBy, false) : items;
+    return items.get();
   }
 
   fetchActivitiesByQueryString(query: string, userId?: number): Promise<any> {

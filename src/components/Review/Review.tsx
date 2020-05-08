@@ -34,7 +34,8 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
             setLoading(true);
             let newActivities = query !== null
                 ? await activitiesApi.fetchActivitiesByQueryString(query, showAllUsers ? undefined : parseInt(user.Id))
-                : await activitiesApi.fetchActivitiesByDates(undefined, undefined, showAllUsers ? undefined : parseInt(user.Id));
+                : await activitiesApi.fetchActivitiesByDates
+                    (undefined, undefined, showAllUsers ? undefined : parseInt(user.Id), undefined, "WeekOf");
             setActivities(newActivities);
             setLoading(false);
         } catch (e) {
@@ -80,7 +81,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     useEffect(() => {
         fetchActivities();
         // eslint-disable-next-line
-    }, [query]);
+    }, [query, showAllUsers]);
 
     const closeModal = () => {
         setModalActivityId(-1);
