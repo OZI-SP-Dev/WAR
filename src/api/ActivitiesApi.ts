@@ -5,18 +5,18 @@ import { ICamlQuery } from '@pnp/sp/lists';
 import { IItems } from '@pnp/sp/items';
 
 export interface UserInfo {
-	Id: string,
+  Id: string,
   Title: string,
   SPUserId?: string,
   text?: string
 }
 
 export interface UserList {
-	results: UserInfo[]
+  results: UserInfo[]
 }
 
 export interface UserIdList {
-	results: number[]
+  results: number[]
 }
 
 export interface IActivity {
@@ -27,12 +27,12 @@ export interface IActivity {
   ActionTaken: string,
   IsBigRock: boolean,
   IsHistoryEntry: boolean,
-	IsDeleted?: boolean,
-	OPRs?: UserList,
-	OPRsId?: UserIdList,
-	__metadata?: {
-		etag: string
-	}
+  IsDeleted?: boolean,
+  OPRs?: UserList,
+  OPRsId?: UserIdList,
+  __metadata?: {
+    etag: string
+  }
 }
 
 export interface IActivityApi {
@@ -63,7 +63,7 @@ export default class ActivitiesApi implements IActivityApi {
     filterString += endDate ? ` and WeekOf le '${endDate.toISOString()}'` : "";
     filterString += userId && userId !== null ? ` and AuthorId eq ${userId}` : "";
     filterString += additionalFilter ? ` and ${additionalFilter}` : "";
-    
+
     let items: IItems = this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsBigRock", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString);
     items = orderBy && orderBy !== null && orderBy !== "" ? items.orderBy(orderBy, false) : items;
     return items.get();
@@ -86,22 +86,22 @@ export default class ActivitiesApi implements IActivityApi {
                   </ViewFields>
                   <Query>
                     <Where>
-                      <And>
-                        <Neq>
-                          <FieldRef Name='IsDeleted' />
-                          <Value Type='Integer'>1</Value>
-                        </Neq>
-                        ${userId && userId !== null ? `
-                          <Eq>
-                            <FieldRef Name='AuthorId' />
-                            <Value Type='Integer'>${userId}</Value>
-                          </Eq>` 
-                          : ""}
-                        <Contains>
-                          <FieldRef Name='ActionTaken' />
-                          <Value Type='Text'>${query}</Value>
-                        </Contains>
-                      </And>
+                      ${userId && userId !== null ? `<And>
+                        <Eq>
+                          <FieldRef Name='AuthorId' />
+                          <Value Type='Integer'>${userId}</Value>
+                        </Eq>` : ""}
+                        <And>
+                          <Neq>
+                            <FieldRef Name='IsDeleted' />
+                            <Value Type='Integer'>1</Value>
+                          </Neq>
+                          <Contains>
+                            <FieldRef Name='ActionTaken' />
+                            <Value Type='Text'>${query}</Value>
+                          </Contains>
+                        </And>
+                      ${userId && userId !== null ? "</And>" : ""}
                     </Where>
                     <OrderBy>
                       <FieldRef Name='WeekOf' Ascending='FALSE'/>
@@ -121,10 +121,10 @@ export default class ActivitiesApi implements IActivityApi {
   }
 
   deleteActivity(activity: IActivity): Promise<any> {
-    let deletedActivity: IActivity = { ...activity, IsDeleted: true};
+    let deletedActivity: IActivity = { ...activity, IsDeleted: true };
     return this.updateActivity(deletedActivity);
   }
-  
+
   /**
    * This will either submit a new Activity or it will update an 
    * existing one. Both will return the Activity as {data: activity}
@@ -140,11 +140,11 @@ export default class ActivitiesApi implements IActivityApi {
    * @param activity The IActivity to be submitted
    */
   async updateActivity(activity: IActivity): Promise<{ data: IActivity }> {
-		let etag = activity.__metadata?.etag;
-		if (etag) {
-			delete activity.__metadata;
-		}
-		return this.activitiesList.items.getById(activity.Id).update(activity, etag);
+    let etag = activity.__metadata?.etag;
+    if (etag) {
+      delete activity.__metadata;
+    }
+    return this.activitiesList.items.getById(activity.Id).update(activity, etag);
   }
 
   addActivity(activity: IActivity): Promise<{ data: IActivity }> {
