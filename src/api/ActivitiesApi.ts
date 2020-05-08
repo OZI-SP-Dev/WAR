@@ -78,8 +78,7 @@ export default class ActivitiesApi implements IActivityApi {
                     <FieldRef Name='WeekOf' />
                     <FieldRef Name='Branch' />
                     <FieldRef Name='ActionTaken' />
-                    <FieldRef Name='OPRs/Title' />
-                    <FieldRef Name='OPRs/Id' />
+                    <FieldRef Name='OPRs' />
                     <FieldRef Name='IsBigRock' />
                     <FieldRef Name='IsHistoryEntry' />
                     <FieldRef Name='IsDeleted' />
@@ -88,19 +87,18 @@ export default class ActivitiesApi implements IActivityApi {
                     <Where>
                       ${userId && userId !== null ? `<And>
                         <Eq>
-                          <FieldRef Name='AuthorId' />
-                          <Value Type='Integer'>${userId}</Value>
+                          <FieldRef Name='Author' LookupId='True' />
+                          <Value Type='Lookup'>${userId}</Value>
                         </Eq>` : ""}
-                        <And>
+                        ${query ? `<And>` : ""}
                           <Neq>
                             <FieldRef Name='IsDeleted' />
-                            <Value Type='Integer'>1</Value>
+                            <Value Type='Boolean'>1</Value>
                           </Neq>
-                          <Contains>
+                          ${query ? `<Contains>
                             <FieldRef Name='ActionTaken' />
-                            <Value Type='Text'>${query}</Value>
-                          </Contains>
-                        </And>
+                            <Value Type='Note'>${query}</Value>
+                          </Contains></And>` : ""}
                       ${userId && userId !== null ? "</And>" : ""}
                     </Where>
                     <OrderBy>
@@ -109,7 +107,7 @@ export default class ActivitiesApi implements IActivityApi {
                   </Query>
                 </View>`,
     };
-    return this.activitiesList.getItemsByCAMLQuery(caml, "OPRs")
+		return this.activitiesList.renderListDataAsStream(caml);
   }
 
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {

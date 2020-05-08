@@ -32,10 +32,21 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     const fetchActivities = async () => {
         try {
             setLoading(true);
-            let newActivities = query !== null
-                ? await activitiesApi.fetchActivitiesByQueryString(query, showAllUsers ? undefined : parseInt(user.Id))
-                : await activitiesApi.fetchActivitiesByDates
-                    (undefined, undefined, showAllUsers ? undefined : parseInt(user.Id), undefined, "WeekOf");
+          let newActivities = await activitiesApi.fetchActivitiesByQueryString(query ? query : '', showAllUsers ? undefined : parseInt(user.Id));
+					/* Of course SharePoint doesn't return data in the same format from this function as it does
+					     with the REST API. Below steps convert to the standard format so results can be used normally */
+					newActivities = newActivities.Row.map((activity: any) => {
+						activity.OPRs = activity.OPRs.map((OPR: any) => {
+							return {
+								Id: OPR.id,
+								Email: OPR.id,
+								Title: OPR.title
+							};
+						})
+						activity.OPRs = { results: activity.OPRs };
+						return activity;
+					});
+					console.log(newActivities);
             setActivities(newActivities);
             setLoading(false);
         } catch (e) {
