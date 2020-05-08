@@ -58,7 +58,7 @@ class EditActivityModal extends Component {
 	updateOPRs(value) {
 		const activity = this.state.activity;
 		activity.OPRs.results = value.map((newOPR) => {
-			return {Id: newOPR.SPUserId, Title: newOPR.text}
+			return {Id: newOPR.SPUserId, Title: newOPR.text, Email: newOPR.Email}
 		});
 		this.setState({ activity });
 	}
