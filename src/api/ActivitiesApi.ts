@@ -37,7 +37,7 @@ export interface IActivity {
 export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any>,
   fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string): Promise<any>,
-  fetchActivitiesByQueryString(query: string): Promise<any>,
+  fetchActivitiesByQueryString(query: string, userId?: number): Promise<any>,
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
   fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
   deleteActivity(activity: IActivity): Promise<any>,
@@ -66,7 +66,7 @@ export default class ActivitiesApi implements IActivityApi {
     return this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsBigRock", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString).get();
   }
 
-  fetchActivitiesByQueryString(query: string): Promise<any> {
+  fetchActivitiesByQueryString(query: string, userId?: number): Promise<any> {
     const caml: ICamlQuery = {
       ViewXml: `<View>
                   <ViewFields>
@@ -88,6 +88,12 @@ export default class ActivitiesApi implements IActivityApi {
                           <FieldRef Name='IsDeleted' />
                           <Value Type='Integer'>1</Value>
                         </Neq>
+                        ${userId && userId !== null ? `
+                          <Eq>
+                            <FieldRef Name='AuthorId' />
+                            <Value Type='Integer'>${userId}</Value>
+                          </Eq>` 
+                          : ""}
                         <Contains>
                           <FieldRef Name='ActionTaken' />
                           <Value Type='Text'>${query}</Value>

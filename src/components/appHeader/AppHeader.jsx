@@ -7,7 +7,7 @@ import RoleUtilities from '../../utilities/RoleUtilities';
 import './AppHeader.css';
 
 function AppHeader() {
-  const [query, setQuery] = useState(null);
+  const [query, setQuery] = useState("");
 
   const user = useContext(UserContext);
   const history = useHistory();
@@ -32,6 +32,9 @@ function AppHeader() {
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
             </LinkContainer>
+            <LinkContainer to="/Review">
+              <NavDropdown.Item>Review</NavDropdown.Item>
+            </LinkContainer>
             <NavDropdown.Divider />
             <LinkContainer to="/WAR">
               <NavDropdown.Item>WAR</NavDropdown.Item>
@@ -55,7 +58,7 @@ function AppHeader() {
             />
             <Button variant="outline-primary" className="mr-sm-3"
               onClick={() => {
-                if (query !== null) history.push(`/Review?query=${query}`)
+                if (query !== null && query !== "") history.push(`/Review?query=${query}`)
               }} >Search</Button>
           </Form>
           <Navbar.Text className="mr-2">

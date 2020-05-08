@@ -1,6 +1,5 @@
-import moment from "moment"
-import { IActivity } from "../api/ActivitiesApi"
-import { IUserRole } from "./RoleUtilities";
+import moment from "moment";
+import { IActivity } from "../api/ActivitiesApi";
 import { spWebContext } from "../providers/SPWebContext";
 
 export default class ActivityUtilities {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row } from "react-bootstrap";
+import { Container, Form, FormCheck, Row, Col } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import ActivityUtilities from "../../utilities/ActivityUtilities";
 import RoleUtilities, { IUserRole } from "../../utilities/RoleUtilities";
@@ -7,7 +8,6 @@ import '../Activities/Activities.css';
 import { ActivityCard } from "../Activities/ActivityCard";
 import ActivitySpinner from "../Activities/ActivitySpinner";
 import EditActivityModal from "../Activities/EditActivityModal";
-import { useLocation } from "react-router-dom";
 
 export function useQuery(): URLSearchParams {
     return new URLSearchParams(useLocation().search);
@@ -23,6 +23,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [deleting, setDeleting] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
+    const [showAllUsers, setShowAllUsers] = useState<boolean>(false);
 
     const activitiesApi = ActivitiesApiConfig.activitiesApi;
 
@@ -32,8 +33,8 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         try {
             setLoading(true);
             let newActivities = query !== null
-                ? await activitiesApi.fetchActivitiesByQueryString(query)
-                : await activitiesApi.fetchActivitiesByDates(undefined, undefined, parseInt(user.Id));
+                ? await activitiesApi.fetchActivitiesByQueryString(query, showAllUsers ? undefined : parseInt(user.Id))
+                : await activitiesApi.fetchActivitiesByDates(undefined, undefined, showAllUsers ? undefined : parseInt(user.Id));
             setActivities(newActivities);
             setLoading(false);
         } catch (e) {
@@ -89,14 +90,28 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         setModalActivityId(activity.Id);
     }
 
+    const switchOnClick = (e: any) => {
+        setShowAllUsers(e.target.checked);
+    }
+
     return (
         <Container>
             <ActivitySpinner show={loading} displayText="Fetching Activities" />
             <Row className="justify-content-center"><h1>Review Activities</h1></Row>
+            <Form className={"mb-3"}>
+                <FormCheck
+                    id="userCheck"
+                    type="switch"
+                    label="Show all Activities for Department"
+                    checked={showAllUsers}
+                    onChange={switchOnClick}
+                />
+            </Form>
             {activities.map(activity =>
-                <>
-                    <ActivityCard className={"mb-3"} key={activity.Id} activity={activity} onClick={cardOnClick} />
+                <div key={`${activity.Id}_div`}>
+                    <ActivityCard className={"mb-3"} key={`${activity.Id}_card`} activity={activity} onClick={cardOnClick} />
                     <EditActivityModal
+                        key={`${activity.Id}_modal`}
                         showEditModal={modalActivityId === activity.Id}
                         submitEditActivity={submitActivity}
                         handleDelete={deleteActivity}
@@ -109,7 +124,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                         showBigRockCheck={(org: string) => RoleUtilities.userCanSetBigRock(user, org)}
                         showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
                     />
-                </>
+                </div>
             )}
         </Container>
     )
