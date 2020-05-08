@@ -25,8 +25,8 @@ export default class ActivityUtilities {
 		// items fetched from the list will already have an SPUserId
 		// newly added OPRs will only have an email that must be converted
 		let userIdPromises = activity.OPRs.results.map(async (OPR: any) => {
-			if (OPR.SPUserId) {
-				return OPR.SPUserId;
+			if (OPR.Id) {
+				return OPR.Id;
 			} else if (OPR.Email) {
 				let ensuredUser = await spWebContext.ensureUser(OPR.Email);
 				return ensuredUser.data.Id;
