@@ -56,7 +56,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 
 	async fetchActivitiesByQueryString(query: string): Promise<any> {
 		await this.sleep();
-		return this.activities.filter(activity => activity.ActionTaken.includes(query));
+		return this.activities.filter(activity => query ? activity.ActionTaken.includes(query) : true);
 	}
 
 	async fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number) {

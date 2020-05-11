@@ -69,7 +69,7 @@ export default class ActivitiesApi implements IActivityApi {
     return items.get();
   }
 
-  fetchActivitiesByQueryString(query: string, userId?: number): Promise<any> {
+  async fetchActivitiesByQueryString(query: string, userId?: number): Promise<any> {
     const caml: ICamlQuery = {
       ViewXml: `<View>
                   <ViewFields>
@@ -107,7 +107,20 @@ export default class ActivitiesApi implements IActivityApi {
                   </Query>
                 </View>`,
     };
-		return this.activitiesList.renderListDataAsStream(caml);
+    let newActivities = await this.activitiesList.renderListDataAsStream(caml);
+    /* Of course SharePoint doesn't return data in the same format from this function as it does
+       with the REST API. Below steps convert to the standard format so results can be used normally */
+    return newActivities.Row.map((activity: any) => {
+      activity.OPRs = activity.OPRs.map((OPR: any) => {
+        return {
+          Id: OPR.id,
+          Email: OPR.id,
+          Title: OPR.title
+        };
+      })
+      activity.OPRs = { results: activity.OPRs };
+      return activity;
+    });
   }
 
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
