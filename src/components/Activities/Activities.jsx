@@ -9,8 +9,6 @@ import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
 import ActivitySpinner from './ActivitySpinner';
 import EditActivityModal from './EditActivityModal';
-// import { spWebContext } from '../../providers/SPWebContext';
-// import "@pnp/sp/site-users/web";
 
 //TODO consider moving away from datetime and going to ISO weeks
 class Activities extends Component {
@@ -31,7 +29,7 @@ class Activities extends Component {
     this.activitiesApi = ActivitiesApiConfig.activitiesApi;
     this.Me = {
       Title: this.props.user.Title,
-      Id: this.props.user.Id || 1
+      Id: this.props.user.Id
     }
   }
 

@@ -22,7 +22,7 @@ export default class ActivityUtilities {
 		}
 
 		//Fetch Id's for new OPRs
-		// items fetched from the list will already have an SPUserId
+		// items fetched from the list will already have an Id
 		// newly added OPRs will only have an email that must be converted
 		let userIdPromises = activity.OPRs.results.map(async (OPR: any) => {
 			if (OPR.Id) {
