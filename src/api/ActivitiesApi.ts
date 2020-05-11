@@ -69,7 +69,7 @@ export default class ActivitiesApi implements IActivityApi {
     return items.get();
   }
 
-  async fetchActivitiesByQueryString(query: string, userId?: number): Promise<any> {
+  async fetchActivitiesByQueryString(query: string, userId?: number): Promise<IActivity> {
     const caml: ICamlQuery = {
       ViewXml: `<View>
                   <ViewFields>
@@ -118,10 +118,18 @@ export default class ActivitiesApi implements IActivityApi {
           Title: OPR.title
         };
       })
-      activity.OPRs = { results: activity.OPRs };
-      activity.Id = activity.ID;
-      activity.WeekOf = activity["WeekOf."]
-      return activity;
+      return {
+        Id: activity.ID,
+        Title: activity.Title,
+        WeekOf: activity["WeekOf."],
+        Branch: activity.Branch,
+        ActionTaken: activity.ActionTaken,
+        IsBigRock: activity.IsBigRock === "Yes" ? true : false,
+        IsHistoryEntry: activity.IsHistoryEntry === "Yes" ? true : false,
+        IsDeleted: activity.IsDeleted === "Yes" ? true : false,
+        OPRs: { results: activity.OPRs },
+        __metadata: { etag: activity.owshiddenversion }
+      };
     });
   }
 
