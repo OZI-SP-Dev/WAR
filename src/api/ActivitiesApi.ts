@@ -119,6 +119,8 @@ export default class ActivitiesApi implements IActivityApi {
         };
       })
       activity.OPRs = { results: activity.OPRs };
+      activity.Id = activity.ID;
+      activity.WeekOf = activity["WeekOf."]
       return activity;
     });
   }

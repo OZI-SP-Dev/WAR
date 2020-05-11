@@ -31,7 +31,7 @@ class Activities extends Component {
     this.activitiesApi = ActivitiesApiConfig.activitiesApi;
     this.Me = {
       Title: this.props.user.Title,
-      Id: this.props.user.Id | 1
+      Id: this.props.user.Id || 1
     }
   }
 
