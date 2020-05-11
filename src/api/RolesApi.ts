@@ -30,7 +30,7 @@ export default class RolesApi implements IRolesApi {
 			const newRole: IRole = {
 				imageInitials: role.User.Title.substr(role.User.Title.indexOf(' ') + 1, 1) + role.User.Title.substr(0, 1),
 				RoleName: role.Title,
-				text: `${role.User.Title}`,
+				text: role.User.Title,
 				secondaryText: `${role.Department && role.Department !== null ? " for Department " + role.Department : ""}`,
 				SPUserId: role.User.Id,
 				ItemID: role.Id,

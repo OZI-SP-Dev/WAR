@@ -9,8 +9,7 @@ import { ActivityPeoplePicker } from './ActivityPeoplePicker';
 class EditActivityModal extends Component {
   constructor(props) {
     super(props);
-    let weekStart = new Date(props.activity.WeekOf);
-    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    let weekStart = DateUtilities.getStartOfWeek(new Date(this.props.activity.WeekOf));
     this.state = {
       activity: { ...props.activity },
       validated: false,
@@ -18,33 +17,35 @@ class EditActivityModal extends Component {
       highlightDates: DateUtilities.getWeek(weekStart),
       datePickerOpen: false
     }
-  }
-
-  static getDerivedStateFromProps(newProps, oldState) {
-    if (oldState.activity === null) {
-      let weekStart = new Date(newProps.activity.WeekOf);
-      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-      return {
-        activity: { ...newProps.activity },
-        selectedDate: weekStart,
-        highlightDates: DateUtilities.getWeek(weekStart)
-      };
-		} else if (oldState.activity.__metadata?.etag !== newProps.activity.__metadata?.etag) {
-			//A new etag means this item has been succesfully updated - reload
-			return { activity: { ...newProps.activity } };
+	}
+	
+	convertOPRsToPersonas = (OPRs) => {
+		let personas = [];
+		if (OPRs && OPRs.results) {
+			personas = OPRs.results.map(OPR => {
+				return {
+					text: OPR.Title,
+					imageInitials: OPR.Title.substr(OPR.Title.indexOf(' ') + 1, 1) + OPR.Title.substr(0, 1),
+					SPUserId: OPR.Id
+				}
+			})
 		}
-    return null;
+		return personas;
 	}
 
-  closeActivity(e) {
-    //reset form fields
-    this.setState({
-      activity: null,
-      validated: false
-    });
-
-    //callback parent
-    this.props.closeEditActivity(e);
+  handleOpen = () => {
+		let weekStart = DateUtilities.getStartOfWeek(new Date(this.props.activity.WeekOf));
+		// Deep copy activity
+		let { OPRs, ...editActivity } = this.props.activity;
+		editActivity.OPRs = {
+			results: [...OPRs.results]
+		};
+		this.setState({
+			activity: editActivity,
+      validated: false,
+      selectedDate: weekStart,
+      highlightDates: DateUtilities.getWeek(weekStart)
+    })
   }
 
   // Syncs fields between react state and form
@@ -52,17 +53,29 @@ class EditActivityModal extends Component {
     const activity = this.state.activity;
     activity[field] = value;
     this.setState({ activity });
-  }
+	}
+	
+	updateOPRs(value) {
+		const activity = this.state.activity;
+		activity.OPRs.results = value.map((newOPR) => {
+			return {Id: newOPR.SPUserId, Title: newOPR.text, Email: newOPR.Email}
+		});
+		this.setState({ activity });
+	}
+
+	isOPRInvalid() {
+    return this.state.activity.OPRs && this.state.activity.OPRs.results && this.state.activity.OPRs.results.length ? false : true;
+	}
 
   validateActivity(e) {
-    const form = document.getElementById("EditActivityModal");
-    if (form.checkValidity() === false) {
+		const form = document.getElementById("EditActivityModal");
+    if (form.checkValidity() === false || this.isOPRInvalid()) {
       e.preventDefault();
       e.stopPropagation();
       this.setState({ validated: true });
     } else {
-      this.props.submitEditActivity(e, this.state.activity)
-      this.setState({ validated: false, activity: null })
+      this.props.submitEditActivity(this.state.activity)
+      this.setState({ validated: false })
     }
   }
 
@@ -84,7 +97,7 @@ class EditActivityModal extends Component {
         <Form.Label>Period of Accomplishment</Form.Label>
         <Form.Control
           type="text"
-          defaultValue={value}
+          value={value}
           onClick={() => !this.isReadOnly() && this.setState({ datePickerOpen: true })}
           required
           readOnly={this.isReadOnly()}
@@ -96,7 +109,8 @@ class EditActivityModal extends Component {
       <ActivityModal
         modalDisplayName="Activity"
         show={this.props.showEditModal}
-        handleClose={e => this.closeActivity(e)}
+        handleShow={() => this.handleOpen()}
+        handleClose={this.props.closeEditActivity}
         handleSubmit={e => this.validateActivity(e)}
         handleDelete={() => this.props.handleDelete(this.state.activity)}
         deleting={this.props.deleting}
@@ -192,10 +206,12 @@ class EditActivityModal extends Component {
 						<Form.Label>OPRs</Form.Label>
 						<Form.Control
 							as={ActivityPeoplePicker}
-							defaultValue={this.props.activity.OPRs}
-							updateOPRs={(e) => this.updateActivity(e, 'OPRs')}
+							defaultValue={this.convertOPRsToPersonas(this.props.activity.OPRs)}
+							updateOPRs={(newOPRs) => this.updateOPRs(newOPRs)}
 							readOnly={this.isReadOnly()}
-							required
+							required={true}
+							isInvalid={this.isOPRInvalid()}
+							isValid={!this.isOPRInvalid()}
 						>
 						</Form.Control>
 						<Form.Control.Feedback type="invalid">

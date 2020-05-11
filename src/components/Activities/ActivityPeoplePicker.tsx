@@ -31,25 +31,18 @@ type ActivityPeoplePicker = {
 	updateOPRs: (p: SPPersona[]) => VoidFunction
 }
 
-export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker> = ({ defaultValue, updateOPRs }) => {
+export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker> = ({ defaultValue, updateOPRs, required }) => {
 	const [peopleList] = React.useState<IPersonaProps[]>(people);
 	const [selectedItems, setSelectedItems] = React.useState<IPersonaProps[]>([]);
 
 	React.useEffect(() => {
 		let personas: SPPersona[] = [];
 		if (defaultValue) {
-			defaultValue.forEach(person => {
-				const persona: SPPersona = { 
-					imageInitials: person.imageInitials,
-					text: person.text,
-					SPUserId: person.SPUserId
-				 };
-				personas.push(persona);
-			});
+			personas = [...defaultValue];
 		}
 		setSelectedItems(personas);
 		// eslint-disable-next-line
-	}, defaultValue)
+	}, [])
 
 	const onFilterChanged = async (
 		filterText: string,
@@ -104,17 +97,21 @@ export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker>
 		}
 	};
 
+	const isInvalid = (): boolean => {
+		return selectedItems.length ? false : true;
+	}
+
 	return (
-			<NormalPeoplePicker
-				onResolveSuggestions={onFilterChanged}
-				getTextFromItem={getTextFromItem}
-				pickerSuggestionsProps={suggestionProps}
-				className={'ms-PeoplePicker'}
-				key={'controlled'}
-				selectedItems={selectedItems}
-				onChange={onItemsChange}
-				resolveDelay={300}
-			/>
+		<NormalPeoplePicker
+			onResolveSuggestions={onFilterChanged}
+			getTextFromItem={getTextFromItem}
+			pickerSuggestionsProps={suggestionProps}
+			className={isInvalid() ? 'ms-PeoplePicker is-invalid' : 'ms-PeoplePicker'}
+			key={'controlled'}
+			selectedItems={selectedItems}
+			onChange={onItemsChange}
+			resolveDelay={300}
+		/>
 	);
 };
 

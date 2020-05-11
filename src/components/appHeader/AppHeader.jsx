@@ -1,12 +1,25 @@
-import React, { useContext } from 'react';
-import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import React, { useContext, useState } from 'react';
+import { Button, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { useHistory } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
-import './AppHeader.css';
 import RoleUtilities from '../../utilities/RoleUtilities';
+import './AppHeader.css';
 
 function AppHeader() {
+  const [query, setQuery] = useState("");
+
   const user = useContext(UserContext);
+  const history = useHistory();
+
+  const updateQuery = (value) => {
+    setQuery(value);
+  }
+
+  const handleSubmit = () => {
+    if (query !== null && query !== "") history.push(`/Review?query=${query}`);
+  }
+
   return (
     <Navbar fixed="top" expand="lg" variant="dark" bg="dark" className="p-0 shadow">
       <Navbar.Brand className="col-sm-3 col-md-2 mr-0">Weekly Activity Report</Navbar.Brand>
@@ -22,6 +35,9 @@ function AppHeader() {
           <NavDropdown title="Reports" id="basic-nav-dropdown">
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
+            </LinkContainer>
+            <LinkContainer to="/Review">
+              <NavDropdown.Item>Review</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />
             <LinkContainer to="/WAR">
@@ -40,6 +56,15 @@ function AppHeader() {
             </LinkContainer>}
         </Nav>
         <Navbar.Collapse className="justify-content-end">
+          <Form inline onSubmit={handleSubmit}>
+            <Form.Control type="text" placeholder="Search" className="mr-sm-1" value={query}
+              onChange={(e) => updateQuery(e.target.value)}
+            />
+            <Button variant="outline-primary" className="mr-sm-3"
+              onClick={handleSubmit} >
+                Search
+            </Button>
+          </Form>
           <Navbar.Text className="mr-2">
             Welcome {user.Title}
           </Navbar.Text>

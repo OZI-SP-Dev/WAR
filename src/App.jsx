@@ -13,6 +13,7 @@ import WeeklyReport from "./components/WeeklyReport/WeeklyReport";
 import BigRocksReport from './components/WeeklyReport/BigRocksReport';
 import HistoryReport from './components/WeeklyReport/HistoryReport';
 import RoleUtilities from './utilities/RoleUtilities';
+import { Review } from './components/Review/Review';
 
 class App extends Component {
   render() {
@@ -38,18 +39,18 @@ class App extends Component {
                       </Route>
                       <Route path="/WAR">
                         <WeeklyReport />
-											</Route>
-											<Route path="/RoleManagement">
-												<UserContext.Consumer>
-													{user => (
-														user.loading ?
-															<>Loading...</> :
-															RoleUtilities.userCanAccessAdminPage(user) ?
-																<RolesProvider><Roles user={user} /></RolesProvider> :
-																<Redirect to={{ pathname: "/" }} />
-													)}
-												</UserContext.Consumer>
-											</Route>
+                      </Route>
+                      <Route path="/RoleManagement">
+                        <UserContext.Consumer>
+                          {user => (
+                            user.loading ?
+                              <>Loading...</> :
+                              RoleUtilities.userCanAccessAdminPage(user) ?
+                                <RolesProvider><Roles user={user} /></RolesProvider> :
+                                <Redirect to={{ pathname: "/" }} />
+                          )}
+                        </UserContext.Consumer>
+                      </Route>
                       <Route exact path="/(Activities)?">
                         <UserContext.Consumer>
                           {user => (
@@ -57,6 +58,14 @@ class App extends Component {
                               <>Loading...</> :
                               <Activities user={user} />
                           )}
+                        </UserContext.Consumer>
+                      </Route>
+                      <Route path="/Review">
+                        <UserContext.Consumer>
+                          {user => (
+                            user.loading ?
+                              <>Loading...</> :
+                              <Review user={user} />)}
                         </UserContext.Consumer>
                       </Route>
                       <Route path="*">

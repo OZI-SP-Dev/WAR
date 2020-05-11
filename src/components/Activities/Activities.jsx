@@ -2,13 +2,13 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import { Button, Container, Row, Spinner } from 'react-bootstrap';
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
+import ActivityUtilities from '../../utilities/ActivityUtilities';
 import DateUtilities from '../../utilities/DateUtilities';
 import RoleUtilities from '../../utilities/RoleUtilities';
 import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
+import ActivitySpinner from './ActivitySpinner';
 import EditActivityModal from './EditActivityModal';
-import { spWebContext } from '../../providers/SPWebContext';
-import "@pnp/sp/site-users/web";
 
 //TODO consider moving away from datetime and going to ISO weeks
 class Activities extends Component {
@@ -26,38 +26,20 @@ class Activities extends Component {
       minCreateDate: {}
     };
 
-		this.activitiesApi = ActivitiesApiConfig.activitiesApi;
-		this.Me = {
-			text: this.props.user.Title,
-			imageInitials: this.props.user.Title.substr(this.props.user.Title.indexOf(' ') + 1, 1) + this.props.user.Title.substr(0, 1),
-			SPUserId: this.props.user.Id
-		}
+    this.activitiesApi = ActivitiesApiConfig.activitiesApi;
+    this.Me = {
+      Title: this.props.user.Title,
+      Id: this.props.user.Id
+    }
   }
 
   componentDidMount() {
-		this.setState({ minCreateDate: RoleUtilities.getMinActivityCreateDate(this.props.user) });
-		this.fetchItems(4, DateUtilities.getStartOfWeek(new Date()));
-	}
-	
-	convertOPRsToPersonas = (OPRs) => {
-		let newOPRs = [];
-		if (OPRs.results) {
-			newOPRs = OPRs.results.map(OPR => {
-				return {
-					text: OPR.Title,
-					imageInitials: OPR.Title.substr(OPR.Title.indexOf(' ') + 1, 1) + OPR.Title.substr(0, 1),
-					SPUserId: OPR.Id
-				}
-			})
-		}
-		return newOPRs;
-	}
+    this.setState({ minCreateDate: RoleUtilities.getMinActivityCreateDate(this.props.user) });
+    this.fetchItems(4, DateUtilities.getStartOfWeek(new Date()));
+  }
 
   fetchItems = (numWeeks, weekStart) => {
-		this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id).then(r => {
-			r.forEach(activity => {
-				activity.OPRs = this.convertOPRsToPersonas(activity.OPRs);
-			})
+    this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id).then(r => {
       const listData = this.state.listData.concat(r);
       this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
       this.addNewWeeks(numWeeks, weekStart);
@@ -69,87 +51,38 @@ class Activities extends Component {
 
   newItem = (date) => {
     const item = {
-      Id: -1, Title: '', WeekOf: moment(date).day(0), InputWeekOf: moment(date).format("YYYY-MM-DD"),
-			Branch: 'OZIC', ActionTaken: '', IsBigRock: false, IsHistoryEntry: false, OPRs: [this.Me]
+      Id: -1, 
+      Title: '', 
+      WeekOf: moment(date).day(0), 
+      InputWeekOf: moment(date).format("YYYY-MM-DD"),
+      Branch: 'OZIC', 
+      ActionTaken: '', 
+      IsBigRock: false, 
+      IsHistoryEntry: false, 
+			OPRs: { results: [this.Me] }
     }
     this.setState({ showEditModal: true, editActivity: item });
   }
 
-	buildActivity = async (activity) => {
-		let builtActivity = {
-			Id: activity.Id,
-			Title: activity.Title,
-			WeekOf: moment(activity.InputWeekOf).day(0).toISOString(),
-			Branch: activity.Branch,
-			ActionTaken: activity.ActionTaken,
-			IsBigRock: activity.IsBigRock,
-			IsHistoryEntry: activity.IsHistoryEntry,
-			OPRsId: { results: [] }
-		};
 
-		//include etag if it exists - new items will not have an etag
-		if (activity.__metadata && activity.__metadata.etag) {
-			builtActivity.__metadata = { etag: activity.__metadata.etag };
-		}
-
-		//Fetch Id's for new OPRs
-		// items fetched from the list will already have an SPUserId
-		// newly added OPRs will only have an email that must be converted
-		let userIdPromises = activity.OPRs.map(async (OPR) => {
-			if (OPR.SPUserId) {
-				return OPR.SPUserId;
-			} else if (OPR.Email) {
-				let ensuredUser = await spWebContext.ensureUser(OPR.Email);
-				return ensuredUser.data.Id;
-			}
-		});
-
-		//wait for all promises to fetch UserIds to complete then add array of IDs to activity
-		await Promise.all(userIdPromises).then(OPRsId => {
-			builtActivity.OPRsId.results = OPRsId;
-		});
-		return builtActivity;
-  }
-
-	submitActivity = async (event, newActivity) => {
+	submitActivity = async (newActivity) => {
 		this.setState({ isLoading: true });
 		//build object to save
-		let activityToSubmit = await this.buildActivity(newActivity);
-
-    // Remove trailing period(s) from Title
-    while (activityToSubmit.Title.charAt(activityToSubmit.Title.length - 1) === '.') {
-      activityToSubmit.Title = activityToSubmit.Title.slice(0, -1);
-    }
+		let activityToSubmit = await ActivityUtilities.buildActivity(newActivity);
 
 		this.activitiesApi.submitActivity(activityToSubmit).then(r => {
 			// Newly created list items return the complete item
 			// Updated list items only return an 'odata.etag' prop
 			//  !! not an odata object with an etag prop !!
 
-			if (r.data['odata.etag']) {
-				// Updated item - set etag on the activity
-				newActivity.__metadata = { etag: ('"' + r.data['odata.etag'].split(',')[1]) };
-			} else {
-				// New item - set Id, WeekOf, and etag
-				newActivity.Id = r.data.Id;
-				newActivity.WeekOf = r.data.WeekOf;
-				newActivity.__metadata = { etag: r.data.__metadata.etag };
-			}
+			newActivity = ActivityUtilities.updateActivityEtagFromResponse(r, newActivity);
 
-			// rather than filter out the old activity, update if it already existed
-			// this prevents the activity display from re-ordering the existing items
-			let activityList = [...this.state.listData];
-			if (activityToSubmit.Id > 0) {
-				activityList = activityList.map(item => {
-					if (item.Id === newActivity.Id) {
-						return(newActivity);
-					}
-					return item;
-				})
-			} else {
-				activityList.push(newActivity);
-			}
-      this.setState({ isLoading: false, showEditModal: false, saveError: false, listData: activityList });
+			this.setState({
+        isLoading: false,
+        showEditModal: false,
+        saveError: false,
+        listData: ActivityUtilities.replaceActivity(this.state.listData, activityToSubmit, newActivity) 
+      });
     }, e => {
       console.error(e);
       this.setState({ saveError: true, isLoading: false });
@@ -158,11 +91,11 @@ class Activities extends Component {
 
   deleteActivity = async (activity) => {
     this.setState({ isDeleting: true })
-    this.activitiesApi.deleteActivity(await this.buildActivity(activity))
+    this.activitiesApi.deleteActivity(await ActivityUtilities.buildActivity(activity))
       .then((res) => this.setState({
         isDeleting: false,
         showEditModal: false,
-        listData: this.state.listData.filter(a => a.Id !== activity.Id)
+        listData: ActivityUtilities.filterActivity(this.state.listData, res.data)
       }), e => {
         console.error(e);
         this.setState({ isDeleting: false, showEditModal: false });
@@ -194,17 +127,11 @@ class Activities extends Component {
   cardOnClick(action) {
 		let editActivity = action;
 		editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
-		this.setState({ showEditModal: true, editActivity });
+    this.setState({ showEditModal: true, editActivity });
   }
 
   render() {
     const { isLoading, loadingMoreWeeks } = this.state;
-    const MySpinner = () =>
-      <div className="spinner">
-        <Spinner animation="border" role="status">
-          <span className="sr-only">Fetching activities...</span>
-        </Spinner>
-      </div>
 
     return (
       <Container>
@@ -222,7 +149,7 @@ class Activities extends Component {
           showBigRockCheck={(org) => RoleUtilities.userCanSetBigRock(this.props.user, org)}
           showHistoryCheck={(org) => RoleUtilities.userCanSetHistory(this.props.user, org)}
         />
-        <Row className="justify-content-center"><h1>Activities</h1></Row>
+        <Row className="justify-content-center"><h1>My Activities</h1></Row>
         {this.state.loadedWeeks.map(date =>
           <ActivityAccordion
             key={date}
@@ -237,7 +164,7 @@ class Activities extends Component {
           {loadingMoreWeeks && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
           {' '}Load More Activities
         </Button>
-        {isLoading && <MySpinner />}
+        <ActivitySpinner show={isLoading} displayText="Fetching activities..." />
       </Container>
     );
   }
