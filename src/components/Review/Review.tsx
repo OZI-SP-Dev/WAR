@@ -94,7 +94,6 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
     return (
         <Container>
-            <ActivitySpinner show={loading} displayText="Fetching Activities" />
             <Row className="justify-content-center"><h1>Review Activities</h1></Row>
             <Form className={"mb-3"}>
                 <FormCheck
@@ -124,6 +123,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                     />
                 </div>
             )}
+            <ActivitySpinner show={loading} displayText="Fetching Activities" />
         </Container>
     )
 }

@@ -128,7 +128,7 @@ export default class ActivitiesApi implements IActivityApi {
         IsHistoryEntry: activity.IsHistoryEntry === "Yes" ? true : false,
         IsDeleted: activity.IsDeleted === "Yes" ? true : false,
         OPRs: { results: activity.OPRs },
-        __metadata: { etag: activity.owshiddenversion }
+        __metadata: { etag: `"${activity.owshiddenversion}"` }
       };
     });
   }
