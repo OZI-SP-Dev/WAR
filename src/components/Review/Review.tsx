@@ -1,6 +1,6 @@
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { Container, Form, FormCheck, Row } from "react-bootstrap";
+import { Container, Form, FormCheck, Row, useAccordionToggle, Accordion } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import ActivityUtilities from "../../utilities/ActivityUtilities";
@@ -12,6 +12,24 @@ import EditActivityModal from "../Activities/EditActivityModal";
 
 export function useQuery(): URLSearchParams {
     return new URLSearchParams(useLocation().search);
+}
+
+function CustomToggle({ children, eventKey }: { children: any, eventKey: any }) {
+    const [open, setOpen] = useState<boolean>(true);
+    const accordionOnClick = useAccordionToggle(eventKey, () =>
+        onClick()
+    );
+
+    const onClick = () => {
+        setOpen(!open)
+    }
+
+    return (
+        <h4 style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
+            {children}
+            <div className={open ? 'arrow-down float-right' : 'arrow-right float-right'} />
+        </h4>
+    );
 }
 
 export interface IReviewProps {
@@ -117,28 +135,32 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                 />
             </Form>
             {getActivityWeeks().map(week =>
-                <div key={week.toString()}>
-                    <h4>Week of: {moment(week).format("DD MMM YYYY")}</h4>
-                    {activities.filter(activity => moment(activity.WeekOf).startOf("day").toString() === week).map(activity =>
-                        <div key={`${activity.Id}_div`}>
-                            <ActivityCard className={"mb-3"} key={`${activity.Id}_card`} activity={activity} onClick={cardOnClick} />
-                            <EditActivityModal
-                                key={`${activity.Id}_modal`}
-                                showEditModal={modalActivityId === activity.Id}
-                                submitEditActivity={submitActivity}
-                                handleDelete={deleteActivity}
-                                closeEditActivity={closeModal}
-                                activity={activity}
-                                deleting={deleting}
-                                saving={loading}
-                                error={error}
-                                minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
-                                showBigRockCheck={(org: string) => RoleUtilities.userCanSetBigRock(user, org)}
-                                showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
-                            />
+                <Accordion key={week + "_acc"} defaultActiveKey="0" className="mb-3">
+                    <CustomToggle eventKey="0">Week of: {moment(week).format("DD MMM YYYY")}</CustomToggle>
+                    <Accordion.Collapse eventKey="0">
+                        <div key={week + "_div"}>
+                            {activities.filter(activity => moment(activity.WeekOf).startOf("day").toString() === week).map(activity =>
+                                <div key={`${activity.Id}_div`}>
+                                    <ActivityCard className={"mb-3"} key={`${activity.Id}_card`} activity={activity} onClick={cardOnClick} />
+                                    <EditActivityModal
+                                        key={`${activity.Id}_modal`}
+                                        showEditModal={modalActivityId === activity.Id}
+                                        submitEditActivity={submitActivity}
+                                        handleDelete={deleteActivity}
+                                        closeEditActivity={closeModal}
+                                        activity={activity}
+                                        deleting={deleting}
+                                        saving={loading}
+                                        error={error}
+                                        minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
+                                        showBigRockCheck={(org: string) => RoleUtilities.userCanSetBigRock(user, org)}
+                                        showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
+                                    />
+                                </div>
+                            )}
                         </div>
-                    )}
-                </div>)}
+                    </Accordion.Collapse>
+                </Accordion>)}
             <ActivitySpinner show={loading} displayText="Fetching Activities" />
         </Container>
     )
