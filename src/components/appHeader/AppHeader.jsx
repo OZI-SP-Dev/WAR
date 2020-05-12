@@ -6,6 +6,7 @@ import { UserContext } from '../../providers/UserProvider';
 import RoleUtilities from '../../utilities/RoleUtilities';
 import './AppHeader.css';
 import { Persona, PersonaSize } from 'office-ui-fabric-react/lib/Persona';
+import { ContactUsContext } from '../ContactUs/ContactUsProvider';
 
 function AppHeader() {
   const [query, setQuery] = useState("");
@@ -50,8 +51,15 @@ function AppHeader() {
             <LinkContainer to="/HistoryReport">
               <NavDropdown.Item>History</NavDropdown.Item>
             </LinkContainer>
-          </NavDropdown>
-          {RoleUtilities.userCanAccessAdminPage(user) &&
+					</NavDropdown>
+					<ContactUsContext.Consumer className="nav-item">
+						{ContactUs => (
+							<button className="nav-link link-button" onClick={() => { ContactUs.setShowContactUs(true) }}>
+                Contact Us
+							</button>
+						)}
+					</ContactUsContext.Consumer>
+					{RoleUtilities.userCanAccessAdminPage(user) &&
             <LinkContainer to="/RoleManagement">
               <Nav.Link>Admin</Nav.Link>
             </LinkContainer>}
