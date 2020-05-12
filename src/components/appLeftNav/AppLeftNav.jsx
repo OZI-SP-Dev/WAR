@@ -1,7 +1,6 @@
 import React from 'react';
 import { Component } from 'react';
 import { NavLink } from 'react-router-dom';
-import { ContactUsContext } from '../ContactUs/ContactUsProvider';
 import './AppLeftNav.css';
 import yoda from './yoda.webp'; // ISSUE: .webp files do not load in Edge
 
