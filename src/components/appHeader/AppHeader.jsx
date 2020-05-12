@@ -30,9 +30,9 @@ function AppHeader() {
           <LinkContainer to="/">
             <Nav.Link>Home</Nav.Link>
           </LinkContainer>
-          <LinkContainer to="/Help" className="justify-content-end">
+					{/*<LinkContainer to="/Help" className="justify-content-end">
             <Nav.Link>Help</Nav.Link>
-          </LinkContainer>
+					</LinkContainer>*/}
           <NavDropdown title="Reports" id="basic-nav-dropdown">
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
