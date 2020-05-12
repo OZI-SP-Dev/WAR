@@ -8,7 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
-## [0.1.3] - 2020-05-011
+## [0.1.4] - 2020-05-11
+### Changed
+- AppHeader now shows user profile picture instead of welcome {user.Title}
+- UserProvider now provides a Persona for the user
+
+### Removed
+- manifest.json - file was being blocked anyway
+
+## [0.1.3] - 2020-05-11
 ### Added
 - Activity Review page for a simpler view to edit Activities
 - Search bar in header that brings the user to the Review page and filters their results based on the query string provided

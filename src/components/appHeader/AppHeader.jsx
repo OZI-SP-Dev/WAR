@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
 import RoleUtilities from '../../utilities/RoleUtilities';
 import './AppHeader.css';
+import { Persona, PersonaSize } from 'office-ui-fabric-react/lib/Persona';
 
 function AppHeader() {
   const [query, setQuery] = useState("");
@@ -65,9 +66,9 @@ function AppHeader() {
                 Search
             </Button>
           </Form>
-          <Navbar.Text className="mr-2">
-            Welcome {user.Title}
-          </Navbar.Text>
+					<Navbar.Text className="mr-2">
+						<Persona {...user.Persona} hidePersonaDetails size={PersonaSize.size32} />
+					</Navbar.Text>
         </Navbar.Collapse>
       </Navbar.Collapse>
     </Navbar>
