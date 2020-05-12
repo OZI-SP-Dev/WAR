@@ -1,3 +1,4 @@
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Container, Form, FormCheck, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
@@ -44,27 +45,27 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     const submitActivity = async (activity: any) => {
         try {
             setLoading(true);
-            let response = (
-                await activitiesApi.submitActivity(await ActivityUtilities.buildActivity(activity)));
+            let builtActivity = await ActivityUtilities.buildActivity(activity)
 
-            activity = ActivityUtilities.updateActivityEtagFromResponse(response, activity);
+            let response = (await activitiesApi.submitActivity(builtActivity));
 
-            setActivities(ActivityUtilities.replaceActivity(activities, response.data, activity));
+            builtActivity = ActivityUtilities.updateActivityEtagFromResponse(response, activity, builtActivity);
+
+            setActivities(ActivityUtilities.replaceActivity(activities, builtActivity));
             setLoading(false);
             setModalActivityId(-1);
         } catch (e) {
             console.error(e);
             setError(true);
             setLoading(false);
-            setModalActivityId(-1);
         }
     }
 
     const deleteActivity = async (activity: any) => {
         try {
             setDeleting(true);
-            let deletedActivity = (await activitiesApi.deleteActivity(await ActivityUtilities.buildActivity(activity))).data;
-            setActivities(ActivityUtilities.filterActivity(activities, deletedActivity));
+            await activitiesApi.deleteActivity(await ActivityUtilities.buildActivity(activity));
+            setActivities(ActivityUtilities.filterActivity(activities, activity));
             setDeleting(false);
             setModalActivityId(-1);
         } catch (e) {
@@ -92,6 +93,17 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         setShowAllUsers(e.target.checked);
     }
 
+    const getActivityWeeks = (): string[] => {
+        let activityWeeks: string[] = [];
+        activities.forEach(activity => {
+            let week = moment(activity.WeekOf).startOf("day");
+            if (!activityWeeks.includes(week.toString())) {
+                activityWeeks.push(week.toString());
+            }
+        });
+        return activityWeeks;
+    }
+
     return (
         <Container>
             <Row className="justify-content-center"><h1>Review Activities</h1></Row>
@@ -104,25 +116,29 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                     onChange={switchOnClick}
                 />
             </Form>
-            {activities.map(activity =>
-                <div key={`${activity.Id}_div`}>
-                    <ActivityCard className={"mb-3"} key={`${activity.Id}_card`} activity={activity} onClick={cardOnClick} />
-                    <EditActivityModal
-                        key={`${activity.Id}_modal`}
-                        showEditModal={modalActivityId === activity.Id}
-                        submitEditActivity={submitActivity}
-                        handleDelete={deleteActivity}
-                        closeEditActivity={closeModal}
-                        activity={activity}
-                        deleting={deleting}
-                        saving={loading}
-                        error={error}
-                        minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
-                        showBigRockCheck={(org: string) => RoleUtilities.userCanSetBigRock(user, org)}
-                        showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
-                    />
-                </div>
-            )}
+            {getActivityWeeks().map(week =>
+                <div key={week.toString()}>
+                    <h4>Week of: {moment(week).format("DD MMM YYYY")}</h4>
+                    {activities.filter(activity => moment(activity.WeekOf).startOf("day").toString() === week).map(activity =>
+                        <div key={`${activity.Id}_div`}>
+                            <ActivityCard className={"mb-3"} key={`${activity.Id}_card`} activity={activity} onClick={cardOnClick} />
+                            <EditActivityModal
+                                key={`${activity.Id}_modal`}
+                                showEditModal={modalActivityId === activity.Id}
+                                submitEditActivity={submitActivity}
+                                handleDelete={deleteActivity}
+                                closeEditActivity={closeModal}
+                                activity={activity}
+                                deleting={deleting}
+                                saving={loading}
+                                error={error}
+                                minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
+                                showBigRockCheck={(org: string) => RoleUtilities.userCanSetBigRock(user, org)}
+                                showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
+                            />
+                        </div>
+                    )}
+                </div>)}
             <ActivitySpinner show={loading} displayText="Fetching Activities" />
         </Container>
     )

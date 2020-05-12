@@ -99,6 +99,7 @@ class EditActivityModal extends Component {
           type="text"
           value={value}
           onClick={() => !this.isReadOnly() && this.setState({ datePickerOpen: true })}
+          onChange={date => this.onDateChange(date)}
           required
           readOnly={this.isReadOnly()}
         />
