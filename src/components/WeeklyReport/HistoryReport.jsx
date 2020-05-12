@@ -21,7 +21,7 @@ class HistoryReport extends Component {
         this.setState({ loadingReport: true });
         let submitEndDate = new Date(endDate);
         submitEndDate.setDate(endDate.getDate() + 1);
-        this.activitiesApi.fetchHistoryEntriesByDates(startDate, submitEndDate).then(r => {
+        this.activitiesApi.fetchHistoryEntriesByDates(startDate, submitEndDate, null, "WeekOf").then(r => {
             this.setState({ loadingReport: false, activities: r });
             $(".report-toggle").click();
         }, e =>

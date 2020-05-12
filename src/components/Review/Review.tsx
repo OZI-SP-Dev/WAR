@@ -42,7 +42,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [deleting, setDeleting] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
-    const [showAllUsers, setShowAllUsers] = useState<boolean>(false);
+    const [showUserOnly, setShowUserOnly] = useState<boolean>(true);
 
     const activitiesApi = ActivitiesApiConfig.activitiesApi;
 
@@ -51,7 +51,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     const fetchActivities = async () => {
         try {
             setLoading(true);
-            let newActivities = await activitiesApi.fetchActivitiesByQueryString(query ? query : '', showAllUsers ? undefined : parseInt(user.Id));
+            let newActivities = await activitiesApi.fetchActivitiesByQueryString(query ? query : '', showUserOnly ? parseInt(user.Id) : undefined);
             setActivities(newActivities);
             setLoading(false);
         } catch (e) {
@@ -97,7 +97,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     useEffect(() => {
         fetchActivities();
         // eslint-disable-next-line
-    }, [query, showAllUsers]);
+    }, [query, showUserOnly]);
 
     const closeModal = () => {
         setModalActivityId(-1);
@@ -108,7 +108,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     }
 
     const switchOnClick = (e: any) => {
-        setShowAllUsers(e.target.checked);
+        setShowUserOnly(e.target.checked);
     }
 
     const getActivityWeeks = (): string[] => {
@@ -129,8 +129,8 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                 <FormCheck
                     id="userCheck"
                     type="switch"
-                    label="Show all Activities for Department"
-                    checked={showAllUsers}
+                    label="Show only my Activities"
+                    checked={showUserOnly}
                     onChange={switchOnClick}
                 />
             </Form>

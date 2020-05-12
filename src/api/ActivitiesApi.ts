@@ -39,8 +39,8 @@ export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any>,
   fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any>,
   fetchActivitiesByQueryString(query: string, userId?: number): Promise<any>,
-  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
-  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
+  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any>,
+  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any>,
   deleteActivity(activity: IActivity): Promise<any>,
   submitActivity(activity: IActivity): Promise<{ data: IActivity }>
 }
@@ -133,12 +133,12 @@ export default class ActivitiesApi implements IActivityApi {
     });
   }
 
-  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
-    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsBigRock eq 1");
+  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any> {
+    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsBigRock eq 1", orderBy);
   }
 
-  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
-    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsHistoryEntry eq 1");
+  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any> {
+    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsHistoryEntry eq 1", orderBy);
   }
 
   deleteActivity(activity: IActivity): Promise<any> {
