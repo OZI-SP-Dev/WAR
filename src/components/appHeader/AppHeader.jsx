@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Button, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { Button, Form, Nav, Navbar, NavDropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
@@ -54,9 +54,19 @@ function AppHeader() {
 					</NavDropdown>
 					<ContactUsContext.Consumer className="nav-item">
 						{ContactUs => (
+							<OverlayTrigger
+								placement="bottom"
+								delay={{ show: 500, hide: 0 }}
+								overlay={
+									<Tooltip id="ContactUsNavTooltip">
+										Submit feedback, bug reports, or just say hello!
+							    </Tooltip>
+								}
+							>
 							<button className="nav-link link-button" onClick={() => { ContactUs.setShowContactUs(true) }}>
-                Contact Us
+									Contact Us
 							</button>
+							</OverlayTrigger>
 						)}
 					</ContactUsContext.Consumer>
 					{RoleUtilities.userCanAccessAdminPage(user) &&
