@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Accordion, Card } from 'react-bootstrap';
 
-class ReportAccordion extends Component {
+class CardAccordion extends Component {
 
     constructor(props) {
         super(props);
@@ -21,7 +21,7 @@ class ReportAccordion extends Component {
                         eventKey={"0"}
                         style={{ cursor: 'pointer' }}
                         onClick={() => this.setState({ accordionOpen: !this.state.accordionOpen })}>
-                        {this.props.searchCardHeader}
+                        {this.props.cardHeader}
                             <div className={this.state.accordionOpen ? 'arrow-down float-right' : 'arrow-right float-right'} />
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey="0">
@@ -33,4 +33,4 @@ class ReportAccordion extends Component {
     }
 }
 
-export default ReportAccordion;
+export default CardAccordion;

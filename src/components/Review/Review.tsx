@@ -9,6 +9,7 @@ import '../Activities/Activities.css';
 import { ActivityCard } from "../Activities/ActivityCard";
 import ActivitySpinner from "../Activities/ActivitySpinner";
 import EditActivityModal from "../Activities/EditActivityModal";
+import CardAccordion from "../CardAccordion/CardAccordion";
 
 export function useQuery(): URLSearchParams {
     return new URLSearchParams(useLocation().search);
@@ -125,15 +126,17 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     return (
         <Container>
             <Row className="justify-content-center"><h1>Review Activities</h1></Row>
-            <Form className={"mb-3"}>
-                <FormCheck
-                    id="userCheck"
-                    type="switch"
-                    label="Show only my Activities"
-                    checked={showUserOnly}
-                    onChange={switchOnClick}
-                />
-            </Form>
+            <CardAccordion cardHeader="Search and Filter">
+                <Form className={"mb-3"}>
+                    <FormCheck
+                        id="userCheck"
+                        type="switch"
+                        label="Show only my Activities"
+                        checked={showUserOnly}
+                        onChange={switchOnClick}
+                    />
+                </Form>
+            </CardAccordion>
             {getActivityWeeks().map(week =>
                 <Accordion key={week + "_acc"} defaultActiveKey="0" className="mb-3">
                     <CustomToggle eventKey="0">Week of: {moment(week).format("DD MMM YYYY")}</CustomToggle>
