@@ -38,7 +38,7 @@ export interface IActivity {
 export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any>,
   fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any>,
-  fetchActivitiesByQueryString(query: string, userId?: number): Promise<any>,
+  fetchActivitiesByQueryString(query: string, org?: string, startDate?: Date, endDate?: Date, userId?: number): Promise<any>,
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any>,
   fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any>,
   deleteActivity(activity: IActivity): Promise<any>,
@@ -69,7 +69,34 @@ export default class ActivitiesApi implements IActivityApi {
     return items.get();
   }
 
-  async fetchActivitiesByQueryString(query: string, userId?: number): Promise<IActivity> {
+  async fetchActivitiesByQueryString(query: string, org?: string, startDate?: Date, endDate?: Date, userId?: number): Promise<IActivity> {
+
+    let conditions: string[] = ["<Neq><FieldRef Name='IsDeleted'/><Value Type='Boolean'>1</Value></Neq>"];
+    if (query) {
+      conditions.push(`<Contains><FieldRef Name='ActionTaken'/><Value Type='Note'>${query}</Value></Contains>`);
+    }
+    if (org) {
+      conditions.push(`<Eq><FieldRef Name='Branch'/><Value Type='Text'>${org}</Value></Eq>`);
+    }
+    if (startDate) {
+      conditions.push(`<Geq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${startDate.toISOString()}</Value></Geq>`);
+    }
+    if (endDate) {
+      conditions.push(`<Leq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${endDate.toISOString()}</Value></Leq>`);
+    }
+    if (userId) {
+      conditions.push(`<Eq><FieldRef Name='Author' LookupId='True'/><Value Type='Lookup'>${userId}</Value></Eq>`);
+    }
+    let queryString = "";
+    conditions.forEach((condition, i) => {
+      queryString += i < conditions.length - 1 ? "<And>" : "";
+      queryString += condition;
+    })
+    for (let i = 0; i < conditions.length - 1; ++i) {
+      queryString += "</And>"
+    }
+    console.log(queryString);
+    
     const caml: ICamlQuery = {
       ViewXml: `<View>
                   <ViewFields>
@@ -85,21 +112,7 @@ export default class ActivitiesApi implements IActivityApi {
                   </ViewFields>
                   <Query>
                     <Where>
-                      ${userId && userId !== null ? `<And>
-                        <Eq>
-                          <FieldRef Name='Author' LookupId='True' />
-                          <Value Type='Lookup'>${userId}</Value>
-                        </Eq>` : ""}
-                        ${query ? `<And>` : ""}
-                          <Neq>
-                            <FieldRef Name='IsDeleted' />
-                            <Value Type='Boolean'>1</Value>
-                          </Neq>
-                          ${query ? `<Contains>
-                            <FieldRef Name='ActionTaken' />
-                            <Value Type='Note'>${query}</Value>
-                          </Contains></And>` : ""}
-                      ${userId && userId !== null ? "</And>" : ""}
+                      ${queryString}
                     </Where>
                     <OrderBy>
                       <FieldRef Name='WeekOf' Ascending='FALSE'/>

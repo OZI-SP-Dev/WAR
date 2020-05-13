@@ -28,7 +28,7 @@ class Report extends Component {
                 <Row className="justify-content-center">
                     <h1>{this.props.pageHeader}</h1>
                 </Row>
-                <CardAccordion cardHeader={this.props.searchCardHeader}>
+                <CardAccordion defaultOpen cardHeader={this.props.searchCardHeader}>
                     <ReportForm
                         submitSearch={() => this.props.submitSearch(this.state.startDate, this.state.endDate)}
                         startDate={this.state.startDate}

@@ -1,15 +1,17 @@
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { Container, Form, FormCheck, Row, useAccordionToggle, Accordion } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
+import { Accordion, Container, Row, useAccordionToggle } from "react-bootstrap";
+import { useLocation, useHistory } from "react-router-dom";
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import ActivityUtilities from "../../utilities/ActivityUtilities";
+import DateUtilities from "../../utilities/DateUtilities";
 import RoleUtilities, { IUserRole } from "../../utilities/RoleUtilities";
 import '../Activities/Activities.css';
 import { ActivityCard } from "../Activities/ActivityCard";
 import ActivitySpinner from "../Activities/ActivitySpinner";
 import EditActivityModal from "../Activities/EditActivityModal";
 import CardAccordion from "../CardAccordion/CardAccordion";
+import { SearchForm } from "./SearchForm";
 
 export function useQuery(): URLSearchParams {
     return new URLSearchParams(useLocation().search);
@@ -38,21 +40,39 @@ export interface IReviewProps {
 }
 
 export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
+
+    let query = useQuery().get("query");
+    const history = useHistory();
+
     const [activities, setActivities] = useState<any[]>([]);
     const [modalActivityId, setModalActivityId] = useState<number>(-1);
     const [loading, setLoading] = useState<boolean>(true);
     const [deleting, setDeleting] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
+
+    // start state vars for search form
+    const initialStartWeek: Date = DateUtilities.getStartOfWeek(new Date());
+    initialStartWeek.setDate(initialStartWeek.getDate() - 7);
+    const initialEndWeek: Date = DateUtilities.getStartOfWeek(new Date());
     const [showUserOnly, setShowUserOnly] = useState<boolean>(true);
+    const [startDate, setStartDate] = useState<Date>(initialStartWeek);
+    const [endDate, setEndDate] = useState<Date>(initialEndWeek);
+    const [startHighlightDates, setStartHighlightDates] =
+        useState<Date[]>(DateUtilities.getWeek(initialStartWeek));
+    const [endHighlightDates, setEndHighlightDates] =
+        useState<Date[]>(DateUtilities.getWeek(initialEndWeek));
+    const [org, setOrg] = useState<string>("--");
+    const [keywordQuery, setKeywordQuery] = useState<string>(query === null ? "" : query);
+    // end state vars for search form
 
     const activitiesApi = ActivitiesApiConfig.activitiesApi;
-
-    let query = useQuery().get("query");
 
     const fetchActivities = async () => {
         try {
             setLoading(true);
-            let newActivities = await activitiesApi.fetchActivitiesByQueryString(query ? query : '', showUserOnly ? parseInt(user.Id) : undefined);
+            let submitStartDate = new Date(startDate);
+            submitStartDate.setDate(startDate.getDate() - 1);
+            let newActivities = await activitiesApi.fetchActivitiesByQueryString(query ? query : '', org !== '--' ? org : '', submitStartDate, endDate, showUserOnly ? parseInt(user.Id) : undefined);
             setActivities(newActivities);
             setLoading(false);
         } catch (e) {
@@ -95,21 +115,12 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         }
     }
 
-    useEffect(() => {
-        fetchActivities();
-        // eslint-disable-next-line
-    }, [query, showUserOnly]);
-
     const closeModal = () => {
         setModalActivityId(-1);
     }
 
     const cardOnClick = (activity: any) => {
         setModalActivityId(activity.Id);
-    }
-
-    const switchOnClick = (e: any) => {
-        setShowUserOnly(e.target.checked);
     }
 
     const getActivityWeeks = (): string[] => {
@@ -123,19 +134,59 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         return activityWeeks;
     }
 
+    // Start search form functions
+    const submitSearch = () => {
+        history.push(`/Review?query=${keywordQuery}`);
+    }
+
+    const switchOnClick = (e: any) => {
+        setShowUserOnly(e.target.checked);
+    }
+
+    const onChangeStartDate = (date: Date) => {
+        setStartDate(DateUtilities.getStartOfWeek(date));
+        setStartHighlightDates(DateUtilities.getWeek(date));
+    }
+
+    const onChangeEndDate = (date: Date) => {
+        setEndDate(DateUtilities.getStartOfWeek(date));
+        setEndHighlightDates(DateUtilities.getWeek(date));
+    }
+
+    const orgOnChange = (e: any) => {
+        setOrg(e.target.value);
+    }
+
+    const keywordQueryOnChange = (e: any) => {
+        setKeywordQuery(e.target.value);
+    }
+    // End search form functions
+
+    useEffect(() => {
+        fetchActivities();
+        // eslint-disable-next-line
+    }, [query]);
+    
     return (
         <Container>
             <Row className="justify-content-center"><h1>Review Activities</h1></Row>
-            <CardAccordion cardHeader="Search and Filter">
-                <Form className={"mb-3"}>
-                    <FormCheck
-                        id="userCheck"
-                        type="switch"
-                        label="Show only my Activities"
-                        checked={showUserOnly}
-                        onChange={switchOnClick}
-                    />
-                </Form>
+            <CardAccordion defaultOpen={false} cardHeader="Search and Filter">
+                <SearchForm
+                    submitSearch={submitSearch}
+                    showUserOnly={showUserOnly}
+                    startDate={startDate}
+                    endDate={endDate}
+                    startHighlightDates={startHighlightDates}
+                    endHighlightDates={endHighlightDates}
+                    org={org}
+                    query={keywordQuery}
+                    loading={loading}
+                    switchOnClick={switchOnClick}
+                    onChangeStartDate={onChangeStartDate}
+                    onChangeEndDate={onChangeEndDate}
+                    orgOnChange={orgOnChange}
+                    queryOnChange={keywordQueryOnChange}
+                />
             </CardAccordion>
             {getActivityWeeks().map(week =>
                 <Accordion key={week + "_acc"} defaultActiveKey="0" className="mb-3">

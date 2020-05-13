@@ -19,7 +19,8 @@ function AppHeader() {
   }
 
   const handleSubmit = () => {
-    if (query !== null && query !== "") history.push(`/Review?query=${query}`);
+    history.push(`/Review${query !== "" ? "?query=" + query : ""}`);
+    setQuery("");
   }
 
   return (
@@ -31,7 +32,7 @@ function AppHeader() {
           <LinkContainer to="/">
             <Nav.Link>Home</Nav.Link>
           </LinkContainer>
-					{/*<LinkContainer to="/Help" className="justify-content-end">
+          {/*<LinkContainer to="/Help" className="justify-content-end">
             <Nav.Link>Help</Nav.Link>
 					</LinkContainer>*/}
           <NavDropdown title="Reports" id="basic-nav-dropdown">
@@ -51,25 +52,25 @@ function AppHeader() {
             <LinkContainer to="/HistoryReport">
               <NavDropdown.Item>History</NavDropdown.Item>
             </LinkContainer>
-					</NavDropdown>
-					<ContactUsContext.Consumer className="nav-item">
-						{ContactUs => (
-							<OverlayTrigger
-								placement="bottom"
-								delay={{ show: 500, hide: 0 }}
-								overlay={
-									<Tooltip id="ContactUsNavTooltip">
-										Submit feedback, bug reports, or just say hello!
+          </NavDropdown>
+          <ContactUsContext.Consumer className="nav-item">
+            {ContactUs => (
+              <OverlayTrigger
+                placement="bottom"
+                delay={{ show: 500, hide: 0 }}
+                overlay={
+                  <Tooltip id="ContactUsNavTooltip">
+                    Submit feedback, bug reports, or just say hello!
 							    </Tooltip>
-								}
-							>
-							<button className="nav-link link-button" onClick={() => { ContactUs.setShowContactUs(true) }}>
-									Contact Us
+                }
+              >
+                <button className="nav-link link-button" onClick={() => { ContactUs.setShowContactUs(true) }}>
+                  Contact Us
 							</button>
-							</OverlayTrigger>
-						)}
-					</ContactUsContext.Consumer>
-					{RoleUtilities.userCanAccessAdminPage(user) &&
+              </OverlayTrigger>
+            )}
+          </ContactUsContext.Consumer>
+          {RoleUtilities.userCanAccessAdminPage(user) &&
             <LinkContainer to="/RoleManagement">
               <Nav.Link>Admin</Nav.Link>
             </LinkContainer>}
@@ -81,12 +82,12 @@ function AppHeader() {
             />
             <Button variant="outline-primary" className="mr-sm-3"
               onClick={handleSubmit} >
-                Search
+              Search
             </Button>
           </Form>
-					<Navbar.Text className="mr-2">
-						<Persona {...user.Persona} hidePersonaDetails size={PersonaSize.size32} />
-					</Navbar.Text>
+          <Navbar.Text className="mr-2">
+            <Persona {...user.Persona} hidePersonaDetails size={PersonaSize.size32} />
+          </Navbar.Text>
         </Navbar.Collapse>
       </Navbar.Collapse>
     </Navbar>

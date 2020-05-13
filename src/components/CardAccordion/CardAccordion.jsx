@@ -7,13 +7,13 @@ class CardAccordion extends Component {
         super(props);
 
         this.state = {
-            accordionOpen: true
+            accordionOpen: props.defaultOpen
         }
     }
 
     render() {
         return (
-            <Accordion defaultActiveKey={"0"} className="mb-3">
+            <Accordion defaultActiveKey={this.props.defaultOpen ? "0" : ""} className="mb-3">
                 <Card>
                     <Accordion.Toggle
                         className="report-toggle"
@@ -22,7 +22,7 @@ class CardAccordion extends Component {
                         style={{ cursor: 'pointer' }}
                         onClick={() => this.setState({ accordionOpen: !this.state.accordionOpen })}>
                         {this.props.cardHeader}
-                            <div className={this.state.accordionOpen ? 'arrow-down float-right' : 'arrow-right float-right'} />
+                        <div className={this.state.accordionOpen ? 'arrow-down float-right' : 'arrow-right float-right'} />
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey="0">
                         <Card.Body>{this.props.children}</Card.Body>
