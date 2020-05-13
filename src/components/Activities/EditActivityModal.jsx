@@ -94,7 +94,7 @@ class EditActivityModal extends Component {
   render() {
     const DatePickerCustomInput = ({ value }) => (
       <>
-        <Form.Label>Period of Accomplishment</Form.Label>
+        <Form.Label>Period of Accomplishment (Week of)</Form.Label>
         <Form.Control
           type="text"
           value={value}

@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [0.1.5] - 2020-05-12
+### Removed
+- Help / FAQs page removed until we have content for them
+
+### Changed
+- Contact Us link moved to top nav and tooltip added
+- EditActivityModal updated WeekOf control title
+- Activites added tooltip
+
 ## [0.1.4] - 2020-05-11
 ### Changed
 - AppHeader now shows user profile picture instead of welcome {user.Title}

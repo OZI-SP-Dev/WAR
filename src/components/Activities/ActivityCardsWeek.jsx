@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Col } from 'react-bootstrap';
+import { Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ActivityCard } from './ActivityCard';
 
 class ActivityCardsWeek extends Component {
@@ -8,11 +8,22 @@ class ActivityCardsWeek extends Component {
         return (
             actions.length ?
                 actions.map((activity) => (
-                    <Col xl={6} className="mb-3" key={activity.Id}>
+									<Col xl={6} className="mb-3" key={activity.Id}>
+										<OverlayTrigger
+											delay={{ show: 500, hide: 0 }}
+											overlay={
+												<Tooltip id={"activityTooltip" + activity.Id}>
+													Click to edit.
+							          </Tooltip>
+											}
+										>
+											<span>
                         <ActivityCard
                             activity={activity}
                             onClick={this.props.onClick}
-                        />
+												/>
+											</span>
+										</OverlayTrigger>
                     </Col>
                 ))
                 : <Col>You have no saved items for this period of accomplishment.</Col>);
