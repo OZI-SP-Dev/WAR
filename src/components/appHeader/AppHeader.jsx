@@ -1,11 +1,12 @@
 import React, { useContext, useState } from 'react';
-import { Button, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { Button, Form, Nav, Navbar, NavDropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
 import RoleUtilities from '../../utilities/RoleUtilities';
 import './AppHeader.css';
 import { Persona, PersonaSize } from 'office-ui-fabric-react/lib/Persona';
+import { ContactUsContext } from '../ContactUs/ContactUsProvider';
 
 function AppHeader() {
   const [query, setQuery] = useState("");
@@ -30,9 +31,9 @@ function AppHeader() {
           <LinkContainer to="/">
             <Nav.Link>Home</Nav.Link>
           </LinkContainer>
-          <LinkContainer to="/Help" className="justify-content-end">
+					{/*<LinkContainer to="/Help" className="justify-content-end">
             <Nav.Link>Help</Nav.Link>
-          </LinkContainer>
+					</LinkContainer>*/}
           <NavDropdown title="Reports" id="basic-nav-dropdown">
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
@@ -50,8 +51,25 @@ function AppHeader() {
             <LinkContainer to="/HistoryReport">
               <NavDropdown.Item>History</NavDropdown.Item>
             </LinkContainer>
-          </NavDropdown>
-          {RoleUtilities.userCanAccessAdminPage(user) &&
+					</NavDropdown>
+					<ContactUsContext.Consumer className="nav-item">
+						{ContactUs => (
+							<OverlayTrigger
+								placement="bottom"
+								delay={{ show: 500, hide: 0 }}
+								overlay={
+									<Tooltip id="ContactUsNavTooltip">
+										Submit feedback, bug reports, or just say hello!
+							    </Tooltip>
+								}
+							>
+							<button className="nav-link link-button" onClick={() => { ContactUs.setShowContactUs(true) }}>
+									Contact Us
+							</button>
+							</OverlayTrigger>
+						)}
+					</ContactUsContext.Consumer>
+					{RoleUtilities.userCanAccessAdminPage(user) &&
             <LinkContainer to="/RoleManagement">
               <Nav.Link>Admin</Nav.Link>
             </LinkContainer>}
