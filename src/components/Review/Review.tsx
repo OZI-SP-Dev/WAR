@@ -135,10 +135,6 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         return activityWeeks;
     }
 
-    const isActivityEditable = (activity: IActivity): boolean => {
-        return activity.Id < 0 || !activity.OPRs || activity.OPRs.results.some(info => parseInt(info.Id) === parseInt(user.Id));
-    }
-
     // Start search form functions
     const submitSearch = () => {
         if (keywordQuery !== query) {
@@ -221,7 +217,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                                         deleting={deleting}
                                         saving={loading}
                                         error={error}
-                                        canEdit={isActivityEditable}
+                                        canEdit={(act: IActivity) => RoleUtilities.isActivityEditable(act, user)}
                                         minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
                                         showBigRockCheck={(org: string) => RoleUtilities.userCanSetBigRock(user, org)}
                                         showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}

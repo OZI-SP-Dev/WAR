@@ -70,7 +70,6 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                         <Form.Control
                             type="text"
                             placeholder="Search for a keyword"
-                            defaultValue={props.query}
                             value={props.query}
                             onChange={props.queryOnChange}
                         />
@@ -82,7 +81,6 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     <Form.Group controlId="orgSearch">
                         <Form.Label>Organization</Form.Label>
                         <Form.Control as="select"
-                            defaultValue={props.org}
                             value={props.org}
                             onChange={props.orgOnChange}
                         >

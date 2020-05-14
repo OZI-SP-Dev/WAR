@@ -1,4 +1,5 @@
 import DateUtilities from "./DateUtilities";
+import { IActivity } from "../api/ActivitiesApi";
 
 export interface IUserRole {
     Title: string,
@@ -59,5 +60,12 @@ export default class RoleUtilities {
             weekStart.setDate(weekStart.getDate() - 7);
         }
         return weekStart;
+    }
+
+    static isActivityEditable(activity: IActivity, user: IUserRole) {
+        let isNew = activity.Id < 0;
+        let userIsOPR = !activity.OPRs || activity.OPRs.results.some(info => parseInt(info.Id) === parseInt(user.Id));
+        let userHasRights = activity.Branch && user.UsersRoles.some(role => activity.Branch.includes(role.department));
+        return isNew || userIsOPR || userHasRights;
     }
 }
