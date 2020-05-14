@@ -38,7 +38,7 @@ export interface IActivity {
 export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any>,
   fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any>,
-  fetchActivitiesByQueryString(query: string, org?: string, startDate?: Date, endDate?: Date, userId?: number): Promise<any>,
+  fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Date, endDate?: Date, userId?: number): Promise<any>,
   fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any>,
   fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any>,
   deleteActivity(activity: IActivity): Promise<any>,
@@ -69,14 +69,14 @@ export default class ActivitiesApi implements IActivityApi {
     return items.get();
   }
 
-  async fetchActivitiesByQueryString(query: string, org?: string, startDate?: Date, endDate?: Date, userId?: number): Promise<IActivity> {
+  async fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Date, endDate?: Date, userId?: number): Promise<IActivity> {
 
     let conditions: string[] = ["<Neq><FieldRef Name='IsDeleted'/><Value Type='Boolean'>1</Value></Neq>"];
     if (query) {
       conditions.push(`<Contains><FieldRef Name='ActionTaken'/><Value Type='Note'>${query}</Value></Contains>`);
     }
     if (org) {
-      conditions.push(`<Eq><FieldRef Name='Branch'/><Value Type='Text'>${org}</Value></Eq>`);
+      conditions.push(`<${includeSubOrgs ? "Contains" : "Eq"}><FieldRef Name='Branch'/><Value Type='Text'>${org}</Value></${includeSubOrgs ? "Contains" : "Eq"}>`);
     }
     if (startDate) {
       conditions.push(`<Geq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${startDate.toISOString()}</Value></Geq>`);
@@ -96,7 +96,7 @@ export default class ActivitiesApi implements IActivityApi {
       queryString += "</And>"
     }
     console.log(queryString);
-    
+
     const caml: ICamlQuery = {
       ViewXml: `<View>
                   <ViewFields>

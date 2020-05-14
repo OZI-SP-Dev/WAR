@@ -3,6 +3,7 @@ import { Button, Col, Form, FormCheck, Row, Spinner } from "react-bootstrap";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import '../WeeklyReport/ReportForm.css';
+import './SearchForm.css';
 
 export interface ISearchFormProps {
     submitSearch: ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void),
@@ -14,7 +15,9 @@ export interface ISearchFormProps {
     org: string,
     query: string,
     loading: boolean,
-    switchOnClick: ((event: React.ChangeEvent<HTMLInputElement>) => void),
+    includeSubOrgs: boolean,
+    userSwitchOnClick: ((event: React.ChangeEvent<HTMLInputElement>) => void),
+    includeSubOrgSwitchOnClick: ((event: React.ChangeEvent<HTMLInputElement>) => void),
     onChangeStartDate: (date: Date) => void,
     onChangeEndDate: (date: Date) => void,
     orgOnChange: ((event: React.FormEvent<any>) => void),
@@ -91,6 +94,19 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                         </Form.Control>
                     </Form.Group>
                 </Col>
+                <Col md={3} className="search-form-center-align">
+                    <Form.Group controlId="subOrgCheck">
+                        <Form.Label />
+                        <FormCheck
+                            id="subOrgCheck"
+                            className="mb-3"
+                            type="switch"
+                            label="Include Sub-Organizations?"
+                            checked={props.includeSubOrgs}
+                            onChange={props.includeSubOrgSwitchOnClick}
+                        />
+                    </Form.Group>
+                </Col>
             </Row>
             <Row>
                 <Col md={3}>
@@ -131,7 +147,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                         type="switch"
                         label="Show only my Activities"
                         checked={props.showUserOnly}
-                        onChange={props.switchOnClick}
+                        onChange={props.userSwitchOnClick}
                     />
                 </Col>
             </Row>

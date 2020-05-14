@@ -63,6 +63,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         useState<Date[]>(DateUtilities.getWeek(initialEndWeek));
     const [org, setOrg] = useState<string>("--");
     const [keywordQuery, setKeywordQuery] = useState<string>(query === null ? "" : query);
+    const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(false);
     // end state vars for search form
 
     const activitiesApi = ActivitiesApiConfig.activitiesApi;
@@ -72,7 +73,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
             setLoading(true);
             let submitStartDate = new Date(startDate);
             submitStartDate.setDate(startDate.getDate() - 1);
-            let newActivities = await activitiesApi.fetchActivitiesByQueryString(query ? query : '', org !== '--' ? org : '', submitStartDate, endDate, showUserOnly ? parseInt(user.Id) : undefined);
+            let newActivities = await activitiesApi.fetchActivitiesByQueryString(query ? query : '', org.replace('--', ''), includeSubOrgs, submitStartDate, endDate, showUserOnly ? parseInt(user.Id) : undefined);
             setActivities(newActivities);
             setLoading(false);
         } catch (e) {
@@ -136,10 +137,14 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
     // Start search form functions
     const submitSearch = () => {
-        history.push(`/Review?query=${keywordQuery}`);
+        if (keywordQuery !== query) {
+            history.push(`/Review?query=${keywordQuery}`);
+        } else {
+            fetchActivities();
+        }
     }
 
-    const switchOnClick = (e: any) => {
+    const userSwitchOnClick = (e: any) => {
         setShowUserOnly(e.target.checked);
     }
 
@@ -160,13 +165,17 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     const keywordQueryOnChange = (e: any) => {
         setKeywordQuery(e.target.value);
     }
+
+    const includeSubOrgSwitchOnClick = (e: any) => {
+        setIncludeSubOrgs(e.target.checked);
+    }
     // End search form functions
 
     useEffect(() => {
         fetchActivities();
         // eslint-disable-next-line
     }, [query]);
-    
+
     return (
         <Container>
             <Row className="justify-content-center"><h1>Review Activities</h1></Row>
@@ -181,7 +190,9 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                     org={org}
                     query={keywordQuery}
                     loading={loading}
-                    switchOnClick={switchOnClick}
+                    includeSubOrgs={includeSubOrgs}
+                    userSwitchOnClick={userSwitchOnClick}
+                    includeSubOrgSwitchOnClick={includeSubOrgSwitchOnClick}
                     onChangeStartDate={onChangeStartDate}
                     onChangeEndDate={onChangeEndDate}
                     orgOnChange={orgOnChange}
