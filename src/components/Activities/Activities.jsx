@@ -145,6 +145,7 @@ class Activities extends Component {
           deleting={this.state.isDeleting}
           saving={this.state.isLoading}
           error={this.state.saveError}
+          canEdit={(activity) => activity.Id < 0 || !activity.OPRs || activity.OPRs.results.some(info => info.Id === this.props.user.Id)}
           minCreateDate={this.state.minCreateDate}
           showBigRockCheck={(org) => RoleUtilities.userCanSetBigRock(this.props.user, org)}
           showHistoryCheck={(org) => RoleUtilities.userCanSetHistory(this.props.user, org)}

@@ -15,7 +15,7 @@ export const UserProvider = ({ children }) => {
 
   const getUser = async () => {
 		if (process.env.NODE_ENV === 'development') {
-			setId(1);
+			setId("1");
 			setTitle('Default User');
 			setEmail('me@example.com');
 			setUsersRoles([{ role: RoleUtilities.ADMIN, deparment: undefined }]);

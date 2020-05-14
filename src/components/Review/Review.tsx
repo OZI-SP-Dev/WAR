@@ -2,7 +2,7 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Accordion, Container, Row, useAccordionToggle } from "react-bootstrap";
 import { useLocation, useHistory } from "react-router-dom";
-import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
+import { ActivitiesApiConfig, IActivity } from '../../api/ActivitiesApi';
 import ActivityUtilities from "../../utilities/ActivityUtilities";
 import DateUtilities from "../../utilities/DateUtilities";
 import RoleUtilities, { IUserRole } from "../../utilities/RoleUtilities";
@@ -135,6 +135,10 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         return activityWeeks;
     }
 
+    const isActivityEditable = (activity: IActivity): boolean => {
+        return activity.Id < 0 || !activity.OPRs || activity.OPRs.results.some(info => parseInt(info.Id) === parseInt(user.Id));
+    }
+
     // Start search form functions
     const submitSearch = () => {
         if (keywordQuery !== query) {
@@ -177,7 +181,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     }, [query]);
 
     return (
-        <Container>
+        <Container fluid>
             <Row className="justify-content-center"><h1>Review Activities</h1></Row>
             <CardAccordion defaultOpen={false} cardHeader="Search and Filter">
                 <SearchForm
@@ -217,6 +221,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                                         deleting={deleting}
                                         saving={loading}
                                         error={error}
+                                        canEdit={isActivityEditable}
                                         minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
                                         showBigRockCheck={(org: string) => RoleUtilities.userCanSetBigRock(user, org)}
                                         showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}

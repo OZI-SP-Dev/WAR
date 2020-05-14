@@ -95,7 +95,6 @@ export default class ActivitiesApi implements IActivityApi {
     for (let i = 0; i < conditions.length - 1; ++i) {
       queryString += "</And>"
     }
-    console.log(queryString);
 
     const caml: ICamlQuery = {
       ViewXml: `<View>
@@ -124,13 +123,6 @@ export default class ActivitiesApi implements IActivityApi {
     /* Of course SharePoint doesn't return data in the same format from this function as it does
        with the REST API. Below steps convert to the standard format so results can be used normally */
     return newActivities.Row.map((activity: any) => {
-      activity.OPRs = activity.OPRs.map((OPR: any) => {
-        return {
-          Id: OPR.id,
-          Email: OPR.id,
-          Title: OPR.title
-        };
-      })
       return {
         Id: activity.ID,
         Title: activity.Title,
@@ -140,7 +132,15 @@ export default class ActivitiesApi implements IActivityApi {
         IsBigRock: activity.IsBigRock === "Yes" ? true : false,
         IsHistoryEntry: activity.IsHistoryEntry === "Yes" ? true : false,
         IsDeleted: activity.IsDeleted === "Yes" ? true : false,
-        OPRs: { results: activity.OPRs },
+        OPRs: {
+          results: activity.OPRs.map((OPR: any) => {
+            return {
+              Id: OPR.id,
+              Email: OPR.email,
+              Title: OPR.title
+            };
+          })
+        },
         __metadata: { etag: `"${activity.owshiddenversion}"` }
       };
     });

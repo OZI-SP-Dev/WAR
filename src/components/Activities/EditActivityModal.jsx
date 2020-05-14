@@ -88,7 +88,7 @@ class EditActivityModal extends Component {
   }
 
   isReadOnly() {
-    return this.props.activity.Id > -1 && new Date(this.props.activity.WeekOf) < this.props.minCreateDate;
+    return !this.props.canEdit(this.props.activity) || new Date(this.props.activity.WeekOf) < this.props.minCreateDate;
   }
 
   render() {
