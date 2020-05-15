@@ -19,7 +19,8 @@ function AppHeader() {
   }
 
   const handleSubmit = () => {
-    if (query !== null && query !== "") history.push(`/Review?query=${query}`);
+    history.push(`/Review${query !== "" ? "?query=" + query : ""}`);
+    setQuery("");
   }
 
   return (
@@ -58,15 +59,15 @@ function AppHeader() {
 									<Tooltip id="ContactUsNavTooltip">
 										Submit feedback, bug reports, or just say hello!
 							    </Tooltip>
-								}
-							>
-							<button className="nav-link link-button" onClick={() => { ContactUs.setShowContactUs(true) }}>
-									Contact Us
+                }
+              >
+                <button className="nav-link link-button" onClick={() => { ContactUs.setShowContactUs(true) }}>
+                  Contact Us
 							</button>
-							</OverlayTrigger>
-						)}
-					</ContactUsContext.Consumer>
-					{RoleUtilities.userCanAccessAdminPage(user) &&
+              </OverlayTrigger>
+            )}
+          </ContactUsContext.Consumer>
+          {RoleUtilities.userCanAccessAdminPage(user) &&
             <LinkContainer to="/RoleManagement">
               <Nav.Link>Admin</Nav.Link>
 						</LinkContainer>}
@@ -81,7 +82,7 @@ function AppHeader() {
             />
             <Button variant="outline-primary" className="mr-sm-3"
               onClick={handleSubmit} >
-                Search
+              Search
             </Button>
 					</Form>
 					<Navbar.Text>
