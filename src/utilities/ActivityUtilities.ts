@@ -44,8 +44,8 @@ export default class ActivityUtilities {
 		return builtActivity;
 	}
 
-	static updateActivityEtagFromResponse(res: any, activity: any) {
-		let newActivity = { ...activity };
+	static updateActivityEtagFromResponse(res: any, oldActivity: any, activity: any) {
+		let newActivity = { ...activity, OPRs: oldActivity.OPRs };
 		if (res.data['odata.etag']) {
 			// Updated item - set etag on the activity
 			newActivity.__metadata = { etag: ('"' + res.data['odata.etag'].split(',')[1]) };
@@ -62,7 +62,7 @@ export default class ActivityUtilities {
 		return activityList.filter(act => act.Id !== activity.Id);
 	}
 
-	static replaceActivity(activityList: any[], oldActivity: any, newActivity: any): any[] {
+	static replaceActivity(activityList: any[], newActivity: any): any[] {
 		let retActivityList = [...activityList];
 		// rather than filter out the old activity, update if it already existed
 		// this prevents the activity display from re-ordering the existing items

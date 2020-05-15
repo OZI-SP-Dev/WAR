@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [0.1.6] - 2020-05-15
+### Added
+- Search form on /Review page
+- Role enforcement on /Review page that restricts normal users to read-only for other users' entries 
+- Role enforcement on /Review page that allows reviewers/chiefs to edit other users' entries
+
+### Changed
+- The /Review page now sorts and groups by WeekOf and each week has a collapsible header
+- Each of the reports now sort by WeekOf
+
 ## [0.1.5] - 2020-05-12
 ### Removed
 - Help / FAQs page removed until we have content for them

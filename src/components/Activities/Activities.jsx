@@ -51,37 +51,37 @@ class Activities extends Component {
 
   newItem = (date) => {
     const item = {
-      Id: -1, 
-      Title: '', 
-      WeekOf: moment(date).day(0), 
+      Id: -1,
+      Title: '',
+      WeekOf: moment(date).day(0),
       InputWeekOf: moment(date).format("YYYY-MM-DD"),
-      Branch: 'OZIC', 
-      ActionTaken: '', 
-      IsBigRock: false, 
-      IsHistoryEntry: false, 
-			OPRs: { results: [this.Me] }
+      Branch: 'OZIC',
+      ActionTaken: '',
+      IsBigRock: false,
+      IsHistoryEntry: false,
+      OPRs: { results: [this.Me] }
     }
     this.setState({ showEditModal: true, editActivity: item });
   }
 
 
-	submitActivity = async (newActivity) => {
-		this.setState({ isLoading: true });
-		//build object to save
-		let activityToSubmit = await ActivityUtilities.buildActivity(newActivity);
+  submitActivity = async (activity) => {
+    this.setState({ isLoading: true });
+    //build object to save
+    let activityToSubmit = await ActivityUtilities.buildActivity(activity);
 
-		this.activitiesApi.submitActivity(activityToSubmit).then(r => {
-			// Newly created list items return the complete item
-			// Updated list items only return an 'odata.etag' prop
-			//  !! not an odata object with an etag prop !!
+    this.activitiesApi.submitActivity(activityToSubmit).then(r => {
+      // Newly created list items return the complete item
+      // Updated list items only return an 'odata.etag' prop
+      //  !! not an odata object with an etag prop !!
 
-			newActivity = ActivityUtilities.updateActivityEtagFromResponse(r, newActivity);
+      activityToSubmit = ActivityUtilities.updateActivityEtagFromResponse(r, activity, activityToSubmit);
 
-			this.setState({
+      this.setState({
         isLoading: false,
         showEditModal: false,
         saveError: false,
-        listData: ActivityUtilities.replaceActivity(this.state.listData, activityToSubmit, newActivity) 
+        listData: ActivityUtilities.replaceActivity(this.state.listData, activityToSubmit)
       });
     }, e => {
       console.error(e);
@@ -95,7 +95,7 @@ class Activities extends Component {
       .then((res) => this.setState({
         isDeleting: false,
         showEditModal: false,
-        listData: ActivityUtilities.filterActivity(this.state.listData, res.data)
+        listData: ActivityUtilities.filterActivity(this.state.listData, activity)
       }), e => {
         console.error(e);
         this.setState({ isDeleting: false, showEditModal: false });
@@ -125,8 +125,8 @@ class Activities extends Component {
   }
 
   cardOnClick(action) {
-		let editActivity = action;
-		editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
+    let editActivity = action;
+    editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
     this.setState({ showEditModal: true, editActivity });
   }
 
@@ -145,6 +145,7 @@ class Activities extends Component {
           deleting={this.state.isDeleting}
           saving={this.state.isLoading}
           error={this.state.saveError}
+          canEdit={(act) => RoleUtilities.isActivityEditable(act, this.props.user)}
           minCreateDate={this.state.minCreateDate}
           showBigRockCheck={(org) => RoleUtilities.userCanSetBigRock(this.props.user, org)}
           showHistoryCheck={(org) => RoleUtilities.userCanSetHistory(this.props.user, org)}

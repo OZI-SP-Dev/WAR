@@ -21,7 +21,7 @@ class BigRocksReport extends Component {
         this.setState({ loadingReport: true });
         let submitEndDate = new Date(endDate);
         submitEndDate.setDate(endDate.getDate() + 1);
-        this.activitiesApi.fetchBigRocksByDates(startDate, submitEndDate).then(r => {
+        this.activitiesApi.fetchBigRocksByDates(startDate, submitEndDate, null, "WeekOf").then(r => {
             this.setState({ loadingReport: false, activities: r });
             $(".report-toggle").click();
         }, e =>

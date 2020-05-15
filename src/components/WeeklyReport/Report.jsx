@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Row } from 'react-bootstrap';
 import DateUtilities from '../../utilities/DateUtilities';
-import ReportAccordion from './ReportAccordion';
+import CardAccordion from '../CardAccordion/CardAccordion';
 import ReportActivitiesByBranch from './ReportActivitiesByBranch';
 import ReportForm from './ReportForm';
 
@@ -28,7 +28,7 @@ class Report extends Component {
                 <Row className="justify-content-center">
                     <h1>{this.props.pageHeader}</h1>
                 </Row>
-                <ReportAccordion searchCardHeader={this.props.searchCardHeader}>
+                <CardAccordion defaultOpen cardHeader={this.props.searchCardHeader}>
                     <ReportForm
                         submitSearch={() => this.props.submitSearch(this.state.startDate, this.state.endDate)}
                         startDate={this.state.startDate}
@@ -45,7 +45,7 @@ class Report extends Component {
                         endHighlightDates={this.state.endHighlightDates}
                         loadingReport={this.props.loadingReport}
                     />
-                </ReportAccordion>
+                </CardAccordion>
                 <ReportActivitiesByBranch activities={this.props.activities} />
             </Container>
         );

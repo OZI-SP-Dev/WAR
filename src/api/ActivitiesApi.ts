@@ -38,9 +38,9 @@ export interface IActivity {
 export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any>,
   fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any>,
-  fetchActivitiesByQueryString(query: string, userId?: number): Promise<any>,
-  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
-  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any>,
+  fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Date, endDate?: Date, userId?: number): Promise<any>,
+  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any>,
+  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any>,
   deleteActivity(activity: IActivity): Promise<any>,
   submitActivity(activity: IActivity): Promise<{ data: IActivity }>
 }
@@ -69,7 +69,33 @@ export default class ActivitiesApi implements IActivityApi {
     return items.get();
   }
 
-  async fetchActivitiesByQueryString(query: string, userId?: number): Promise<IActivity> {
+  async fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Date, endDate?: Date, userId?: number): Promise<IActivity> {
+
+    let conditions: string[] = ["<Neq><FieldRef Name='IsDeleted'/><Value Type='Boolean'>1</Value></Neq>"];
+    if (query) {
+      conditions.push(`<Contains><FieldRef Name='ActionTaken'/><Value Type='Note'>${query}</Value></Contains>`);
+    }
+    if (org) {
+      conditions.push(`<${includeSubOrgs ? "Contains" : "Eq"}><FieldRef Name='Branch'/><Value Type='Text'>${org}</Value></${includeSubOrgs ? "Contains" : "Eq"}>`);
+    }
+    if (startDate) {
+      conditions.push(`<Geq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${startDate.toISOString()}</Value></Geq>`);
+    }
+    if (endDate) {
+      conditions.push(`<Leq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${endDate.toISOString()}</Value></Leq>`);
+    }
+    if (userId) {
+      conditions.push(`<Eq><FieldRef Name='Author' LookupId='True'/><Value Type='Lookup'>${userId}</Value></Eq>`);
+    }
+    let queryString = "";
+    conditions.forEach((condition, i) => {
+      queryString += i < conditions.length - 1 ? "<And>" : "";
+      queryString += condition;
+    })
+    for (let i = 0; i < conditions.length - 1; ++i) {
+      queryString += "</And>"
+    }
+
     const caml: ICamlQuery = {
       ViewXml: `<View>
                   <ViewFields>
@@ -85,21 +111,7 @@ export default class ActivitiesApi implements IActivityApi {
                   </ViewFields>
                   <Query>
                     <Where>
-                      ${userId && userId !== null ? `<And>
-                        <Eq>
-                          <FieldRef Name='Author' LookupId='True' />
-                          <Value Type='Lookup'>${userId}</Value>
-                        </Eq>` : ""}
-                        ${query ? `<And>` : ""}
-                          <Neq>
-                            <FieldRef Name='IsDeleted' />
-                            <Value Type='Boolean'>1</Value>
-                          </Neq>
-                          ${query ? `<Contains>
-                            <FieldRef Name='ActionTaken' />
-                            <Value Type='Note'>${query}</Value>
-                          </Contains></And>` : ""}
-                      ${userId && userId !== null ? "</And>" : ""}
+                      ${queryString}
                     </Where>
                     <OrderBy>
                       <FieldRef Name='WeekOf' Ascending='FALSE'/>
@@ -111,13 +123,6 @@ export default class ActivitiesApi implements IActivityApi {
     /* Of course SharePoint doesn't return data in the same format from this function as it does
        with the REST API. Below steps convert to the standard format so results can be used normally */
     return newActivities.Row.map((activity: any) => {
-      activity.OPRs = activity.OPRs.map((OPR: any) => {
-        return {
-          Id: OPR.id,
-          Email: OPR.id,
-          Title: OPR.title
-        };
-      })
       return {
         Id: activity.ID,
         Title: activity.Title,
@@ -127,18 +132,26 @@ export default class ActivitiesApi implements IActivityApi {
         IsBigRock: activity.IsBigRock === "Yes" ? true : false,
         IsHistoryEntry: activity.IsHistoryEntry === "Yes" ? true : false,
         IsDeleted: activity.IsDeleted === "Yes" ? true : false,
-        OPRs: { results: activity.OPRs },
+        OPRs: {
+          results: activity.OPRs.map((OPR: any) => {
+            return {
+              Id: OPR.id,
+              Email: OPR.email,
+              Title: OPR.title
+            };
+          })
+        },
         __metadata: { etag: `"${activity.owshiddenversion}"` }
       };
     });
   }
 
-  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
-    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsBigRock eq 1");
+  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any> {
+    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsBigRock eq 1", orderBy);
   }
 
-  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
-    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsHistoryEntry eq 1");
+  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any> {
+    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsHistoryEntry eq 1", orderBy);
   }
 
   deleteActivity(activity: IActivity): Promise<any> {
