@@ -27,7 +27,7 @@ class AppLeftNav extends Component {
                             </NavLink>
 						</li>
 						<li className="nav-item">
-							<a className="nav-link" href="https://af.mil/News/Coronavirus-Disease-2019/">
+							<a className="nav-link" href="https://www.af.mil/News/Coronavirus-Disease-2019/">
 								<img width="24" height="24" src={process.env.PUBLIC_URL + '/COVID19.svg'} alt="Logo" className="logo" /> Coronavirus Info</a>
 						</li>
 						<li className="nav-item">
