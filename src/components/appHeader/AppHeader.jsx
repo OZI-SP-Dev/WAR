@@ -85,9 +85,7 @@ function AppHeader() {
               Search
             </Button>
 					</Form>
-					<Navbar.Text>
 						<Persona className="mr-2 d-none d-md-inline-block" {...user.Persona} hidePersonaDetails size={PersonaSize.size32} />
-					</Navbar.Text>
 				</Nav>
 			</Navbar.Collapse>
     </Navbar>
