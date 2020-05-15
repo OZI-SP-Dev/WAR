@@ -93,7 +93,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     }
 
     return (
-        <Container>
+        <Container fluid>
             <Row className="justify-content-center"><h1>Review Activities</h1></Row>
             <Form className={"mb-3"}>
                 <FormCheck
