@@ -7,6 +7,7 @@ import RoleUtilities from '../../utilities/RoleUtilities';
 import './AppHeader.css';
 import { Persona, PersonaSize } from 'office-ui-fabric-react/lib/Persona';
 import { ContactUsContext } from '../ContactUs/ContactUsProvider';
+import DateUtilities from '../../utilities/DateUtilities';
 
 function AppHeader() {
   const [query, setQuery] = useState("");
@@ -23,6 +24,9 @@ function AppHeader() {
     setQuery("");
   }
 
+  let reviewStartDate = DateUtilities.getStartOfWeek(new Date());
+  reviewStartDate.setDate(reviewStartDate.getDate() - 7);
+
   return (
     <Navbar fixed="top" expand="md" variant="dark" bg="dark" className="p-0 shadow">
       <Navbar.Brand className="col-xs-1 col-sm-3 col-md-2 mr-0">Weekly Activity Report</Navbar.Brand>
@@ -32,11 +36,11 @@ function AppHeader() {
           <LinkContainer to="/">
             <Nav.Link>Home</Nav.Link>
           </LinkContainer>
-					<NavDropdown title="Reports" id="basic-nav-dropdown">
+          <NavDropdown title="Reports" id="basic-nav-dropdown">
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to="/Review">
+            <LinkContainer to={`/Review?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getStartOfWeek(new Date()).toISOString()}`}>
               <NavDropdown.Item>Review</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />
@@ -49,15 +53,15 @@ function AppHeader() {
             <LinkContainer to="/HistoryReport">
               <NavDropdown.Item>History</NavDropdown.Item>
             </LinkContainer>
-					</NavDropdown>
-					<ContactUsContext.Consumer>
-						{ContactUs => (
-							<OverlayTrigger
-								placement="bottom"
-								delay={{ show: 500, hide: 0 }}
-								overlay={
-									<Tooltip id="ContactUsNavTooltip">
-										Submit feedback, bug reports, or just say hello!
+          </NavDropdown>
+          <ContactUsContext.Consumer>
+            {ContactUs => (
+              <OverlayTrigger
+                placement="bottom"
+                delay={{ show: 500, hide: 0 }}
+                overlay={
+                  <Tooltip id="ContactUsNavTooltip">
+                    Submit feedback, bug reports, or just say hello!
 							    </Tooltip>
                 }
               >
@@ -70,10 +74,10 @@ function AppHeader() {
           {RoleUtilities.userCanAccessAdminPage(user) &&
             <LinkContainer to="/RoleManagement">
               <Nav.Link>Admin</Nav.Link>
-						</LinkContainer>}
-					<LinkContainer className="d-lg-none d-xl-none" to="/Review">
-						<Nav.Link>Search</Nav.Link>
-					</LinkContainer>
+            </LinkContainer>}
+          <LinkContainer className="d-lg-none d-xl-none" to="/Review">
+            <Nav.Link>Search</Nav.Link>
+          </LinkContainer>
         </Nav>
         <Nav className="justify-content-end">
           <Form className="d-none d-lg-inline-block" inline onSubmit={handleSubmit}>
@@ -84,10 +88,10 @@ function AppHeader() {
               onClick={handleSubmit} >
               Search
             </Button>
-					</Form>
-						<Persona className="mr-2 d-none d-md-inline-block" {...user.Persona} hidePersonaDetails size={PersonaSize.size32} />
-				</Nav>
-			</Navbar.Collapse>
+          </Form>
+          <Persona className="mr-2 d-none d-md-inline-block" {...user.Persona} hidePersonaDetails size={PersonaSize.size32} />
+        </Nav>
+      </Navbar.Collapse>
     </Navbar>
   );
 }
