@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [0.1.8] - 2020-05-18
+### Fixed
+- Global search will now search the keyword entered for all entries instead of by the default date range
+
+### Changed
+- Search params for the /Review page are now put into the URL params instead of state vars
+
 ## [0.1.7] - 2020-05-15
 ### Added
 - COVID19 SVG and link on LeftNav
