@@ -18,7 +18,7 @@ class ReportForm extends Component {
     render() {
         let StartDatePickerCustomInput = ({ value }) => (
             <>
-                <Form.Label>Report Start Date</Form.Label>
+                <Form.Label>Report Start Week</Form.Label>
                 <Form.Control
                     type="text"
                     value={value}
@@ -28,7 +28,7 @@ class ReportForm extends Component {
 
         let EndDatePickerCustomInput = ({ value }) => (
             <>
-                <Form.Label>Report End Date</Form.Label>
+                <Form.Label>Report End Week</Form.Label>
                 <Form.Control
                     type="text"
                     value={value}
