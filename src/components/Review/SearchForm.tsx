@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { Button, Col, Form, FormCheck, Row, Spinner } from "react-bootstrap";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { useHistory } from "react-router-dom";
+import DateUtilities from "../../utilities/DateUtilities";
 import '../WeeklyReport/ReportForm.css';
 import './SearchForm.css';
-import DateUtilities from "../../utilities/DateUtilities";
 
 export interface ISearchFormProps {
-    submitSearch: ((keywordQuery: string, org: string, includeSubOrgs: boolean, startDate: Date, endDate: Date, showUserOnly: boolean) => void),
     query: string,
     loading: boolean
 }
@@ -28,6 +28,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
     const [org, setOrg] = useState<string>("--");
     const [keywordQuery, setKeywordQuery] = useState<string>(props.query === null ? "" : props.query);
     const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(false);
+
+    const history = useHistory();
 
     const startDatePickerOnClick = () => {
         setStartDatePickerOpen(true);
@@ -68,6 +70,10 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         setIncludeSubOrgs(e.target.checked);
     }
 
+    const submitSearch = (keywordQuery: string, org: string, includeSubOrgs: boolean, startDate: Date, endDate: Date, showUserOnly: boolean) => {
+        history.push(`/Review?query=${keywordQuery}&org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&showUserOnly=${showUserOnly}`);
+    }
+
     const StartDatePickerCustomInput = ({ value }: any) => (
         <>
             <Form.Label>Search Week Start</Form.Label>
@@ -89,7 +95,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         </>);
 
     return (
-        <Form className={"mb-3"}>
+        <Form className={"mb-3"} onSubmit={() => submitSearch(keywordQuery, org, includeSubOrgs, startDate, endDate, showUserOnly)}>
             <Row>
                 <Col md={4}>
                     <Form.Group controlId="keywordSearch">
@@ -180,7 +186,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                 disabled={props.loading}
                 className="float-right mb-3"
                 variant="primary"
-                onClick={() => props.submitSearch(keywordQuery, org, includeSubOrgs, startDate, endDate, showUserOnly)}>
+                onClick={() => submitSearch(keywordQuery, org, includeSubOrgs, startDate, endDate, showUserOnly)}>
                 {props.loading && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
                 {' '}Submit Search
             </Button>

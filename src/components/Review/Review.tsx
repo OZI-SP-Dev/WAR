@@ -1,10 +1,9 @@
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Accordion, Container, Row, useAccordionToggle } from "react-bootstrap";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { ActivitiesApiConfig, IActivity } from '../../api/ActivitiesApi';
 import ActivityUtilities from "../../utilities/ActivityUtilities";
-import DateUtilities from "../../utilities/DateUtilities";
 import RoleUtilities, { IUserRole } from "../../utilities/RoleUtilities";
 import '../Activities/Activities.css';
 import { ActivityCard } from "../Activities/ActivityCard";
@@ -48,8 +47,6 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     let urlStartDate = query.get("startDate");
     let urlEndDate = query.get("endDate");
     let urlShowUserOnly = query.get("showUserOnly");
-
-    const history = useHistory();
 
     const [activities, setActivities] = useState<any[]>([]);
     const [modalActivityId, setModalActivityId] = useState<number>(-1);
@@ -134,12 +131,6 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         return activityWeeks;
     }
 
-    // Start search form functions
-    const submitSearch = (keywordQuery: string, org: string, includeSubOrgs: boolean, startDate: Date, endDate: Date, showUserOnly: boolean) => {
-        history.push(`/Review?query=${keywordQuery}&org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&showUserOnly=${showUserOnly}`);
-    }
-    // End search form functions
-
     useEffect(() => {
         fetchActivities();
         // eslint-disable-next-line
@@ -149,11 +140,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         <Container fluid>
             <Row className="justify-content-center"><h1>{urlQuery === null ? "Review Activities" : "Search Results"}</h1></Row>
             <CardAccordion defaultOpen={false} cardHeader="Search and Filter">
-                <SearchForm
-                    submitSearch={submitSearch}
-                    query={urlQuery ? urlQuery : ''}
-                    loading={loading}
-                />
+                <SearchForm query={urlQuery ? urlQuery : ''} loading={loading} />
             </CardAccordion>
             {getActivityWeeks().map(week =>
                 <Accordion key={week + "_acc"} defaultActiveKey="0" className="mb-3">
