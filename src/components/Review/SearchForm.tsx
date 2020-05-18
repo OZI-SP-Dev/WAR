@@ -4,29 +4,30 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import '../WeeklyReport/ReportForm.css';
 import './SearchForm.css';
+import DateUtilities from "../../utilities/DateUtilities";
 
 export interface ISearchFormProps {
-    submitSearch: ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void),
-    showUserOnly: boolean,
-    startDate: Date,
-    endDate: Date,
-    startHighlightDates: Date[],
-    endHighlightDates: Date[],
-    org: string,
+    submitSearch: ((keywordQuery: string, org: string, includeSubOrgs: boolean, startDate: Date, endDate: Date, showUserOnly: boolean) => void),
     query: string,
-    loading: boolean,
-    includeSubOrgs: boolean,
-    userSwitchOnClick: ((event: React.ChangeEvent<HTMLInputElement>) => void),
-    includeSubOrgSwitchOnClick: ((event: React.ChangeEvent<HTMLInputElement>) => void),
-    onChangeStartDate: (date: Date) => void,
-    onChangeEndDate: (date: Date) => void,
-    orgOnChange: ((event: React.FormEvent<any>) => void),
-    queryOnChange: ((event: React.FormEvent<any>) => void),
+    loading: boolean
 }
 
 export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISearchFormProps) => {
+    const initialStartWeek: Date = DateUtilities.getStartOfWeek(new Date());
+    initialStartWeek.setDate(initialStartWeek.getDate() - 7);
+    const initialEndWeek: Date = DateUtilities.getStartOfWeek(new Date());
     const [startDatePickerOpen, setStartDatePickerOpen] = useState<boolean>(false);
     const [endDatePickerOpen, setEndDatePickerOpen] = useState<boolean>(false);
+    const [showUserOnly, setShowUserOnly] = useState<boolean>(true);
+    const [startDate, setStartDate] = useState<Date>(initialStartWeek);
+    const [endDate, setEndDate] = useState<Date>(initialEndWeek);
+    const [startHighlightDates, setStartHighlightDates] =
+        useState<Date[]>(DateUtilities.getWeek(initialStartWeek));
+    const [endHighlightDates, setEndHighlightDates] =
+        useState<Date[]>(DateUtilities.getWeek(initialEndWeek));
+    const [org, setOrg] = useState<string>("--");
+    const [keywordQuery, setKeywordQuery] = useState<string>(props.query === null ? "" : props.query);
+    const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(false);
 
     const startDatePickerOnClick = () => {
         setStartDatePickerOpen(true);
@@ -39,6 +40,32 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
     const clickOutside = () => {
         setStartDatePickerOpen(false);
         setEndDatePickerOpen(false);
+    }
+
+    const userSwitchOnClick = (e: any) => {
+        setShowUserOnly(e.target.checked);
+    }
+
+    const onChangeStartDate = (date: Date) => {
+        setStartDate(DateUtilities.getStartOfWeek(date));
+        setStartHighlightDates(DateUtilities.getWeek(date));
+    }
+
+    const onChangeEndDate = (date: Date) => {
+        setEndDate(DateUtilities.getStartOfWeek(date));
+        setEndHighlightDates(DateUtilities.getWeek(date));
+    }
+
+    const orgOnChange = (e: any) => {
+        setOrg(e.target.value);
+    }
+
+    const keywordQueryOnChange = (e: any) => {
+        setKeywordQuery(e.target.value);
+    }
+
+    const includeSubOrgSwitchOnClick = (e: any) => {
+        setIncludeSubOrgs(e.target.checked);
     }
 
     const StartDatePickerCustomInput = ({ value }: any) => (
@@ -70,8 +97,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                         <Form.Control
                             type="text"
                             placeholder="Search for a keyword"
-                            value={props.query}
-                            onChange={props.queryOnChange}
+                            value={keywordQuery}
+                            onChange={keywordQueryOnChange}
                         />
                     </Form.Group>
                 </Col>
@@ -81,8 +108,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     <Form.Group controlId="orgSearch">
                         <Form.Label>Organization</Form.Label>
                         <Form.Control as="select"
-                            value={props.org}
-                            onChange={props.orgOnChange}
+                            value={org}
+                            onChange={orgOnChange}
                         >
                             <option>--</option>
                             <option>OZI</option>
@@ -100,8 +127,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                             className="mb-3"
                             type="switch"
                             label="Include Sub-Organizations?"
-                            checked={props.includeSubOrgs}
-                            onChange={props.includeSubOrgSwitchOnClick}
+                            checked={includeSubOrgs}
+                            onChange={includeSubOrgSwitchOnClick}
                         />
                     </Form.Group>
                 </Col>
@@ -111,9 +138,9 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     <Form.Group controlId="weekOfStart">
                         <DatePicker
                             className="weekly-report-date-picker"
-                            selected={props.startDate}
-                            onChange={props.onChangeStartDate}
-                            highlightDates={props.startHighlightDates}
+                            selected={startDate}
+                            onChange={onChangeStartDate}
+                            highlightDates={startHighlightDates}
                             maxDate={new Date()}
                             customInput={<StartDatePickerCustomInput />}
                             open={startDatePickerOpen}
@@ -126,9 +153,9 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     <Form.Group controlId="weekOfEnd">
                         <DatePicker
                             className="weekly-report-date-picker"
-                            selected={props.endDate}
-                            onChange={props.onChangeEndDate}
-                            highlightDates={props.endHighlightDates}
+                            selected={endDate}
+                            onChange={onChangeEndDate}
+                            highlightDates={endHighlightDates}
                             maxDate={new Date()}
                             customInput={<EndDatePickerCustomInput />}
                             open={endDatePickerOpen}
@@ -144,8 +171,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                         id="userCheck"
                         type="switch"
                         label="Show only my Activities"
-                        checked={props.showUserOnly}
-                        onChange={props.userSwitchOnClick}
+                        checked={showUserOnly}
+                        onChange={userSwitchOnClick}
                     />
                 </Col>
             </Row>
@@ -153,7 +180,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                 disabled={props.loading}
                 className="float-right mb-3"
                 variant="primary"
-                onClick={props.submitSearch}>
+                onClick={() => props.submitSearch(keywordQuery, org, includeSubOrgs, startDate, endDate, showUserOnly)}>
                 {props.loading && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
                 {' '}Submit Search
             </Button>

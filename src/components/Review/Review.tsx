@@ -41,7 +41,14 @@ export interface IReviewProps {
 
 export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
-    let query = useQuery().get("query");
+    let query = useQuery();
+    let urlQuery = query.get("query");
+    let urlOrg = query.get("org");
+    let urlIncludeSubOrgs = query.get("includeSubOrgs");
+    let urlStartDate = query.get("startDate");
+    let urlEndDate = query.get("endDate");
+    let urlShowUserOnly = query.get("showUserOnly");
+
     const history = useHistory();
 
     const [activities, setActivities] = useState<any[]>([]);
@@ -50,30 +57,22 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     const [deleting, setDeleting] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
 
-    // start state vars for search form
-    const initialStartWeek: Date = DateUtilities.getStartOfWeek(new Date());
-    initialStartWeek.setDate(initialStartWeek.getDate() - 7);
-    const initialEndWeek: Date = DateUtilities.getStartOfWeek(new Date());
-    const [showUserOnly, setShowUserOnly] = useState<boolean>(true);
-    const [startDate, setStartDate] = useState<Date>(initialStartWeek);
-    const [endDate, setEndDate] = useState<Date>(initialEndWeek);
-    const [startHighlightDates, setStartHighlightDates] =
-        useState<Date[]>(DateUtilities.getWeek(initialStartWeek));
-    const [endHighlightDates, setEndHighlightDates] =
-        useState<Date[]>(DateUtilities.getWeek(initialEndWeek));
-    const [org, setOrg] = useState<string>("--");
-    const [keywordQuery, setKeywordQuery] = useState<string>(query === null ? "" : query);
-    const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(false);
-    // end state vars for search form
-
     const activitiesApi = ActivitiesApiConfig.activitiesApi;
 
     const fetchActivities = async () => {
         try {
             setLoading(true);
-            let submitStartDate = new Date(startDate);
-            submitStartDate.setDate(startDate.getDate() - 1);
-            let newActivities = await activitiesApi.fetchActivitiesByQueryString(query ? query : '', org.replace('--', ''), includeSubOrgs, submitStartDate, endDate, showUserOnly ? parseInt(user.Id) : undefined);
+            let submitQuery = urlQuery ? urlQuery : '';
+            let submitOrg = urlOrg ? urlOrg.replace('--', '') : undefined;
+            let submitIncludeSubOrgs = urlIncludeSubOrgs === "true" ? true : false;
+            let submitStartDate = undefined;
+            if (urlStartDate) {
+                submitStartDate = new Date(urlStartDate);
+                submitStartDate.setDate(submitStartDate.getDate() - 1);
+            }
+            let submitEndDate = urlEndDate ? new Date(urlEndDate) : undefined;
+            let submitUserId = urlShowUserOnly === "false" ? undefined : parseInt(user.Id);
+            let newActivities = await activitiesApi.fetchActivitiesByQueryString(submitQuery, submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, submitUserId);
             setActivities(newActivities);
             setLoading(false);
         } catch (e) {
@@ -128,75 +127,32 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         let activityWeeks: string[] = [];
         activities.forEach(activity => {
             let week = moment(activity.WeekOf).startOf("day");
-            if (!activityWeeks.includes(week.toString())) {
-                activityWeeks.push(week.toString());
+            if (!activityWeeks.includes(week.toISOString())) {
+                activityWeeks.push(week.toISOString());
             }
         });
         return activityWeeks;
     }
 
     // Start search form functions
-    const submitSearch = () => {
-        if (keywordQuery !== query) {
-            history.push(`/Review?query=${keywordQuery}`);
-        } else {
-            fetchActivities();
-        }
-    }
-
-    const userSwitchOnClick = (e: any) => {
-        setShowUserOnly(e.target.checked);
-    }
-
-    const onChangeStartDate = (date: Date) => {
-        setStartDate(DateUtilities.getStartOfWeek(date));
-        setStartHighlightDates(DateUtilities.getWeek(date));
-    }
-
-    const onChangeEndDate = (date: Date) => {
-        setEndDate(DateUtilities.getStartOfWeek(date));
-        setEndHighlightDates(DateUtilities.getWeek(date));
-    }
-
-    const orgOnChange = (e: any) => {
-        setOrg(e.target.value);
-    }
-
-    const keywordQueryOnChange = (e: any) => {
-        setKeywordQuery(e.target.value);
-    }
-
-    const includeSubOrgSwitchOnClick = (e: any) => {
-        setIncludeSubOrgs(e.target.checked);
+    const submitSearch = (keywordQuery: string, org: string, includeSubOrgs: boolean, startDate: Date, endDate: Date, showUserOnly: boolean) => {
+        history.push(`/Review?query=${keywordQuery}&org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&showUserOnly=${showUserOnly}`);
     }
     // End search form functions
 
     useEffect(() => {
         fetchActivities();
         // eslint-disable-next-line
-    }, [query]);
+    }, [urlQuery, urlOrg, urlIncludeSubOrgs, urlStartDate, urlEndDate, urlShowUserOnly]);
 
     return (
         <Container fluid>
-            <Row className="justify-content-center"><h1>{query === null ? "Review Activities" : "Search Results"}</h1></Row>
+            <Row className="justify-content-center"><h1>{urlQuery === null ? "Review Activities" : "Search Results"}</h1></Row>
             <CardAccordion defaultOpen={false} cardHeader="Search and Filter">
                 <SearchForm
                     submitSearch={submitSearch}
-                    showUserOnly={showUserOnly}
-                    startDate={startDate}
-                    endDate={endDate}
-                    startHighlightDates={startHighlightDates}
-                    endHighlightDates={endHighlightDates}
-                    org={org}
-                    query={keywordQuery}
+                    query={urlQuery ? urlQuery : ''}
                     loading={loading}
-                    includeSubOrgs={includeSubOrgs}
-                    userSwitchOnClick={userSwitchOnClick}
-                    includeSubOrgSwitchOnClick={includeSubOrgSwitchOnClick}
-                    onChangeStartDate={onChangeStartDate}
-                    onChangeEndDate={onChangeEndDate}
-                    orgOnChange={orgOnChange}
-                    queryOnChange={keywordQueryOnChange}
                 />
             </CardAccordion>
             {getActivityWeeks().map(week =>
@@ -204,7 +160,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                     <CustomToggle eventKey="0">Week of: {moment(week).format("DD MMM YYYY")}</CustomToggle>
                     <Accordion.Collapse eventKey="0">
                         <div key={week + "_div"}>
-                            {activities.filter(activity => moment(activity.WeekOf).startOf("day").toString() === week).map(activity =>
+                            {activities.filter(activity => moment(activity.WeekOf).startOf("day").toISOString() === week).map(activity =>
                                 <div key={`${activity.Id}_div`}>
                                     <ActivityCard className={"mb-3"} key={`${activity.Id}_card`} activity={activity} onClick={cardOnClick} />
                                     <EditActivityModal
