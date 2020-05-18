@@ -24,18 +24,15 @@ function AppHeader() {
   }
 
   return (
-    <Navbar fixed="top" expand="lg" variant="dark" bg="dark" className="p-0 shadow">
-      <Navbar.Brand className="col-sm-3 col-md-2 mr-0">Weekly Activity Report</Navbar.Brand>
+    <Navbar fixed="top" expand="md" variant="dark" bg="dark" className="p-0 shadow">
+      <Navbar.Brand className="col-xs-1 col-sm-3 col-md-2 mr-0">Weekly Activity Report</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <LinkContainer to="/">
             <Nav.Link>Home</Nav.Link>
           </LinkContainer>
-          {/*<LinkContainer to="/Help" className="justify-content-end">
-            <Nav.Link>Help</Nav.Link>
-					</LinkContainer>*/}
-          <NavDropdown title="Reports" id="basic-nav-dropdown">
+					<NavDropdown title="Reports" id="basic-nav-dropdown">
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
             </LinkContainer>
@@ -52,15 +49,15 @@ function AppHeader() {
             <LinkContainer to="/HistoryReport">
               <NavDropdown.Item>History</NavDropdown.Item>
             </LinkContainer>
-          </NavDropdown>
-          <ContactUsContext.Consumer className="nav-item">
-            {ContactUs => (
-              <OverlayTrigger
-                placement="bottom"
-                delay={{ show: 500, hide: 0 }}
-                overlay={
-                  <Tooltip id="ContactUsNavTooltip">
-                    Submit feedback, bug reports, or just say hello!
+					</NavDropdown>
+					<ContactUsContext.Consumer>
+						{ContactUs => (
+							<OverlayTrigger
+								placement="bottom"
+								delay={{ show: 500, hide: 0 }}
+								overlay={
+									<Tooltip id="ContactUsNavTooltip">
+										Submit feedback, bug reports, or just say hello!
 							    </Tooltip>
                 }
               >
@@ -73,10 +70,13 @@ function AppHeader() {
           {RoleUtilities.userCanAccessAdminPage(user) &&
             <LinkContainer to="/RoleManagement">
               <Nav.Link>Admin</Nav.Link>
-            </LinkContainer>}
+						</LinkContainer>}
+					<LinkContainer className="d-lg-none d-xl-none" to="/Review">
+						<Nav.Link>Search</Nav.Link>
+					</LinkContainer>
         </Nav>
-        <Navbar.Collapse className="justify-content-end">
-          <Form inline onSubmit={handleSubmit}>
+        <Nav className="justify-content-end">
+          <Form className="d-none d-lg-inline-block" inline onSubmit={handleSubmit}>
             <Form.Control type="text" placeholder="Search" className="mr-sm-1" value={query}
               onChange={(e) => updateQuery(e.target.value)}
             />
@@ -84,12 +84,10 @@ function AppHeader() {
               onClick={handleSubmit} >
               Search
             </Button>
-          </Form>
-          <Navbar.Text className="mr-2">
-            <Persona {...user.Persona} hidePersonaDetails size={PersonaSize.size32} />
-          </Navbar.Text>
-        </Navbar.Collapse>
-      </Navbar.Collapse>
+					</Form>
+						<Persona className="mr-2 d-none d-md-inline-block" {...user.Persona} hidePersonaDetails size={PersonaSize.size32} />
+				</Nav>
+			</Navbar.Collapse>
     </Navbar>
   );
 }

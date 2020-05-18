@@ -24,7 +24,7 @@ class Report extends Component {
 
     render() {
         return (
-            <Container>
+            <Container fluid>
                 <Row className="justify-content-center">
                     <h1>{this.props.pageHeader}</h1>
                 </Row>
