@@ -10,7 +10,7 @@ export default class ActivityUtilities {
 			Title: activity.Title,
 			WeekOf: moment(activity.InputWeekOf).day(0).toISOString(),
 			Branch: activity.Branch,
-			ActionTaken: activity.ActionTaken,
+			ActionTaken: activity.ActionTaken.trim(),
 			IsBigRock: activity.IsBigRock,
 			IsHistoryEntry: activity.IsHistoryEntry,
 			OPRsId: { results: [] }

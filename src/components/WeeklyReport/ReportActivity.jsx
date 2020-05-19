@@ -9,11 +9,11 @@ class ReportActivity extends Component {
         return (
             <Row>
                 <p>
-                    <strong>Week of:</strong> {moment(activity.WeekOf).format("DD/MM/YYYY")}<br />
+                    <strong>Week of:</strong> {moment(activity.WeekOf).format("MM/DD/YYYY")}<br />
                     <strong>Activity/Purpose:</strong> {activity.Title}<br />
                     <strong>Action Taken/In Work:</strong> {activity.ActionTaken}<br />
-                    <strong>OPRs:</strong> {activity.OPRs && activity.OPRs.results && activity.OPRs.results.map((OPR) =>
-                      (<span key={OPR.Id}> {OPR.Title}; </span>))}
+										<strong>OPRs:</strong> {activity.OPRs && activity.OPRs.results && activity.OPRs.results.map((OPR, index, array) =>
+											(<span key={OPR.Id}> {OPR.Title}{array.length - 1 > index ? ';' : ''} </span>))}
                 </p>
             </Row>
         );
