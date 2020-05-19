@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.1] - 2020-05-19
+### Changed
+- Trim whitespace on saving activity
+- Made date formats consistent (MM/DD/YYYY)
+- Org logo in left nav now has correct margins and width
+
+### Removed
+- Yoda.webp image file :'(
+
 ## [1.0.0] - 2020-05-19
 - Deployed the application into PROD for the first time
 
