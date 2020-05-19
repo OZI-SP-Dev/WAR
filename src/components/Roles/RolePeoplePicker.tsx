@@ -162,9 +162,9 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 							>
 								<option>--</option>
 								{roleType !== RoleUtilities.REVIEWER && <option>OZI</option>}
-								{roleType === RoleUtilities.REVIEWER && <option>OZIC</option>}
-								{roleType === RoleUtilities.REVIEWER && <option>OZIF</option>}
-								{roleType === RoleUtilities.REVIEWER && <option>OZIP</option>}
+								<option>OZIC</option>
+								<option>OZIF</option>
+								<option>OZIP</option>
 							</Form.Control>
 							<Form.Control.Feedback type='invalid'>Please provide a department for the {roleType}</Form.Control.Feedback>
 						</Form.Group>}

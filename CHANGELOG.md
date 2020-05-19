@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.2] - 2020-05-19
+- Enabled 4 letters in Chief role picker
+
 ## [1.0.1] - 2020-05-19
 ### Changed
 - Trim whitespace on saving activity
