@@ -1,7 +1,7 @@
 {
   "name": "weekly-activity-report",
   "homepage": ".",
-  "version": "0.1.8",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@fluentui/react": "^7.105.9",
@@ -34,6 +34,7 @@
     "start": "react-scripts start",
     "build:war-dev": "env-cmd -f ./.env.war-dev.json react-scripts build&&npm run rename",
     "build:war-test": "env-cmd -f ./.env.war-test.json react-scripts build&&npm run rename",
+    "build:war-prod": "env-cmd -f ./.env.war-prod.json react-scripts build&&npm run rename",
     "build:rob-test": "env-cmd -f ./.env.rob-test.json react-scripts build&&npm run rename",
     "rename": "node -e \"require('fs').rename('build/index.html', 'build/index.aspx', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\"",
     "test": "react-scripts test"
