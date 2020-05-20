@@ -61,7 +61,7 @@ export default class ActivitiesApi implements IActivityApi {
     let filterString = "IsDeleted ne 1"
     filterString += startDate ? ` and WeekOf ge '${startDate.toISOString()}'` : "";
     filterString += endDate ? ` and WeekOf le '${endDate.toISOString()}'` : "";
-    filterString += userId && userId !== null ? ` and AuthorId eq ${userId}` : "";
+    filterString += userId && userId !== null ? ` and (AuthorId eq ${userId} or OPRs/Id eq ${userId})` : "";
     filterString += additionalFilter ? ` and ${additionalFilter}` : "";
 
     let items: IItems = this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsBigRock", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString);
@@ -85,7 +85,9 @@ export default class ActivitiesApi implements IActivityApi {
       conditions.push(`<Leq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${endDate.toISOString()}</Value></Leq>`);
     }
     if (userId) {
-      conditions.push(`<Eq><FieldRef Name='Author' LookupId='True'/><Value Type='Lookup'>${userId}</Value></Eq>`);
+      conditions.push(`<Or><Eq><FieldRef Name='Author' LookupId='True'/><Value Type='Lookup'>${userId}</Value></Eq>
+                           <Eq><FieldRef Name='OPRs' LookupId='True'/><Value Type='Lookup'>${userId}</Value></Eq>
+                       </Or>`);
     }
     let queryString = "";
     conditions.forEach((condition, i) => {
