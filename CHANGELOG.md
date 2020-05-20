@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.3] - 2020-05-20
+### Fixed
+- Activities are now pulled based on if the user is the author or in the OPRs list
+
 ## [1.0.2] - 2020-05-19
 - Enabled 4 letters in Chief role picker
 
