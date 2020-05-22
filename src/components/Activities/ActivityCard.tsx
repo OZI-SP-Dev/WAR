@@ -20,11 +20,11 @@ export const ActivityCard: React.FunctionComponent<IActivityCardProps> = ({ acti
                 <Card.Text as="div">
                     <strong>Week of:</strong> {moment(activity.WeekOf).format("MM/DD/YYYY")}<br />
                     <strong>Action Taken/In Work:</strong> <span style={{ whiteSpace: 'pre-line' }}>{activity.ActionTaken}</span><br />
-										<strong>Branch: </strong><span>{activity.Branch}</span><br />
-										<strong>OPRs:</strong> {activity.OPRs && activity.OPRs.results && activity.OPRs.results.map((OPR: any, index: number, array: any[]) =>
-											(<span key={OPR.Id}> {OPR.Title}{array.length - 1 > index ? ';' : ''} </span>))}<br />
-										{activity.IsBigRock ? <span className="big-rock">Big Rock</span> : ''}
-										{activity.IsHistoryEntry ? <span className="history">History Item</span> : ''}
+                    <strong>Branch: </strong><span>{activity.Branch}</span><br />
+                    <strong>OPRs:</strong> {activity.OPRs && activity.OPRs.results && activity.OPRs.results.map((OPR: any, index: number, array: any[]) =>
+                        (<span key={OPR.Id}> {OPR.Title}{array.length - 1 > index ? ';' : ''} </span>))}<br />
+                    {activity.IsBigRock ? <span className="big-rock">Big Rock</span> : ''}
+                    {activity.IsHistoryEntry ? <span className="history">History Item</span> : ''}
                 </Card.Text>
             </Card.Body>
         </Card>

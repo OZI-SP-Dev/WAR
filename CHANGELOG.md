@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.5] - 2020-05-22
+### Fixed
+- Whitespace is now preserved on report pages
+
 ## [1.0.4] - 2020-05-22
 ### Added
 - Show if an Activity is a Big Rock or History Item on the Review and Activites pages
