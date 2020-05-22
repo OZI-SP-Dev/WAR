@@ -8,7 +8,7 @@ class ReportActivity extends Component {
     render() {
         let activity = this.props.activity;
         return (
-            <Row>
+            <Row className="activity">
                 <p className="preserve-whitespace">
                     <strong>Week of:</strong> {moment(activity.WeekOf).format("MM/DD/YYYY")}<br />
                     <strong>Activity/Purpose:</strong> {activity.Title}<br />
