@@ -25,3 +25,17 @@
     border-top: 10px solid black;
     margin-top: 5px;
 }
+
+span.history {
+	font-style: italic;
+	font-weight: bold;
+	margin-right: 8px;
+	color: blue;
+}
+
+.big-rock {
+	font-style: italic;
+	font-weight: bold;
+	margin-right: 8px;
+	color: red;
+}
