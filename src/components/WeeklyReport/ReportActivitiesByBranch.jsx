@@ -5,6 +5,15 @@ import './ReportActivity.css';
 
 class ReportActivitiesByBranch extends Component {
 
+    // We are going to be revisiting this so that we can make the report page more readable while maintaining the copy/paste functionality
+    // componentDidMount() {
+    //     document.addEventListener('copy', e => {
+    //         let copyText = e.composedPath();
+    //         console.log(copyText);
+    //         e.clipboardData.setData('text/html', copyText);
+    //     });
+    // }
+
     render() {
         let activitiesByBranch = {};
         this.props.activities.forEach(activity => {
