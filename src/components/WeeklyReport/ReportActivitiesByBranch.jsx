@@ -24,12 +24,12 @@ class ReportActivitiesByBranch extends Component {
         });
 
         return (
-            Object.keys(activitiesByBranch).map(branch =>
+            this.props.activities.length > 0 ? Object.keys(activitiesByBranch).map(branch =>
                 (<div className="activity-branch">
                     <Row><h4><u>{branch} Activities</u>:</h4></Row>
                     {activitiesByBranch[branch].map(activity => <ReportActivity activity={activity} />)}
                 </div>)
-            )
+            ) : <Row className="justify-content-center m-5"><h4>{this.props.reportGenerated ? "No activities were found for the given date range" : "Please select a date range and press 'Generate Report' for a report to be shown"}</h4></Row>
         );
     }
 }

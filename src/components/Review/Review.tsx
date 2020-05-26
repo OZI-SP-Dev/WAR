@@ -138,7 +138,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
     return (
         <Container fluid>
-            <Row className="justify-content-center"><h1>{urlQuery === null ? "Review Activities" : "Search Results"}</h1></Row>
+            <Row className="justify-content-center m-3"><h1>{urlQuery === null ? "Review Activities" : "Search Results"}</h1></Row>
             <CardAccordion defaultOpen={false} cardHeader="Search and Filter">
                 <SearchForm query={urlQuery ? urlQuery : ''} loading={loading} />
             </CardAccordion>

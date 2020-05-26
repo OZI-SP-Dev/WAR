@@ -22,10 +22,10 @@ class HistoryReport extends Component {
         let submitEndDate = new Date(endDate);
         submitEndDate.setDate(endDate.getDate() + 1);
         this.activitiesApi.fetchHistoryEntriesByDates(startDate, submitEndDate, null, "WeekOf").then(r => {
-            this.setState({ loadingReport: false, activities: r });
+            this.setState({ loadingReport: false, activities: r, reportGenerated: true });
             $(".report-toggle").click();
         }, e =>
-            this.setState({ loadingReport: false, errorMessage: `Error while trying to fetch History Entries. ${e}` })
+            this.setState({ loadingReport: false, errorMessage: `Error while trying to fetch History Entries. ${e}`, reportGenerated: true })
         );
     }
 
@@ -37,6 +37,7 @@ class HistoryReport extends Component {
                 submitSearch={(startDate, endDate) => this.submitSearch(startDate, endDate)}
                 loadingReport={this.state.loadingReport}
                 activities={this.state.activities}
+                reportGenerated={this.state.reportGenerated}
             />
         );
     }
