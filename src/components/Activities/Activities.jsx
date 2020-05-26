@@ -150,7 +150,7 @@ class Activities extends Component {
           showBigRockCheck={(org) => RoleUtilities.userCanSetBigRock(this.props.user, org)}
           showHistoryCheck={(org) => RoleUtilities.userCanSetHistory(this.props.user, org)}
         />
-				<Row className="justify-content-center"><h1>My Activities</h1></Row>
+        <Row className="justify-content-center m-3"><h1>My Activities</h1></Row>
         {this.state.loadedWeeks.map(date =>
           <ActivityAccordion
             key={date}

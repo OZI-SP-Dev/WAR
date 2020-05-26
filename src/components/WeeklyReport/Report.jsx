@@ -25,7 +25,7 @@ class Report extends Component {
     render() {
         return (
             <Container fluid>
-                <Row className="justify-content-center">
+                <Row className="justify-content-center m-3">
                     <h1>{this.props.pageHeader}</h1>
                 </Row>
                 <CardAccordion defaultOpen cardHeader={this.props.searchCardHeader}>
@@ -46,7 +46,7 @@ class Report extends Component {
                         loadingReport={this.props.loadingReport}
                     />
                 </CardAccordion>
-                <ReportActivitiesByBranch activities={this.props.activities} />
+                <ReportActivitiesByBranch activities={this.props.activities} reportGenerated={this.props.reportGenerated} />
             </Container>
         );
     }

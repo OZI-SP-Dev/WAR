@@ -11,7 +11,8 @@ class WeeklyReport extends Component {
         this.state = {
             loadingReport: false,
             errorMessage: "",
-            activities: []
+            activities: [],
+            reportGenerated: false
         }
 
         this.activitiesApi = ActivitiesApiConfig.activitiesApi;
@@ -22,10 +23,10 @@ class WeeklyReport extends Component {
         let submitEndDate = new Date(endDate);
         submitEndDate.setDate(endDate.getDate() + 1);
         this.activitiesApi.fetchActivitiesByDates(startDate, submitEndDate, null, null, "WeekOf").then(r => {
-            this.setState({ loadingReport: false, activities: r });
+            this.setState({ loadingReport: false, activities: r, reportGenerated: true });
             $(".report-toggle").click();
         }, e =>
-            this.setState({ loadingReport: false, errorMessage: `Error while trying to fetch Activities. ${e}` })
+            this.setState({ loadingReport: false, errorMessage: `Error while trying to fetch Activities. ${e}`, reportGenerated: true })
         );
     }
 
@@ -37,6 +38,7 @@ class WeeklyReport extends Component {
                 submitSearch={(startDate, endDate) => this.submitSearch(startDate, endDate)}
                 loadingReport={this.state.loadingReport}
                 activities={this.state.activities}
+                reportGenerated={this.state.reportGenerated}
             />
         );
     }
