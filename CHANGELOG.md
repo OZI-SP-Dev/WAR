@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.6] - 2020-05-26
+### Added
+- Message on reports pages to indicate when there are no activities found
+- Message on reports pages to indicate when the report has not yet been generated
+
+### Changed
+- Each page's header now has better spacing
+
 ## [1.0.5] - 2020-05-22
 ### Fixed
 - Whitespace is now preserved on report pages
