@@ -55,7 +55,7 @@ class Activities extends Component {
       Title: '',
       WeekOf: moment(date).day(0),
       InputWeekOf: moment(date).format("YYYY-MM-DD"),
-      Branch: 'OZIC',
+      Branch: '', // TODO: Pull user's default
       ActionTaken: '',
       IsBigRock: false,
       IsHistoryEntry: false,

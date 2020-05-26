@@ -142,9 +142,10 @@ class EditActivityModal extends Component {
               defaultValue={this.props.activity.Branch}
               value={this.state.Branch}
               onChange={(e) => this.updateActivity(e.target.value, 'Branch')}
-              disabled={this.isReadOnly()}
+							disabled={this.isReadOnly()}
+							required
             >
-              <option>--</option>
+              <option value=''>--</option>
               <option>OZI</option>
               <option>OZIC</option>
               <option>OZIF</option>

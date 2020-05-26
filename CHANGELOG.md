@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.7] - 2020-05-26
+### Changed
+- Default org for new activities is now blank (displays as '--') instead of OZIC
+- Org for activities is now required (can't be blank)
+
 ## [1.0.6] - 2020-05-26
 ### Added
 - Message on reports pages to indicate when there are no activities found
