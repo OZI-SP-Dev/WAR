@@ -79,7 +79,7 @@ class Activities extends Component {
 
       activityToSubmit = ActivityUtilities.updateActivityEtagFromResponse(r, activity, activityToSubmit);
 
-      if (activity.Id < 0) {
+      if (activity.Id < 0 && activity.Branch !== this.props.user.UserPreferences.DefaultOrg) {
         this.props.user.UserPreferences.updateDefaultOrg(activity.Branch);
       }
 
