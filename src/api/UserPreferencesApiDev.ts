@@ -8,17 +8,8 @@ export default class UserPreferencesApiDev implements IUserPreferencesApi {
             Id: '1',
             Title: '1',
             User: {
-                Title: "Robert Porterfield",
+                Title: "Default User",
                 Id: '1'
-            },
-            DefaultOrg: 'OZIC'
-        },
-        {
-            Id: '2',
-            Title: '2',
-            User: {
-                Title: "Jeremy Clark",
-                Id: '2'
             },
             DefaultOrg: 'OZIC'
         }
@@ -30,9 +21,9 @@ export default class UserPreferencesApiDev implements IUserPreferencesApi {
         return new Promise(r => setTimeout(r, m));
     }
 
-    async fetchPreferences(userId: string): Promise<any> {
+    async fetchPreferences(userId: string): Promise<IUserPreferences | null | undefined> {
         await this.sleep(1500);
-        return this.prefs;
+        return this.prefs.find(pref => pref.Title === userId);
     }
 
     async submitPreferences(userId: string, defaultOrg: string): Promise<any> {
@@ -41,7 +32,6 @@ export default class UserPreferencesApiDev implements IUserPreferencesApi {
         if (existingIndex > -1) {
             this.prefs[existingIndex] = { ...this.prefs[existingIndex], DefaultOrg: defaultOrg };
         } else {
-            let newId: string = (++this.lastId).toString();
             this.prefs.push({
                 Id: userId,
                 Title: userId,

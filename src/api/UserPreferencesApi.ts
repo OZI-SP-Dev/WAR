@@ -2,7 +2,7 @@ import { spWebContext } from '../providers/SPWebContext';
 import UserPreferencesApiDev from './UserPreferencesApiDev';
 
 export interface IUserPreferencesApi {
-    fetchPreferences(userId: string): Promise<any>,
+    fetchPreferences(userId: string): Promise<IUserPreferences | null | undefined>,
     submitPreferences(userId: string, defaultOrg: string): Promise<any>
 }
 
@@ -19,14 +19,15 @@ export interface IUserPreferences {
 export default class UserPreferencesApi implements IUserPreferencesApi {
     userPreferencesList = spWebContext.lists.getByTitle("UserPreferences");
 
-    fetchPreferences(userId: string): Promise<IUserPreferences> {
-        return this.userPreferencesList.items.select("Title", "User/Title", "User/Id", "DefaultOrg").filter(`UserId eq ${userId}`).get();
+    async fetchPreferences(userId: string): Promise<IUserPreferences | null> {
+        let userPreferences: IUserPreferences[] = await this.userPreferencesList.items.select("Id", "Title", "User/Title", "User/Id", "DefaultOrg").expand("User").filter(`UserId eq ${userId}`).get();
+        return userPreferences.length > 0 ? userPreferences[0] : null;
     }
 
     async submitPreferences(userId: string, defaultOrg: string): Promise<any> {
-        let userPreferences: IUserPreferences = await this.fetchPreferences(userId);
+        let userPreferences: IUserPreferences | null = await this.fetchPreferences(userId);
         if (userPreferences) {
-            return this.userPreferencesList.items.getById(userPreferences.Id).update({ DefaultOrg: defaultOrg});
+            return this.userPreferencesList.items.getById(userPreferences.Id).update({ DefaultOrg: defaultOrg });
         } else {
             return this.userPreferencesList.items.add({
                 Title: userId,

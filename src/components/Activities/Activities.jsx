@@ -5,6 +5,7 @@ import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import ActivityUtilities from '../../utilities/ActivityUtilities';
 import DateUtilities from '../../utilities/DateUtilities';
 import RoleUtilities from '../../utilities/RoleUtilities';
+import { UserPreferencesApiConfig } from '../../api/UserPreferencesApi';
 import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
 import ActivitySpinner from './ActivitySpinner';
@@ -27,6 +28,7 @@ class Activities extends Component {
     };
 
     this.activitiesApi = ActivitiesApiConfig.activitiesApi;
+    this.userPreferencesApi = UserPreferencesApiConfig.userPreferencesApi;
     this.Me = {
       Title: this.props.user.Title,
       Id: this.props.user.Id
@@ -55,7 +57,7 @@ class Activities extends Component {
       Title: '',
       WeekOf: moment(date).day(0),
       InputWeekOf: moment(date).format("YYYY-MM-DD"),
-      Branch: '', // TODO: Pull user's default
+      Branch: this.props.user.UserPreferences.DefaultOrg ? this.props.user.UserPreferences.DefaultOrg : '',
       ActionTaken: '',
       IsBigRock: false,
       IsHistoryEntry: false,
@@ -76,6 +78,10 @@ class Activities extends Component {
       //  !! not an odata object with an etag prop !!
 
       activityToSubmit = ActivityUtilities.updateActivityEtagFromResponse(r, activity, activityToSubmit);
+
+      if (activity.Id < 0) {
+        this.userPreferencesApi.submitPreferences(this.props.user.Id, activity.Branch);
+      }
 
       this.setState({
         isLoading: false,
