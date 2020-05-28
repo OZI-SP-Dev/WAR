@@ -14,31 +14,36 @@ export const UserProvider = ({ children }) => {
   const [UsersRoles, setUsersRoles] = useState([]);
   const [UserPreferences, setUserPreferences] = useState(null);
   const [Persona, setPersona] = useState(null);
-  
+
   const userPreferencesApi = UserPreferencesApiConfig.userPreferencesApi;
 
+  const updateUserPreferences = (defaultOrg) => {
+    userPreferencesApi.submitPreferences(Id, defaultOrg);
+    setUserPreferences({...UserPreferences, DefaultOrg: defaultOrg});
+  }
+
   const getUser = async () => {
-		if (process.env.NODE_ENV === 'development') {
-			setId("1");
-			setTitle('Default User');
-			setEmail('me@example.com');
+    if (process.env.NODE_ENV === 'development') {
+      setId("1");
+      setTitle('Default User');
+      setEmail('me@example.com');
       setUsersRoles([{ role: RoleUtilities.ADMIN, deparment: undefined }]);
       setUserPreferences(await userPreferencesApi.fetchPreferences('1'));
-			setPersona({ text: 'Default User', imageUrl: TestImages.personaMale });
+      setPersona({ text: 'Default User', imageUrl: TestImages.personaMale });
       setLoading(false);
     } else {
       try {
         const web = spWebContext;
-				let currentUser = await web.currentUser.get();
-				console.log(currentUser);
+        let currentUser = await web.currentUser.get();
+        console.log(currentUser);
         setTitle(currentUser.Title);
         setId(currentUser.Id);
-				setEmail(currentUser.Email);
-				setPersona({
-					text: currentUser.Title,
-					imageUrl: "/_layouts/15/userphoto.aspx?accountname=" + currentUser.LoginName + "&size=S",
-					Email: currentUser.Email
-				});
+        setEmail(currentUser.Email);
+        setPersona({
+          text: currentUser.Title,
+          imageUrl: "/_layouts/15/userphoto.aspx?accountname=" + currentUser.LoginName + "&size=S",
+          Email: currentUser.Email
+        });
 
         const filterstring = "UserId eq " + currentUser.Id;
         const myRoles = await web.lists.getByTitle("Roles").items.filter(filterstring).get();
@@ -63,7 +68,15 @@ export const UserProvider = ({ children }) => {
   }, [])
 
   return (
-    <UserContext.Provider value={{ loading, Title, Id, Email, UsersRoles, UserPreferences, Persona }}>
+    <UserContext.Provider value={{
+      loading,
+      Title,
+      Id,
+      Email,
+      UsersRoles,
+      UserPreferences: { ...UserPreferences, updateDefaultOrg: updateUserPreferences },
+      Persona
+    }}>
       {children}
     </UserContext.Provider>
   )

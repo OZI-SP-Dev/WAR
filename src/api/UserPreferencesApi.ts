@@ -13,7 +13,8 @@ export interface IUserPreferences {
         Title: string,
         Id: string
     },
-    DefaultOrg: string
+    DefaultOrg: string,
+    updateDefaultOrg?: (defaultOrg: string) => void
 }
 
 export default class UserPreferencesApi implements IUserPreferencesApi {
@@ -30,8 +31,8 @@ export default class UserPreferencesApi implements IUserPreferencesApi {
             return this.userPreferencesList.items.getById(userPreferences.Id).update({ DefaultOrg: defaultOrg });
         } else {
             return this.userPreferencesList.items.add({
-                Title: userId,
-                UserId: userId,
+                Title: `${userId}`,
+                UserId: `${userId}`,
                 DefaultOrg: defaultOrg
             });
         }
