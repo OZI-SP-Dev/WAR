@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.9] - 2020-05-29
+### Added
+- UserPreferences SharePoint list that will be used to keep track of user specific properties
+- A DefaultOrg for each user which will be based on the user's last used org/branch when creating activities
+
+### Changed 
+- The Activity modal shown when creating a new Activity will show the DefaultOrg saved for that user
+- Saving a different org/branch when creating a new Activity will update that user's DefaultOrg
+
 ## [1.0.8] - 2020-05-28
 ### Changed
 - Review now orders by Branch (alphabetically ascending)

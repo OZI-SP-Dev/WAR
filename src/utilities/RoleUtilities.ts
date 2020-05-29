@@ -1,11 +1,13 @@
 import DateUtilities from "./DateUtilities";
 import { IActivity } from "../api/ActivitiesApi";
+import { IUserPreferences } from "../api/UserPreferencesApi";
 
 export interface IUserRole {
     Title: string,
     Id: string,
     Email: string,
-    UsersRoles: { role: string, department: string }[]
+    UsersRoles: { role: string, department: string }[],
+    UserPreferences: IUserPreferences
 }
 
 export default class RoleUtilities {
