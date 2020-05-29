@@ -116,7 +116,8 @@ export default class ActivitiesApi implements IActivityApi {
                       ${queryString}
                     </Where>
                     <OrderBy>
-                      <FieldRef Name='WeekOf' Ascending='FALSE'/>
+											<FieldRef Name='Branch' Ascending='True'/>
+											<FieldRef Name='WeekOf' Ascending='FALSE'/>
                     </OrderBy>
                   </Query>
                 </View>`,
