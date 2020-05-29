@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.8] - 2020-05-28
+### Changed
+- Review now orders by Branch (alphabetically ascending)
+
 ## [1.0.7] - 2020-05-26
 ### Changed
 - Default org for new activities is now blank (displays as '--') instead of OZIC
