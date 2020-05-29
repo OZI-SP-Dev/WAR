@@ -8,26 +8,36 @@ import '../WeeklyReport/ReportForm.css';
 import './SearchForm.css';
 
 export interface ISearchFormProps {
-    query: string,
+    defaultQuery: string,
+    defaultOrg: string,
+    defaultIncludeSubOrgs: boolean,
+    defaultStartDate: Date | null,
+    defaultEndDate: Date | null,
+    defaultShowUserOnly: boolean,
     loading: boolean
 }
 
 export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISearchFormProps) => {
-    const initialStartWeek: Date = DateUtilities.getStartOfWeek(new Date());
-    initialStartWeek.setDate(initialStartWeek.getDate() - 7);
-    const initialEndWeek: Date = DateUtilities.getStartOfWeek(new Date());
+
+    let initialStartWeek = props.defaultStartDate;
+    if (!initialStartWeek) {
+        initialStartWeek = DateUtilities.getStartOfWeek(new Date());
+        initialStartWeek.setDate(initialStartWeek.getDate() - 7);
+    }
+    const initialEndWeek: Date = props.defaultEndDate ? props.defaultEndDate : DateUtilities.getStartOfWeek(new Date());
+
     const [startDatePickerOpen, setStartDatePickerOpen] = useState<boolean>(false);
     const [endDatePickerOpen, setEndDatePickerOpen] = useState<boolean>(false);
-    const [showUserOnly, setShowUserOnly] = useState<boolean>(true);
+    const [showUserOnly, setShowUserOnly] = useState<boolean>(props.defaultShowUserOnly);
     const [startDate, setStartDate] = useState<Date>(initialStartWeek);
     const [endDate, setEndDate] = useState<Date>(initialEndWeek);
     const [startHighlightDates, setStartHighlightDates] =
         useState<Date[]>(DateUtilities.getWeek(initialStartWeek));
     const [endHighlightDates, setEndHighlightDates] =
         useState<Date[]>(DateUtilities.getWeek(initialEndWeek));
-    const [org, setOrg] = useState<string>("--");
-    const [keywordQuery, setKeywordQuery] = useState<string>(props.query === null ? "" : props.query);
-    const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(false);
+    const [org, setOrg] = useState<string>(props.defaultOrg);
+    const [keywordQuery, setKeywordQuery] = useState<string>(props.defaultQuery);
+    const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(props.defaultIncludeSubOrgs);
 
     const history = useHistory();
 

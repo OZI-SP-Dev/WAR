@@ -140,7 +140,15 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         <Container fluid>
             <Row className="justify-content-center m-3"><h1>{urlQuery === null ? "Review Activities" : "Search Results"}</h1></Row>
             <CardAccordion defaultOpen={false} cardHeader="Search and Filter">
-                <SearchForm query={urlQuery ? urlQuery : ''} loading={loading} />
+                <SearchForm
+                    defaultQuery={urlQuery ? urlQuery : ''}
+                    defaultOrg={urlOrg ? urlOrg : '--'}
+                    defaultIncludeSubOrgs={urlIncludeSubOrgs === "true" ? true : false}
+                    defaultStartDate={urlStartDate ? new Date(urlStartDate) : null}
+                    defaultEndDate={urlEndDate ? new Date(urlEndDate) : null}
+                    defaultShowUserOnly={urlShowUserOnly === "true" || urlShowUserOnly === null ? true : false}
+                    loading={loading}
+                />
             </CardAccordion>
             {getActivityWeeks().map(week =>
                 <Accordion key={week + "_acc"} defaultActiveKey="0" className="mb-3">
