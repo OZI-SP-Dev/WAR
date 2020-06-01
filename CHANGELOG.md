@@ -8,9 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
-## [1.0.10] - 2020-05-29
+## [1.0.10] - 2020-06-01
 ### Fixed
 - The Review page will now use the URL parameters as the default values of all of the search form arguments
+
+### Changed
+- The form now submits with the enter button as well as when the submit button is pressed
 
 ## [1.0.9] - 2020-05-29
 ### Added

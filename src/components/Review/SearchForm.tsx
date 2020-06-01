@@ -80,7 +80,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         setIncludeSubOrgs(e.target.checked);
     }
 
-    const submitSearch = (keywordQuery: string, org: string, includeSubOrgs: boolean, startDate: Date, endDate: Date, showUserOnly: boolean) => {
+    const submitSearch = () => {
         history.push(`/Review?query=${keywordQuery}&org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&showUserOnly=${showUserOnly}`);
     }
 
@@ -105,7 +105,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         </>);
 
     return (
-        <Form className={"mb-3"} onSubmit={() => submitSearch(keywordQuery, org, includeSubOrgs, startDate, endDate, showUserOnly)}>
+        <Form className={"mb-3"} onSubmit={submitSearch}>
             <Row>
                 <Col md={4}>
                     <Form.Group controlId="keywordSearch">
@@ -196,7 +196,9 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                 disabled={props.loading}
                 className="float-right mb-3"
                 variant="primary"
-                onClick={() => submitSearch(keywordQuery, org, includeSubOrgs, startDate, endDate, showUserOnly)}>
+                type="submit"
+                onSubmit={submitSearch}
+            >
                 {props.loading && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
                 {' '}Submit Search
             </Button>
