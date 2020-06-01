@@ -8,26 +8,36 @@ import '../WeeklyReport/ReportForm.css';
 import './SearchForm.css';
 
 export interface ISearchFormProps {
-    query: string,
+    defaultQuery: string,
+    defaultOrg: string,
+    defaultIncludeSubOrgs: boolean,
+    defaultStartDate: Date | null,
+    defaultEndDate: Date | null,
+    defaultShowUserOnly: boolean,
     loading: boolean
 }
 
 export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISearchFormProps) => {
-    const initialStartWeek: Date = DateUtilities.getStartOfWeek(new Date());
-    initialStartWeek.setDate(initialStartWeek.getDate() - 7);
-    const initialEndWeek: Date = DateUtilities.getStartOfWeek(new Date());
+
+    let initialStartWeek = props.defaultStartDate;
+    if (!initialStartWeek) {
+        initialStartWeek = DateUtilities.getStartOfWeek(new Date());
+        initialStartWeek.setDate(initialStartWeek.getDate() - 7);
+    }
+    const initialEndWeek: Date = props.defaultEndDate ? props.defaultEndDate : DateUtilities.getStartOfWeek(new Date());
+
     const [startDatePickerOpen, setStartDatePickerOpen] = useState<boolean>(false);
     const [endDatePickerOpen, setEndDatePickerOpen] = useState<boolean>(false);
-    const [showUserOnly, setShowUserOnly] = useState<boolean>(true);
+    const [showUserOnly, setShowUserOnly] = useState<boolean>(props.defaultShowUserOnly);
     const [startDate, setStartDate] = useState<Date>(initialStartWeek);
     const [endDate, setEndDate] = useState<Date>(initialEndWeek);
     const [startHighlightDates, setStartHighlightDates] =
         useState<Date[]>(DateUtilities.getWeek(initialStartWeek));
     const [endHighlightDates, setEndHighlightDates] =
         useState<Date[]>(DateUtilities.getWeek(initialEndWeek));
-    const [org, setOrg] = useState<string>("--");
-    const [keywordQuery, setKeywordQuery] = useState<string>(props.query === null ? "" : props.query);
-    const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(false);
+    const [org, setOrg] = useState<string>(props.defaultOrg);
+    const [keywordQuery, setKeywordQuery] = useState<string>(props.defaultQuery);
+    const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(props.defaultIncludeSubOrgs);
 
     const history = useHistory();
 
@@ -70,7 +80,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         setIncludeSubOrgs(e.target.checked);
     }
 
-    const submitSearch = (keywordQuery: string, org: string, includeSubOrgs: boolean, startDate: Date, endDate: Date, showUserOnly: boolean) => {
+    const submitSearch = () => {
         history.push(`/Review?query=${keywordQuery}&org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&showUserOnly=${showUserOnly}`);
     }
 
@@ -95,7 +105,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         </>);
 
     return (
-        <Form className={"mb-3"} onSubmit={() => submitSearch(keywordQuery, org, includeSubOrgs, startDate, endDate, showUserOnly)}>
+        <Form className={"mb-3"} onSubmit={submitSearch}>
             <Row>
                 <Col md={4}>
                     <Form.Group controlId="keywordSearch">
@@ -186,7 +196,9 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                 disabled={props.loading}
                 className="float-right mb-3"
                 variant="primary"
-                onClick={() => submitSearch(keywordQuery, org, includeSubOrgs, startDate, endDate, showUserOnly)}>
+                type="submit"
+                onSubmit={submitSearch}
+            >
                 {props.loading && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
                 {' '}Submit Search
             </Button>
