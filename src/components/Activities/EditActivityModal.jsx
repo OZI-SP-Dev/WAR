@@ -146,11 +146,7 @@ class EditActivityModal extends Component {
 							required
             >
               <option value=''>--</option>
-              <option>OZI</option>
-              <option>OZIC</option>
-              <option>OZIF</option>
-              <option>OZIP</option>
-              <option>OTHER</option>
+              {this.props.orgs.map(org => <option>{org}</option>)}
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="editActivityTitle">

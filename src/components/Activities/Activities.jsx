@@ -10,6 +10,7 @@ import './Activities.css';
 import ActivityAccordion from './ActivityAccordion';
 import ActivitySpinner from './ActivitySpinner';
 import EditActivityModal from './EditActivityModal';
+import { OrgsApiConfig } from '../../api/OrgsApi';
 
 //TODO consider moving away from datetime and going to ISO weeks
 class Activities extends Component {
@@ -17,6 +18,7 @@ class Activities extends Component {
     super(props);
     this.state = {
       listData: [],
+      orgs: [],
       isLoading: true,
       isDeleting: false,
       showEditModal: false,
@@ -28,6 +30,7 @@ class Activities extends Component {
     };
 
     this.activitiesApi = ActivitiesApiConfig.activitiesApi;
+    this.orgsApi = OrgsApiConfig.orgsApi;
     this.userPreferencesApi = UserPreferencesApiConfig.userPreferencesApi;
     this.Me = {
       Title: this.props.user.Title,
@@ -38,6 +41,7 @@ class Activities extends Component {
   componentDidMount() {
     this.setState({ minCreateDate: RoleUtilities.getMinActivityCreateDate(this.props.user) });
     this.fetchItems(4, DateUtilities.getStartOfWeek(new Date()));
+    this.fetchOrgs();
   }
 
   fetchItems = (numWeeks, weekStart) => {
@@ -49,6 +53,10 @@ class Activities extends Component {
       //TODO better error handling
       this.setState({ loadingMoreWeeks: false, isLoading: false });
     });
+  }
+
+  fetchOrgs = () => {
+    this.orgsApi.fetchOrgs().then((orgs) => this.setState({ orgs: orgs ? orgs : [] }));
   }
 
   newItem = (date) => {
@@ -155,6 +163,7 @@ class Activities extends Component {
           minCreateDate={this.state.minCreateDate}
           showBigRockCheck={(org) => RoleUtilities.userCanSetBigRock(this.props.user, org)}
           showHistoryCheck={(org) => RoleUtilities.userCanSetHistory(this.props.user, org)}
+          orgs={this.state.orgs.map(org => org.Title)}
         />
         <Row className="justify-content-center m-3"><h1>My Activities</h1></Row>
         {this.state.loadedWeeks.map(date =>

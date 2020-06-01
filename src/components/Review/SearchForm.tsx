@@ -14,7 +14,8 @@ export interface ISearchFormProps {
     defaultStartDate: Date | null,
     defaultEndDate: Date | null,
     defaultShowUserOnly: boolean,
-    loading: boolean
+    loading: boolean,
+    orgs: string[]
 }
 
 export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISearchFormProps) => {
@@ -128,10 +129,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                             onChange={orgOnChange}
                         >
                             <option>--</option>
-                            <option>OZI</option>
-                            <option>OZIC</option>
-                            <option>OZIF</option>
-                            <option>OZIP</option>
+                            {props.orgs.map(org => <option>{org}</option>)}
                         </Form.Control>
                     </Form.Group>
                 </Col>
