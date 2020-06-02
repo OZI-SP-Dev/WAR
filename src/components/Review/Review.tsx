@@ -11,7 +11,6 @@ import ActivitySpinner from "../Activities/ActivitySpinner";
 import EditActivityModal from "../Activities/EditActivityModal";
 import CardAccordion from "../CardAccordion/CardAccordion";
 import { SearchForm } from "./SearchForm";
-import { OrgsApiConfig, IOrgs } from "../../api/OrgsApi";
 
 export function useQuery(): URLSearchParams {
     return new URLSearchParams(useLocation().search);
@@ -50,19 +49,12 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     let urlShowUserOnly = query.get("showUserOnly");
 
     const [activities, setActivities] = useState<any[]>([]);
-    const [orgs, setOrgs] = useState<IOrgs[]>([]);
     const [modalActivityId, setModalActivityId] = useState<number>(-1);
     const [loading, setLoading] = useState<boolean>(true);
     const [deleting, setDeleting] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
 
-    const orgsApi = OrgsApiConfig.orgsApi;
     const activitiesApi = ActivitiesApiConfig.activitiesApi;
-
-    const fetchOrgs = async () => {
-        const fetchedOrgs = await orgsApi.fetchOrgs();
-        setOrgs(fetchedOrgs ? fetchedOrgs : []);
-    }
 
     const fetchActivities = async () => {
         try {
@@ -143,11 +135,6 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         fetchActivities();
     }, [urlQuery, urlOrg, urlIncludeSubOrgs, urlStartDate, urlEndDate, urlShowUserOnly]);
 
-    useEffect(() => {
-        fetchOrgs();
-        // eslint-disable-next-line
-    }, []);
-
     return (
         <Container fluid>
             <Row className="justify-content-center m-3"><h1>{urlQuery === null ? "Review Activities" : "Search Results"}</h1></Row>
@@ -160,7 +147,6 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                     defaultEndDate={urlEndDate ? new Date(urlEndDate) : null}
                     defaultShowUserOnly={urlShowUserOnly === "true" || urlShowUserOnly === null ? true : false}
                     loading={loading}
-                    orgs={orgs.map(org => org.Title)}
                 />
             </CardAccordion>
             {getActivityWeeks().map(week =>
@@ -185,7 +171,6 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                                         minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
                                         showBigRockCheck={(org: string) => RoleUtilities.userCanSetBigRock(user, org)}
                                         showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
-                                        orgs={orgs.map(org => org.Title)}
                                     />
                                 </div>
                             )}

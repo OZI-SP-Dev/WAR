@@ -14,21 +14,21 @@ export const RolesProvider: React.FunctionComponent = ({ children }) => {
 	const rolesApi = RolesApiConfig.rolesApi;
 
 	const getRoles = async () => {
-			try {
-				let roles = await rolesApi.fetchRoles();
-				setRolesList(roles);
-				setLoading(false);
-			} catch (error) {
-				console.log(error);
-				setLoading(false);
-			}
+		try {
+			let roles = await rolesApi.fetchRoles();
+			setRolesList(roles);
+			setLoading(false);
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
 	}
 
 	useEffect(() => {
 		getRoles().catch((error) => {
 			console.log(error);
 		})
-	// eslint-disable-next-line
+		// eslint-disable-next-line
 	}, [])
 
 	// Wrap up items to pass to the provider
@@ -38,7 +38,7 @@ export const RolesProvider: React.FunctionComponent = ({ children }) => {
 		loading
 	};
 
-	return (<RolesContext.Provider value={rolesContext}>{ children }</RolesContext.Provider>);
+	return (<RolesContext.Provider value={rolesContext}>{children}</RolesContext.Provider>);
 };
 
 export const { Consumer } = RolesContext;
