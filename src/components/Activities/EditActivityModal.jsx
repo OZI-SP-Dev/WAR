@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Form } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { OrgsContext } from "../../providers/OrgsContext";
 import DateUtilities from '../../utilities/DateUtilities';
 import ActivityModal from './ActivityModal';
 import { ActivityPeoplePicker } from './ActivityPeoplePicker';
@@ -17,31 +18,31 @@ class EditActivityModal extends Component {
       highlightDates: DateUtilities.getWeek(weekStart),
       datePickerOpen: false
     }
-	}
-	
-	convertOPRsToPersonas = (OPRs) => {
-		let personas = [];
-		if (OPRs && OPRs.results) {
-			personas = OPRs.results.map(OPR => {
-				return {
-					text: OPR.Title,
-					imageInitials: OPR.Title.substr(OPR.Title.indexOf(' ') + 1, 1) + OPR.Title.substr(0, 1),
-					SPUserId: OPR.Id
-				}
-			})
-		}
-		return personas;
-	}
+  }
+
+  convertOPRsToPersonas = (OPRs) => {
+    let personas = [];
+    if (OPRs && OPRs.results) {
+      personas = OPRs.results.map(OPR => {
+        return {
+          text: OPR.Title,
+          imageInitials: OPR.Title.substr(OPR.Title.indexOf(' ') + 1, 1) + OPR.Title.substr(0, 1),
+          SPUserId: OPR.Id
+        }
+      })
+    }
+    return personas;
+  }
 
   handleOpen = () => {
-		let weekStart = DateUtilities.getStartOfWeek(new Date(this.props.activity.WeekOf));
-		// Deep copy activity
-		let { OPRs, ...editActivity } = this.props.activity;
-		editActivity.OPRs = {
-			results: [...OPRs.results]
-		};
-		this.setState({
-			activity: editActivity,
+    let weekStart = DateUtilities.getStartOfWeek(new Date(this.props.activity.WeekOf));
+    // Deep copy activity
+    let { OPRs, ...editActivity } = this.props.activity;
+    editActivity.OPRs = {
+      results: [...OPRs.results]
+    };
+    this.setState({
+      activity: editActivity,
       validated: false,
       selectedDate: weekStart,
       highlightDates: DateUtilities.getWeek(weekStart)
@@ -53,22 +54,22 @@ class EditActivityModal extends Component {
     const activity = this.state.activity;
     activity[field] = value;
     this.setState({ activity });
-	}
-	
-	updateOPRs(value) {
-		const activity = this.state.activity;
-		activity.OPRs.results = value.map((newOPR) => {
-			return {Id: newOPR.SPUserId, Title: newOPR.text, Email: newOPR.Email}
-		});
-		this.setState({ activity });
-	}
+  }
 
-	isOPRInvalid() {
+  updateOPRs(value) {
+    const activity = this.state.activity;
+    activity.OPRs.results = value.map((newOPR) => {
+      return { Id: newOPR.SPUserId, Title: newOPR.text, Email: newOPR.Email }
+    });
+    this.setState({ activity });
+  }
+
+  isOPRInvalid() {
     return this.state.activity.OPRs && this.state.activity.OPRs.results && this.state.activity.OPRs.results.length ? false : true;
-	}
+  }
 
   validateActivity(e) {
-		const form = document.getElementById("EditActivityModal");
+    const form = document.getElementById("EditActivityModal");
     if (form.checkValidity() === false || this.isOPRInvalid()) {
       e.preventDefault();
       e.stopPropagation();
@@ -142,15 +143,13 @@ class EditActivityModal extends Component {
               defaultValue={this.props.activity.Branch}
               value={this.state.Branch}
               onChange={(e) => this.updateActivity(e.target.value, 'Branch')}
-							disabled={this.isReadOnly()}
-							required
+              disabled={this.isReadOnly()}
+              required
             >
               <option value=''>--</option>
-              <option>OZI</option>
-              <option>OZIC</option>
-              <option>OZIF</option>
-              <option>OZIP</option>
-              <option>OTHER</option>
+              <OrgsContext.Consumer>
+                {orgsContext => <>{(orgsContext.orgs ? orgsContext.orgs : []).map(org => <option>{org}</option>)}</>}
+              </OrgsContext.Consumer>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="editActivityTitle">
@@ -204,22 +203,22 @@ class EditActivityModal extends Component {
                 disabled={this.isReadOnly()}
               />
             </Form.Group>}
-					<Form.Group controlId="editActivityOPRs">
-						<Form.Label>OPRs</Form.Label>
-						<Form.Control
-							as={ActivityPeoplePicker}
-							defaultValue={this.convertOPRsToPersonas(this.props.activity.OPRs)}
-							updateOPRs={(newOPRs) => this.updateOPRs(newOPRs)}
-							readOnly={this.isReadOnly()}
-							required={true}
-							isInvalid={this.isOPRInvalid()}
-							isValid={!this.isOPRInvalid()}
-						>
-						</Form.Control>
-						<Form.Control.Feedback type="invalid">
-							You must have at least one OPR.
+          <Form.Group controlId="editActivityOPRs">
+            <Form.Label>OPRs</Form.Label>
+            <Form.Control
+              as={ActivityPeoplePicker}
+              defaultValue={this.convertOPRsToPersonas(this.props.activity.OPRs)}
+              updateOPRs={(newOPRs) => this.updateOPRs(newOPRs)}
+              readOnly={this.isReadOnly()}
+              required={true}
+              isInvalid={this.isOPRInvalid()}
+              isValid={!this.isOPRInvalid()}
+            >
+            </Form.Control>
+            <Form.Control.Feedback type="invalid">
+              You must have at least one OPR.
             </Form.Control.Feedback>
-					</Form.Group>
+          </Form.Group>
 
         </Form>
       </ActivityModal>

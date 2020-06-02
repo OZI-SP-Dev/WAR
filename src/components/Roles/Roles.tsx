@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Row, Col, ListGroup, ListGroupItem, TabContent, TabPane, TabContainer } from "react-bootstrap";
+import { Col, ListGroup, ListGroupItem, Row, TabContainer, TabContent, TabPane } from "react-bootstrap";
 import { LinkContainer } from 'react-router-bootstrap';
-import { RolesSubSection } from "./RolesSubSection";
-import { RolesContext } from "./RolesContext";
 import RoleUtilities, { IUserRole } from '../../utilities/RoleUtilities';
+import { RolesContext } from "./RolesContext";
+import { RolesSubSection } from "./RolesSubSection";
 
 export interface IRolesProps {
 	user: IUserRole

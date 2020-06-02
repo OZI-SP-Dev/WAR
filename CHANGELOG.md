@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.11] - 2020-06-01
+### Added
+- SP List to keep track of the orgs being used
+- Support in app to automatically pull from the Orgs SP List instead of having a list of Orgs hardcoded in
+
 ## [1.0.10] - 2020-06-01
 ### Fixed
 - The Review page will now use the URL parameters as the default values of all of the search form arguments

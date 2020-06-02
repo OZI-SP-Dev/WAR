@@ -133,7 +133,6 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
     useEffect(() => {
         fetchActivities();
-        // eslint-disable-next-line
     }, [urlQuery, urlOrg, urlIncludeSubOrgs, urlStartDate, urlEndDate, urlShowUserOnly]);
 
     return (

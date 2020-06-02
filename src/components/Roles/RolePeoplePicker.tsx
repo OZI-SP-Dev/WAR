@@ -21,10 +21,11 @@ const suggestionProps: IBasePickerSuggestionsProps = {
 };
 
 export interface IRolePeoplePicker {
-	roleType: string
+	roleType: string,
+	orgs: string[]
 }
 
-export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ roleType }) => {
+export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ roleType, orgs }) => {
 	const [peopleList] = React.useState<IPersonaProps[]>(people);
 	const [selectedItems, setSelectedItems] = React.useState<IPersonaProps[]>([]);
 	const [selectedDepartment, setSelectedDepartment] = React.useState<string>("");
@@ -161,10 +162,7 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 								isInvalid={didUserSubmit && !departmentFieldValid()}
 							>
 								<option>--</option>
-								{roleType !== RoleUtilities.REVIEWER && <option>OZI</option>}
-								<option>OZIC</option>
-								<option>OZIF</option>
-								<option>OZIP</option>
+								{orgs.map(org => <option>{org}</option>)}
 							</Form.Control>
 							<Form.Control.Feedback type='invalid'>Please provide a department for the {roleType}</Form.Control.Feedback>
 						</Form.Group>}

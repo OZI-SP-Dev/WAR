@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import * as React from 'react';
+import { useContext, useState } from 'react';
 import { Button, Col, Form, FormCheck, Row, Spinner } from "react-bootstrap";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useHistory } from "react-router-dom";
+import { OrgsContext } from "../../providers/OrgsContext";
 import DateUtilities from "../../utilities/DateUtilities";
 import '../WeeklyReport/ReportForm.css';
 import './SearchForm.css';
@@ -38,6 +40,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
     const [org, setOrg] = useState<string>(props.defaultOrg);
     const [keywordQuery, setKeywordQuery] = useState<string>(props.defaultQuery);
     const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(props.defaultIncludeSubOrgs);
+
+    const { orgs } = useContext(OrgsContext);
 
     const history = useHistory();
 
@@ -128,10 +132,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                             onChange={orgOnChange}
                         >
                             <option>--</option>
-                            <option>OZI</option>
-                            <option>OZIC</option>
-                            <option>OZIF</option>
-                            <option>OZIP</option>
+                            {(orgs ? orgs : []).map(org => <option>{org}</option>)}
                         </Form.Control>
                     </Form.Group>
                 </Col>
