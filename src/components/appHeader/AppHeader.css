@@ -8,8 +8,18 @@
     font-size: 1rem;
     background-color: rgba(0, 0, 0, .25);
     box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
-    min-width: 11em;
-  }
+		min-width: 11em;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	
+	.navbar-brand.test {
+		background-color: rgba(255, 0, 0);
+	}
+
+	.navbar-brand.test::before {
+  	content: "TEST ";
+	}
   
   .navbar .form-control {
     padding: .75rem 1rem;
