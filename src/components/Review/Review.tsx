@@ -11,6 +11,7 @@ import ActivitySpinner from "../Activities/ActivitySpinner";
 import EditActivityModal from "../Activities/EditActivityModal";
 import CardAccordion from "../CardAccordion/CardAccordion";
 import { SearchForm } from "./SearchForm";
+import DateUtilities from "../../utilities/DateUtilities";
 
 export function useQuery(): URLSearchParams {
     return new URLSearchParams(useLocation().search);
@@ -67,7 +68,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                 submitStartDate = new Date(urlStartDate);
                 submitStartDate.setDate(submitStartDate.getDate() - 1);
             }
-            let submitEndDate = urlEndDate ? new Date(urlEndDate) : undefined;
+            let submitEndDate = urlEndDate ? DateUtilities.getStartOfWeek(new Date(urlEndDate)) : undefined;
             let submitUserId = urlShowUserOnly === "false" ? undefined : parseInt(user.Id);
             let newActivities = await activitiesApi.fetchActivitiesByQueryString(submitQuery, submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, submitUserId);
             setActivities(newActivities);
