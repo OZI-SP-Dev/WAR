@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.12] - 2020-06-02
+### Added
+- Indicators for TEST builds
+- Browser support message
+
 ## [1.0.11] - 2020-06-01
 ### Added
 - SP List to keep track of the orgs being used

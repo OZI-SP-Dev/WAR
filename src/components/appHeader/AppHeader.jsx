@@ -29,7 +29,7 @@ function AppHeader() {
 
   return (
     <Navbar fixed="top" expand="md" variant="dark" bg="dark" className="p-0 shadow">
-      <Navbar.Brand className="col-xs-1 col-sm-3 col-md-2 mr-0">Weekly Activity Report</Navbar.Brand>
+			<Navbar.Brand className={(process.env.REACT_APP_TEST_SYS ? "test " : "") + "col-xs-1 col-sm-3 col-md-2 mr-0"}>Weekly Activity Report</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
