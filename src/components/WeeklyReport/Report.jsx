@@ -16,7 +16,7 @@ class Report extends Component {
             startDate: thisWeek,
             startHighlightDates: DateUtilities.getWeek(thisWeek),
             startDatePickerOpen: false,
-            endDate: thisWeek,
+            endDate: DateUtilities.getEndOfWeek(thisWeek),
             endHighlightDates: DateUtilities.getWeek(thisWeek),
             endDatePickerOpen: false
         }
@@ -39,7 +39,7 @@ class Report extends Component {
                         startHighlightDates={this.state.startHighlightDates}
                         endDate={this.state.endDate}
                         onChangeEndDate={date => this.setState({
-                            endDate: DateUtilities.getStartOfWeek(date),
+                            endDate: DateUtilities.getEndOfWeek(date),
                             endHighlightDates: DateUtilities.getWeek(date)
                         })}
                         endHighlightDates={this.state.endHighlightDates}

@@ -40,7 +40,7 @@ function AppHeader() {
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to={`/Review?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getStartOfWeek(new Date()).toISOString()}`}>
+            <LinkContainer to={`/Review?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(new Date()).toISOString()}`}>
               <NavDropdown.Item>Review</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />

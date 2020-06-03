@@ -26,7 +26,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         initialStartWeek = DateUtilities.getStartOfWeek(new Date());
         initialStartWeek.setDate(initialStartWeek.getDate() - 7);
     }
-    const initialEndWeek: Date = props.defaultEndDate ? props.defaultEndDate : DateUtilities.getStartOfWeek(new Date());
+    const initialEndWeek: Date = props.defaultEndDate ? DateUtilities.getEndOfWeek(props.defaultEndDate) : DateUtilities.getEndOfWeek(new Date());
 
     const [startDatePickerOpen, setStartDatePickerOpen] = useState<boolean>(false);
     const [endDatePickerOpen, setEndDatePickerOpen] = useState<boolean>(false);
@@ -68,7 +68,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
     }
 
     const onChangeEndDate = (date: Date) => {
-        setEndDate(DateUtilities.getStartOfWeek(date));
+        setEndDate(DateUtilities.getEndOfWeek(date));
         setEndHighlightDates(DateUtilities.getWeek(date));
     }
 
@@ -132,7 +132,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                             onChange={orgOnChange}
                         >
                             <option>--</option>
-                            {(orgs ? orgs : []).map(org => <option>{org}</option>)}
+                            {(orgs ? orgs : []).map(org => <option key={org}>{org}</option>)}
                         </Form.Control>
                     </Form.Group>
                 </Col>
@@ -158,7 +158,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                             selected={startDate}
                             onChange={onChangeStartDate}
                             highlightDates={startHighlightDates}
-                            maxDate={new Date()}
+                            maxDate={endDate}
                             customInput={<StartDatePickerCustomInput />}
                             open={startDatePickerOpen}
                             onClickOutside={clickOutside}
@@ -173,6 +173,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                             selected={endDate}
                             onChange={onChangeEndDate}
                             highlightDates={endHighlightDates}
+                            minDate={startDate}
                             maxDate={new Date()}
                             customInput={<EndDatePickerCustomInput />}
                             open={endDatePickerOpen}

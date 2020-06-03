@@ -148,7 +148,7 @@ class EditActivityModal extends Component {
             >
               <option value=''>--</option>
               <OrgsContext.Consumer>
-                {orgsContext => <>{(orgsContext.orgs ? orgsContext.orgs : []).map(org => <option>{org}</option>)}</>}
+                {orgsContext => <>{(orgsContext.orgs ? orgsContext.orgs : []).map(org => <option key={org}>{org}</option>)}</>}
               </OrgsContext.Consumer>
             </Form.Control>
           </Form.Group>

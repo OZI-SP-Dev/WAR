@@ -6,6 +6,10 @@ export default class DateUtilities {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay(), 0, 0, 0, 0);
   }
 
+  static getEndOfWeek(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + (6 - date.getDay()), 0, 0, 0, 0);
+  }
+
   static getWeek(date: Date) {
     let weekStart: Date = this.getStartOfWeek(date);
     let week = [];

@@ -46,7 +46,7 @@ class ReportForm extends Component {
                                 selected={this.props.startDate}
                                 onChange={this.props.onChangeStartDate}
                                 highlightDates={this.props.startHighlightDates}
-                                maxDate={new Date()}
+                                maxDate={this.props.endDate}
                                 customInput={<StartDatePickerCustomInput />}
                                 open={this.state.startDatePickerOpen}
                                 onClickOutside={() => this.setState({ startDatePickerOpen: false })}
@@ -61,6 +61,7 @@ class ReportForm extends Component {
                                 selected={this.props.endDate}
                                 onChange={this.props.onChangeEndDate}
                                 highlightDates={this.props.endHighlightDates}
+                                minDate={this.props.startDate}
                                 maxDate={new Date()}
                                 customInput={<EndDatePickerCustomInput />}
                                 open={this.state.endDatePickerOpen}

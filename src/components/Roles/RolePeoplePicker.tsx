@@ -162,7 +162,7 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 								isInvalid={didUserSubmit && !departmentFieldValid()}
 							>
 								<option>--</option>
-								{orgs.map(org => <option>{org}</option>)}
+							{orgs.map(org => <option key={org}>{org}</option>)}
 							</Form.Control>
 							<Form.Control.Feedback type='invalid'>Please provide a department for the {roleType}</Form.Control.Feedback>
 						</Form.Group>}
