@@ -19,7 +19,7 @@ export const UserProvider = ({ children }) => {
 
   const updateUserPreferences = (defaultOrg) => {
     userPreferencesApi.submitPreferences(Id, defaultOrg);
-    setUserPreferences({...UserPreferences, DefaultOrg: defaultOrg});
+    setUserPreferences({ ...UserPreferences, DefaultOrg: defaultOrg });
   }
 
   const getUser = async () => {
@@ -64,7 +64,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     getUser().catch((error) => {
       console.log(error);
-    })
+    })// eslint-disable-next-line
   }, [])
 
   return (
