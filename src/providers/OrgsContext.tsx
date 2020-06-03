@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { IOrgs, OrgsApiConfig } from "../api/OrgsApi";
+import { OrgsApiConfig } from "../api/OrgsApi";
 
 
 export interface IOrgsContext {
