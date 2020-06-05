@@ -117,8 +117,8 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         setModalActivityId(-1);
     }
 
-		const cardOnClick = (activity: any) => {
-				activity.InputWeekOf = activity.WeekOf.split('T', 1)[0];
+    const cardOnClick = (activity: any) => {
+        activity.InputWeekOf = activity.WeekOf.split('T', 1)[0];
         setModalActivityId(activity.Id);
     }
 
