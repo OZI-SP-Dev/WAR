@@ -8,7 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
-## [1.0.13] - 2020-0604
+## [1.0.14] - 2020-06-08
+### Changed
+- The date ranges on forms will now show the last day of the week on the ending date of the range
+- Moved to using MomentJS for all of the date code as it is easier to manage
+
+### Fixed
+- Manually sorted the Review page's weeks because in some specific instances they could get out of order
+
+## [1.0.13] - 2020-06-04
 ### Fixed
 - Editing an activity from the Review page no longer moves the date
 
