@@ -1,6 +1,6 @@
-import moment from "moment";
 import { IActivity } from "../api/ActivitiesApi";
 import { spWebContext } from "../providers/SPWebContext";
+import DateUtilities from "./DateUtilities";
 
 export default class ActivityUtilities {
 
@@ -8,7 +8,7 @@ export default class ActivityUtilities {
 		let builtActivity: any = {
 			Id: activity.Id,
 			Title: activity.Title,
-			WeekOf: moment(activity.InputWeekOf).day(0).toISOString(),
+			WeekOf: DateUtilities.getDate(activity.InputWeekOf).day(0).toISOString(),
 			Branch: activity.Branch,
 			ActionTaken: activity.ActionTaken.trim(),
 			IsBigRock: activity.IsBigRock,

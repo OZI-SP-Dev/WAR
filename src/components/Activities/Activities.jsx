@@ -1,4 +1,3 @@
-import moment from 'moment';
 import React, { Component } from 'react';
 import { Button, Container, Row, Spinner } from 'react-bootstrap';
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
@@ -24,7 +23,7 @@ class Activities extends Component {
       loadedWeeks: [],
       loadingMoreWeeks: false,
       saveError: false,
-      minCreateDate: {}
+      minCreateDate: RoleUtilities.getMinActivityCreateDate(this.props.user)
     };
 
     this.activitiesApi = ActivitiesApiConfig.activitiesApi;
@@ -36,8 +35,7 @@ class Activities extends Component {
   }
 
   componentDidMount() {
-    this.setState({ minCreateDate: RoleUtilities.getMinActivityCreateDate(this.props.user) });
-    this.fetchItems(4, DateUtilities.getStartOfWeek(new Date()));
+    this.fetchItems(4, DateUtilities.getStartOfWeek());
   }
 
   fetchItems = (numWeeks, weekStart) => {
@@ -55,8 +53,8 @@ class Activities extends Component {
     const item = {
       Id: -1,
       Title: '',
-      WeekOf: moment(date).day(0),
-      InputWeekOf: moment(date).format("YYYY-MM-DD"),
+      WeekOf: DateUtilities.getStartOfWeek(date).toISOString(),
+      InputWeekOf: DateUtilities.getDate(date).format("YYYY-MM-DD"),
       Branch: this.props.user.UserPreferences.DefaultOrg ? this.props.user.UserPreferences.DefaultOrg : '',
       ActionTaken: '',
       IsBigRock: false,
@@ -111,8 +109,8 @@ class Activities extends Component {
   addNewWeeks = (numWeeks, weekStart) => {
     let newWeeks = this.state.loadedWeeks;
     for (let i = 0; i < numWeeks; ++i) {
-      let week = new Date(weekStart);
-      week.setDate(weekStart.getDate() - (7 * i));
+      let week = DateUtilities.getDate(weekStart);
+      week.subtract(7 * i, 'days');
       newWeeks.push(week);
     }
     this.setState({ loadedWeeks: newWeeks });
@@ -121,8 +119,8 @@ class Activities extends Component {
   loadMoreWeeks = () => {
     this.setState({ loadingMoreWeeks: true })
     let lastWeekLoaded = this.state.loadedWeeks[this.state.loadedWeeks.length - 1];
-    let nextWeekStart = new Date(lastWeekLoaded);
-    nextWeekStart.setDate(lastWeekLoaded.getDate() - 7);
+    let nextWeekStart = DateUtilities.getDate(lastWeekLoaded);
+    nextWeekStart.subtract(7, 'days');
     this.fetchItems(4, nextWeekStart);
   }
 
@@ -132,7 +130,6 @@ class Activities extends Component {
 
   cardOnClick(action) {
     let editActivity = action;
-    editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
     this.setState({ showEditModal: true, editActivity });
   }
 

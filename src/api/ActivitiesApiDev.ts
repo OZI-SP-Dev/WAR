@@ -1,5 +1,6 @@
-import { IActivity, IActivityApi, UserInfo } from "./ActivitiesApi";
+import { Moment } from "moment";
 import DateUtilities from "../utilities/DateUtilities";
+import { IActivity, IActivityApi, UserInfo } from "./ActivitiesApi";
 
 
 export default class ActivitiesApiDev implements IActivityApi {
@@ -8,7 +9,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 		{
 			Id: 1, 
 			Title: 'SP BAC', 
-			WeekOf: DateUtilities.getStartOfWeek(new Date()).toISOString(), 
+			WeekOf: DateUtilities.getStartOfWeek().toISOString(), 
 			Branch: 'OZI',
 			ActionTaken: 'Lorem\n ipsum\n dolor sit amet, consectetur adipiscing elit.\n Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.', 
 			IsBigRock: false, 
@@ -19,7 +20,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 		{
 			Id: 2, 
 			Title: 'SP Support',
-			WeekOf: DateUtilities.getStartOfWeek(new Date()).toISOString(), 
+			WeekOf: DateUtilities.getStartOfWeek().toISOString(), 
 			Branch: 'OZI',
 			ActionTaken: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.', 
 			IsBigRock: false, 
@@ -30,7 +31,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 		{
 			Id: 3, 
 			Title: 'SP Support', 
-			WeekOf: DateUtilities.getStartOfWeek(new Date()).toISOString(), 
+			WeekOf: DateUtilities.getStartOfWeek().toISOString(), 
 			Branch: 'OZIC',
 			ActionTaken: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi euismod lacus ac sagittis mollis. Nulla ut quam sed nisl pulvinar cursus sit amet eget lacus. Suspendisse rutrum pulvinar tortor ut vehicula. Nunc non arcu imperdiet, semper urna at, facilisis lectus. Phasellus risus magna, dignissim vel consequat ac, tincidunt in lacus. Aliquam euismod fringilla mauris, ac bibendum quam pulvinar vitae. Donec iaculis accumsan mi sed tincidunt. Proin accumsan, massa vitae malesuada porta, mauris purus facilisis sem, vel laoreet magna urna eget nulla. Phasellus convallis ipsum a convallis tincidunt.\n\nNam in leo velit. Mauris at ullamcorper leo. In tortor ligula, efficitur et diam sit amet, tincidunt finibus ligula. Aliquam finibus egestas justo ut posuere. Vestibulum pharetra, tellus et finibus pellentesque, dui leo consectetur augue, sit amet pharetra nisl velit sed sapien. Quisque non nunc turpis. Donec eu erat mauris. In et tincidunt enim. Donec luctus eu lectus sed scelerisque. Nulla iaculis ultricies lectus, nec eleifend ipsum auctor a. Quisque sed massa eros.', 
 			IsBigRock: true, 
@@ -44,12 +45,12 @@ export default class ActivitiesApiDev implements IActivityApi {
 		return new Promise(r => setTimeout(r, 1500));
 	}
 
-	async fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any> {
+	async fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Moment, userId: number): Promise<any> {
 		await this.sleep();
 		return this.activities;
 	}
 
-	async fetchActivitiesByDates(startDate: Date, endDate: Date, userId: number): Promise<any> {
+	async fetchActivitiesByDates(startDate: Moment, endDate: Moment, userId: number): Promise<any> {
 		await this.sleep();
 		return this.activities;
 	}
@@ -59,12 +60,12 @@ export default class ActivitiesApiDev implements IActivityApi {
 		return this.activities.filter(activity => query ? activity.ActionTaken.includes(query) : true);
 	}
 
-	async fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number) {
+	async fetchBigRocksByDates(startDate: Moment, endDate: Moment, userId: number) {
 		await this.sleep();
 		return this.activities.filter(activity => activity.IsBigRock);
 	}
 
-	async fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number) {
+	async fetchHistoryEntriesByDates(startDate: Moment, endDate: Moment, userId: number) {
 		await this.sleep();
 		return this.activities.filter(activity => activity.IsHistoryEntry);
 	}

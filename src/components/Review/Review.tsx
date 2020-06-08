@@ -1,9 +1,9 @@
-import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Accordion, Container, Row, useAccordionToggle } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import { ActivitiesApiConfig, IActivity } from '../../api/ActivitiesApi';
 import ActivityUtilities from "../../utilities/ActivityUtilities";
+import DateUtilities from "../../utilities/DateUtilities";
 import RoleUtilities, { IUserRole } from "../../utilities/RoleUtilities";
 import '../Activities/Activities.css';
 import { ActivityCard } from "../Activities/ActivityCard";
@@ -11,7 +11,7 @@ import ActivitySpinner from "../Activities/ActivitySpinner";
 import EditActivityModal from "../Activities/EditActivityModal";
 import CardAccordion from "../CardAccordion/CardAccordion";
 import { SearchForm } from "./SearchForm";
-import DateUtilities from "../../utilities/DateUtilities";
+import moment from "moment";
 
 export function useQuery(): URLSearchParams {
     return new URLSearchParams(useLocation().search);
@@ -65,10 +65,9 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
             let submitIncludeSubOrgs = urlIncludeSubOrgs === "true" ? true : false;
             let submitStartDate = undefined;
             if (urlStartDate) {
-                submitStartDate = new Date(urlStartDate);
-                submitStartDate.setDate(submitStartDate.getDate() - 1);
+                submitStartDate = DateUtilities.getDate(urlStartDate).subtract(1, 'day');
             }
-            let submitEndDate = urlEndDate ? DateUtilities.getStartOfWeek(new Date(urlEndDate)) : undefined;
+            let submitEndDate = urlEndDate ? DateUtilities.getStartOfWeek(urlEndDate) : undefined;
             let submitUserId = urlShowUserOnly === "false" ? undefined : parseInt(user.Id);
             let newActivities = await activitiesApi.fetchActivitiesByQueryString(submitQuery, submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, submitUserId);
             setActivities(newActivities);
@@ -118,18 +117,22 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     }
 
     const cardOnClick = (activity: any) => {
-        activity.InputWeekOf = activity.WeekOf.split('T', 1)[0];
         setModalActivityId(activity.Id);
     }
 
     const getActivityWeeks = (): string[] => {
         let activityWeeks: string[] = [];
         activities.forEach(activity => {
-            let week = moment(activity.WeekOf).startOf("day");
+            let week = DateUtilities.getDate(activity.WeekOf);
             if (!activityWeeks.includes(week.toISOString())) {
                 activityWeeks.push(week.toISOString());
             }
         });
+        activityWeeks.sort((d1, d2) => {
+            let date1 = moment(d1);
+            let date2 = moment(d2);
+            return date1.isBefore(date2) ? 1 : date1.isAfter(date2) ? -1 : 0;
+        })
         return activityWeeks;
     }
 
@@ -146,18 +149,18 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                     defaultQuery={urlQuery ? urlQuery : ''}
                     defaultOrg={urlOrg ? urlOrg : '--'}
                     defaultIncludeSubOrgs={urlIncludeSubOrgs === "true" ? true : false}
-                    defaultStartDate={urlStartDate ? new Date(urlStartDate) : null}
-                    defaultEndDate={urlEndDate ? new Date(urlEndDate) : null}
+                    defaultStartDate={urlStartDate ? DateUtilities.getDate(urlStartDate) : null}
+                    defaultEndDate={urlEndDate ? DateUtilities.getDate(urlEndDate) : null}
                     defaultShowUserOnly={urlShowUserOnly === "true" || urlShowUserOnly === null ? true : false}
                     loading={loading}
                 />
             </CardAccordion>
             {getActivityWeeks().map(week =>
                 <Accordion key={week + "_acc"} defaultActiveKey="0" className="mb-3">
-                    <CustomToggle eventKey="0">Week of: {moment(week).format("DD MMM YYYY")}</CustomToggle>
+                    <CustomToggle eventKey="0">Week of: {DateUtilities.getDate(week).format("DD MMM YYYY")}</CustomToggle>
                     <Accordion.Collapse eventKey="0">
                         <div key={week + "_div"}>
-                            {activities.filter(activity => moment(activity.WeekOf).startOf("day").toISOString() === week).map(activity =>
+                            {activities.filter(activity => DateUtilities.getDate(activity.WeekOf).toISOString() === week).map(activity =>
                                 <div key={`${activity.Id}_div`}>
                                     <ActivityCard className={"mb-3"} key={`${activity.Id}_card`} activity={activity} onClick={cardOnClick} />
                                     <EditActivityModal

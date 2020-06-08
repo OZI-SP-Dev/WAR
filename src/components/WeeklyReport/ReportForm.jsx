@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import DateUtilities from '../../utilities/DateUtilities';
 import './ReportForm.css';
 
 class ReportForm extends Component {
@@ -43,10 +44,10 @@ class ReportForm extends Component {
                         <Form.Group controlId="WeeklyReportWeekOfStart">
                             <DatePicker
                                 className="weekly-report-date-picker"
-                                selected={this.props.startDate}
+                                selected={DateUtilities.momentToDate(this.props.startDate)}
                                 onChange={this.props.onChangeStartDate}
                                 highlightDates={this.props.startHighlightDates}
-                                maxDate={this.props.endDate}
+                                maxDate={DateUtilities.momentToDate(this.props.endDate)}
                                 customInput={<StartDatePickerCustomInput />}
                                 open={this.state.startDatePickerOpen}
                                 onClickOutside={() => this.setState({ startDatePickerOpen: false })}
@@ -58,11 +59,11 @@ class ReportForm extends Component {
                         <Form.Group controlId="WeeklyReportWeekOfEnd">
                             <DatePicker
                                 className="weekly-report-date-picker"
-                                selected={this.props.endDate}
+                                selected={DateUtilities.momentToDate(this.props.endDate)}
                                 onChange={this.props.onChangeEndDate}
                                 highlightDates={this.props.endHighlightDates}
-                                minDate={this.props.startDate}
-                                maxDate={new Date()}
+                                minDate={DateUtilities.momentToDate(this.props.startDate)}
+                                maxDate={DateUtilities.momentToDate(DateUtilities.getToday())}
                                 customInput={<EndDatePickerCustomInput />}
                                 open={this.state.endDatePickerOpen}
                                 onClickOutside={() => this.setState({ endDatePickerOpen: false })}

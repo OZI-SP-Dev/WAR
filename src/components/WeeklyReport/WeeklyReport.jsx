@@ -2,6 +2,7 @@ import $ from 'jquery';
 import React, { Component } from 'react';
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import Report from './Report';
+import DateUtilities from '../../utilities/DateUtilities';
 
 class WeeklyReport extends Component {
 
@@ -20,8 +21,7 @@ class WeeklyReport extends Component {
 
     submitSearch(startDate, endDate) {
         this.setState({ loadingReport: true });
-        let submitEndDate = new Date(endDate);
-        submitEndDate.setDate(endDate.getDate() + 1);
+        let submitEndDate = DateUtilities.getDate(endDate).add(1, 'day');
         this.activitiesApi.fetchActivitiesByDates(startDate, submitEndDate, null, null, "WeekOf").then(r => {
             this.setState({ loadingReport: false, activities: r, reportGenerated: true });
             $(".report-toggle").click();

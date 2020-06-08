@@ -1,13 +1,13 @@
+import { Persona, PersonaSize } from 'office-ui-fabric-react/lib/Persona';
 import React, { useContext, useState } from 'react';
 import { Button, Form, Nav, Navbar, NavDropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
-import RoleUtilities from '../../utilities/RoleUtilities';
-import './AppHeader.css';
-import { Persona, PersonaSize } from 'office-ui-fabric-react/lib/Persona';
-import { ContactUsContext } from '../ContactUs/ContactUsProvider';
 import DateUtilities from '../../utilities/DateUtilities';
+import RoleUtilities from '../../utilities/RoleUtilities';
+import { ContactUsContext } from '../ContactUs/ContactUsProvider';
+import './AppHeader.css';
 
 function AppHeader() {
   const [query, setQuery] = useState("");
@@ -24,8 +24,8 @@ function AppHeader() {
     setQuery("");
   }
 
-  let reviewStartDate = DateUtilities.getStartOfWeek(new Date());
-  reviewStartDate.setDate(reviewStartDate.getDate() - 7);
+  let reviewStartDate = DateUtilities.getStartOfWeek();
+  reviewStartDate.subtract(7, 'days');
 
   return (
     <Navbar fixed="top" expand="md" variant="dark" bg="dark" className="p-0 shadow">
@@ -40,7 +40,7 @@ function AppHeader() {
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to={`/Review?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(new Date()).toISOString()}`}>
+            <LinkContainer to={`/Review?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek().toISOString()}`}>
               <NavDropdown.Item>Review</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />

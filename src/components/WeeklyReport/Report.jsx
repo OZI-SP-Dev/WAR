@@ -10,7 +10,7 @@ class Report extends Component {
     constructor(props) {
         super(props);
 
-        let thisWeek = DateUtilities.getStartOfWeek(new Date());
+        let thisWeek = DateUtilities.getStartOfWeek();
 
         this.state = {
             startDate: thisWeek,

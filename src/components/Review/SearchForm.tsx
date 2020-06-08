@@ -1,3 +1,4 @@
+import { Moment } from 'moment';
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { Button, Col, Form, FormCheck, Row, Spinner } from "react-bootstrap";
@@ -13,8 +14,8 @@ export interface ISearchFormProps {
     defaultQuery: string,
     defaultOrg: string,
     defaultIncludeSubOrgs: boolean,
-    defaultStartDate: Date | null,
-    defaultEndDate: Date | null,
+    defaultStartDate: Moment | null,
+    defaultEndDate: Moment | null,
     defaultShowUserOnly: boolean,
     loading: boolean
 }
@@ -23,16 +24,15 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
 
     let initialStartWeek = props.defaultStartDate;
     if (!initialStartWeek) {
-        initialStartWeek = DateUtilities.getStartOfWeek(new Date());
-        initialStartWeek.setDate(initialStartWeek.getDate() - 7);
+        initialStartWeek = DateUtilities.getStartOfWeek().subtract(7, 'days');
     }
-    const initialEndWeek: Date = props.defaultEndDate ? DateUtilities.getEndOfWeek(props.defaultEndDate) : DateUtilities.getEndOfWeek(new Date());
+    const initialEndWeek: Moment = props.defaultEndDate ? DateUtilities.getEndOfWeek(props.defaultEndDate) : DateUtilities.getEndOfWeek();
 
     const [startDatePickerOpen, setStartDatePickerOpen] = useState<boolean>(false);
     const [endDatePickerOpen, setEndDatePickerOpen] = useState<boolean>(false);
     const [showUserOnly, setShowUserOnly] = useState<boolean>(props.defaultShowUserOnly);
-    const [startDate, setStartDate] = useState<Date>(initialStartWeek);
-    const [endDate, setEndDate] = useState<Date>(initialEndWeek);
+    const [startDate, setStartDate] = useState<Moment>(initialStartWeek);
+    const [endDate, setEndDate] = useState<Moment>(initialEndWeek);
     const [startHighlightDates, setStartHighlightDates] =
         useState<Date[]>(DateUtilities.getWeek(initialStartWeek));
     const [endHighlightDates, setEndHighlightDates] =
@@ -155,10 +155,10 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     <Form.Group controlId="weekOfStart">
                         <DatePicker
                             className="weekly-report-date-picker"
-                            selected={startDate}
+                            selected={DateUtilities.momentToDate(startDate)}
                             onChange={onChangeStartDate}
                             highlightDates={startHighlightDates}
-                            maxDate={endDate}
+                            maxDate={DateUtilities.momentToDate(endDate)}
                             customInput={<StartDatePickerCustomInput />}
                             open={startDatePickerOpen}
                             onClickOutside={clickOutside}
@@ -170,11 +170,11 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     <Form.Group controlId="weekOfEnd">
                         <DatePicker
                             className="weekly-report-date-picker"
-                            selected={endDate}
+                            selected={DateUtilities.momentToDate(endDate)}
                             onChange={onChangeEndDate}
                             highlightDates={endHighlightDates}
-                            minDate={startDate}
-                            maxDate={new Date()}
+                            minDate={DateUtilities.momentToDate(startDate)}
+                            maxDate={DateUtilities.momentToDate(DateUtilities.getDate())}
                             customInput={<EndDatePickerCustomInput />}
                             open={endDatePickerOpen}
                             onClickOutside={clickOutside}
