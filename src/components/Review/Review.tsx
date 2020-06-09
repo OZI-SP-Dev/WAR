@@ -151,7 +151,8 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                     defaultIncludeSubOrgs={urlIncludeSubOrgs === "true" ? true : false}
                     defaultStartDate={urlStartDate ? DateUtilities.getDate(urlStartDate) : null}
                     defaultEndDate={urlEndDate ? DateUtilities.getDate(urlEndDate) : null}
-                    defaultShowUserOnly={urlShowUserOnly === "true" || urlShowUserOnly === null ? true : false}
+                    defaultShowUserOnly={!RoleUtilities.userHasAnyRole(user) && (urlShowUserOnly === "true" || urlShowUserOnly === null) ?
+                        true : false}
                     loading={loading}
                 />
             </CardAccordion>
