@@ -68,7 +68,8 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                 submitStartDate = DateUtilities.getDate(urlStartDate).subtract(1, 'day');
             }
             let submitEndDate = urlEndDate ? DateUtilities.getStartOfWeek(urlEndDate) : undefined;
-            let submitUserId = urlShowUserOnly === "false" ? undefined : parseInt(user.Id);
+            let submitUserId = urlShowUserOnly === "false" || (!urlShowUserOnly && RoleUtilities.userHasAnyRole(user)) ? 
+                undefined : parseInt(user.Id);
             let newActivities = await activitiesApi.fetchActivitiesByQueryString(submitQuery, submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, submitUserId);
             setActivities(newActivities);
             setLoading(false);
