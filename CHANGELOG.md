@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.15] - 2020-06-09
+### Changed
+- Big Rocks report is now Monthly Activity Report (MAR)
+- Big Rock flag is now MAR Item flag
+- Activities list 'isBigRock' replaced by 'isMarEntry'
+
 ## [1.0.14] - 2020-06-08
 ### Changed
 - The date ranges on forms will now show the last day of the week on the ending date of the range
