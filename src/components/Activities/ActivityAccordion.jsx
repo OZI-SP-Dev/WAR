@@ -10,10 +10,10 @@ class ActivityAccordion extends Component {
     this.state = {
       open: false
     };
-    this.startWeek = new Date(props.weekOf);
-    this.endWeek = new Date(props.weekOf);
-    this.endWeek.setDate(this.startWeek.getDate() + 6);
-    let currentWeek = DateUtilities.getStartOfWeek(new Date());
+    this.startWeek = DateUtilities.getDate(props.weekOf);
+    this.endWeek = DateUtilities.getDate(props.weekOf);
+    this.endWeek.add(6, 'days');
+    let currentWeek = DateUtilities.getStartOfWeek();
     this.isThisWeek = this.datesAreEqual(this.startWeek, currentWeek);
     if (this.isThisWeek) {
       this.state.open = true;
@@ -21,11 +21,11 @@ class ActivityAccordion extends Component {
   }
 
   datesAreEqual(date1, date2) {
-    return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate();
+    return date1.isSame(date2, 'days');
   }
 
   getFilteredActions() {
-    return this.props.actions.filter(action => this.datesAreEqual(new Date(action.WeekOf), this.startWeek));
+    return this.props.actions.filter(action => this.datesAreEqual(DateUtilities.getDate(action.WeekOf), this.startWeek));
   }
 
   accordionClicked = () => {
@@ -34,7 +34,7 @@ class ActivityAccordion extends Component {
 
   formatDate = (date) => {
     //using 'default' was causing Edge to puke
-    return `${date.getDate()} ${date.toLocaleString('en-us', { month: 'short' })} ${date.getFullYear()}`;
+    return date.format("DD MMM YYYY");
   }
 
   render() {

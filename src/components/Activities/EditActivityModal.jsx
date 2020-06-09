@@ -10,11 +10,11 @@ import { ActivityPeoplePicker } from './ActivityPeoplePicker';
 class EditActivityModal extends Component {
   constructor(props) {
     super(props);
-    let weekStart = DateUtilities.getStartOfWeek(new Date(this.props.activity.WeekOf));
+    let weekStart = DateUtilities.getStartOfWeek(this.props.activity.WeekOf);
     this.state = {
       activity: { ...props.activity },
       validated: false,
-      selectedDate: weekStart,
+      selectedDate: DateUtilities.momentToDate(weekStart),
       highlightDates: DateUtilities.getWeek(weekStart),
       datePickerOpen: false
     }
@@ -35,16 +35,17 @@ class EditActivityModal extends Component {
   }
 
   handleOpen = () => {
-    let weekStart = DateUtilities.getStartOfWeek(new Date(this.props.activity.WeekOf));
+    let weekStart = DateUtilities.getStartOfWeek(this.props.activity.WeekOf);
     // Deep copy activity
     let { OPRs, ...editActivity } = this.props.activity;
     editActivity.OPRs = {
       results: [...OPRs.results]
     };
+    editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
     this.setState({
       activity: editActivity,
       validated: false,
-      selectedDate: weekStart,
+      selectedDate: DateUtilities.momentToDate(weekStart),
       highlightDates: DateUtilities.getWeek(weekStart)
     })
   }
@@ -85,11 +86,11 @@ class EditActivityModal extends Component {
     let highlightDates = DateUtilities.getWeek(selectedDate);
     let activity = this.state.activity;
     activity.InputWeekOf = selectedDate;
-    this.setState({ activity, selectedDate, highlightDates });
+    this.setState({ activity, selectedDate: DateUtilities.momentToDate(selectedDate), highlightDates });
   }
 
   isReadOnly() {
-    return !this.props.canEdit(this.props.activity) || new Date(this.props.activity.WeekOf) < this.props.minCreateDate;
+    return !this.props.canEdit(this.props.activity) || DateUtilities.getDate(this.props.activity.WeekOf) < this.props.minCreateDate;
   }
 
   render() {
@@ -129,8 +130,8 @@ class EditActivityModal extends Component {
               selected={this.state.selectedDate}
               onChange={date => this.onDateChange(date)}
               highlightDates={this.state.highlightDates}
-              minDate={this.props.minCreateDate}
-              maxDate={new Date()}
+              minDate={DateUtilities.momentToDate(this.props.minCreateDate)}
+              maxDate={DateUtilities.momentToDate(DateUtilities.getToday())}
               customInput={<DatePickerCustomInput />}
               open={this.state.datePickerOpen}
               onClickOutside={() => this.setState({ datePickerOpen: false })}
@@ -148,7 +149,7 @@ class EditActivityModal extends Component {
             >
               <option value=''>--</option>
               <OrgsContext.Consumer>
-                {orgsContext => <>{(orgsContext.orgs ? orgsContext.orgs : []).map(org => <option>{org}</option>)}</>}
+                {orgsContext => <>{(orgsContext.orgs ? orgsContext.orgs : []).map(org => <option key={org}>{org}</option>)}</>}
               </OrgsContext.Consumer>
             </Form.Control>
           </Form.Group>

@@ -1,8 +1,10 @@
-import { spWebContext } from '../providers/SPWebContext';
-import "@pnp/sp/search";
-import ActivitiesApiDev from './ActivitiesApiDev';
-import { ICamlQuery } from '@pnp/sp/lists';
 import { IItems } from '@pnp/sp/items';
+import { ICamlQuery } from '@pnp/sp/lists';
+import "@pnp/sp/search";
+import { Moment } from 'moment';
+import { spWebContext } from '../providers/SPWebContext';
+import DateUtilities from '../utilities/DateUtilities';
+import ActivitiesApiDev from './ActivitiesApiDev';
 
 export interface UserInfo {
   Id: string,
@@ -36,11 +38,11 @@ export interface IActivity {
 }
 
 export interface IActivityApi {
-  fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any>,
-  fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any>,
-  fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Date, endDate?: Date, userId?: number): Promise<any>,
-  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any>,
-  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any>,
+  fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Moment, userId: number): Promise<any>,
+  fetchActivitiesByDates(startDate?: Moment, endDate?: Moment, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any>,
+  fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Moment, endDate?: Moment, userId?: number): Promise<any>,
+  fetchBigRocksByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any>,
+  fetchHistoryEntriesByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any>,
   deleteActivity(activity: IActivity): Promise<any>,
   submitActivity(activity: IActivity): Promise<{ data: IActivity }>
 }
@@ -49,15 +51,15 @@ export default class ActivitiesApi implements IActivityApi {
 
   activitiesList = spWebContext.lists.getByTitle("Activities");
 
-  fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Date, userId: number): Promise<any> {
-    let maxDate = new Date(weekStart);
-    maxDate.setDate(maxDate.getDate() + 1);
-    let minDate = new Date(weekStart);
-    minDate.setDate(minDate.getDate() - (numWeeks * 7));
+  fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Moment, userId: number): Promise<any> {
+    let maxDate = DateUtilities.getDate(weekStart);
+    maxDate.add(1, 'day');
+    let minDate = DateUtilities.getDate(weekStart);
+    minDate.subtract((numWeeks - 1) * 7, 'days');
     return this.fetchActivitiesByDates(minDate, maxDate, userId);
   }
 
-  fetchActivitiesByDates(startDate?: Date, endDate?: Date, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any> {
+  fetchActivitiesByDates(startDate?: Moment, endDate?: Moment, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any> {
     let filterString = "IsDeleted ne 1"
     filterString += startDate ? ` and WeekOf ge '${startDate.toISOString()}'` : "";
     filterString += endDate ? ` and WeekOf le '${endDate.toISOString()}'` : "";
@@ -69,7 +71,7 @@ export default class ActivitiesApi implements IActivityApi {
     return items.get();
   }
 
-  async fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Date, endDate?: Date, userId?: number): Promise<IActivity> {
+  async fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Moment, endDate?: Moment, userId?: number): Promise<IActivity> {
 
     let conditions: string[] = ["<Neq><FieldRef Name='IsDeleted'/><Value Type='Boolean'>1</Value></Neq>"];
     if (query) {
@@ -149,11 +151,11 @@ export default class ActivitiesApi implements IActivityApi {
     });
   }
 
-  fetchBigRocksByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any> {
+  fetchBigRocksByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any> {
     return this.fetchActivitiesByDates(startDate, endDate, userId, "IsBigRock eq 1", orderBy);
   }
 
-  fetchHistoryEntriesByDates(startDate: Date, endDate: Date, userId: number, orderBy?: string): Promise<any> {
+  fetchHistoryEntriesByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any> {
     return this.fetchActivitiesByDates(startDate, endDate, userId, "IsHistoryEntry eq 1", orderBy);
   }
 

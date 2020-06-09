@@ -1,6 +1,7 @@
-import DateUtilities from "./DateUtilities";
+import { Moment } from "moment";
 import { IActivity } from "../api/ActivitiesApi";
 import { IUserPreferences } from "../api/UserPreferencesApi";
+import DateUtilities from "./DateUtilities";
 
 export interface IUserRole {
     Title: string,
@@ -56,10 +57,10 @@ export default class RoleUtilities {
         return editableRoles;
     }
 
-    static getMinActivityCreateDate(user: IUserRole): Date {
-        let weekStart = DateUtilities.getStartOfWeek(new Date());
+    static getMinActivityCreateDate(user: IUserRole): Moment {
+        let weekStart = DateUtilities.getStartOfWeek();
         if (this.userHasAnyRole(user)) {
-            weekStart.setDate(weekStart.getDate() - 7);
+            weekStart.subtract(7, 'days');
         }
         return weekStart;
     }

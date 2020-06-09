@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { Button, Modal, Spinner, Alert, Form } from 'react-bootstrap';
 import { sp } from "@pnp/sp";
 import "@pnp/sp/sputilities";
+import React, { useState } from 'react';
+import { Alert, Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
+import DateUtilities from '../../utilities/DateUtilities';
 
 export const ContactUsModal = (props) => {
 	const defaultEmailProps = {
@@ -61,7 +62,7 @@ export const ContactUsModal = (props) => {
 	}
 
 	const addAdditionalDetails = (body) => {
-		let today = new Date().toLocaleString();
+		let today = DateUtilities.getToday(true).toLocaleString();
 		body = body + "<br><hr><br>Message sent by " + props.user +
 			"<br>On " + today +
 			"<br>From route " + location;
