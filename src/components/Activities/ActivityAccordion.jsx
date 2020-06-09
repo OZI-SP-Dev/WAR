@@ -21,7 +21,7 @@ class ActivityAccordion extends Component {
   }
 
   datesAreEqual(date1, date2) {
-    return date1.year() === date2.year() && date1.month() === date2.month() && date1.date() === date2.date();
+    return date1.isSame(date2, 'days');
   }
 
   getFilteredActions() {

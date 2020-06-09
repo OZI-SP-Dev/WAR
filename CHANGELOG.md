@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 - Manually sorted the Review page's weeks because in some specific instances they could get out of order
+- Fixed off by one error causing the API to fetch an extra week of data
 
 ## [1.0.13] - 2020-06-04
 ### Fixed

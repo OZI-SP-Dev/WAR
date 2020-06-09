@@ -3,8 +3,8 @@ import moment, { Moment } from "moment";
 
 export default class DateUtilities {
 
-  static getToday(): Moment {
-    return moment().utc().startOf('day');
+  static getToday(keepTime?: boolean): Moment {
+    return keepTime ? moment().utc() : moment().utc().startOf('day');
   }
 
   static getDate(date?: string | Moment | Date): Moment {

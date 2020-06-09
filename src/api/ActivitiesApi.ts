@@ -55,7 +55,7 @@ export default class ActivitiesApi implements IActivityApi {
     let maxDate = DateUtilities.getDate(weekStart);
     maxDate.add(1, 'day');
     let minDate = DateUtilities.getDate(weekStart);
-    minDate.subtract(numWeeks * 7, 'days');
+    minDate.subtract((numWeeks - 1) * 7, 'days');
     return this.fetchActivitiesByDates(minDate, maxDate, userId);
   }
 
