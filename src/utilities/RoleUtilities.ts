@@ -38,7 +38,7 @@ export default class RoleUtilities {
         return this.userIsBranchChiefOrHigher(user);
     }
 
-    static userCanSetBigRock(user: IUserRole, org: string): boolean {
+    static userCanSetMar(user: IUserRole, org: string): boolean {
         return this.userIsBranchChiefOrHigher(user, org);
     }
 

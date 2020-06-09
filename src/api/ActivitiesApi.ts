@@ -27,7 +27,7 @@ export interface IActivity {
   WeekOf: string,
   Branch: string,
   ActionTaken: string,
-  IsBigRock: boolean,
+  IsMarEntry: boolean,
   IsHistoryEntry: boolean,
   IsDeleted?: boolean,
   OPRs?: UserList,
@@ -41,7 +41,7 @@ export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Moment, userId: number): Promise<any>,
   fetchActivitiesByDates(startDate?: Moment, endDate?: Moment, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any>,
   fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Moment, endDate?: Moment, userId?: number): Promise<any>,
-  fetchBigRocksByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any>,
+  fetchMarEntriesByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any>,
   fetchHistoryEntriesByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any>,
   deleteActivity(activity: IActivity): Promise<any>,
   submitActivity(activity: IActivity): Promise<{ data: IActivity }>
@@ -66,7 +66,7 @@ export default class ActivitiesApi implements IActivityApi {
     filterString += userId && userId !== null ? ` and (AuthorId eq ${userId} or OPRs/Id eq ${userId})` : "";
     filterString += additionalFilter ? ` and ${additionalFilter}` : "";
 
-    let items: IItems = this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsBigRock", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString);
+    let items: IItems = this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsMarEntry", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString);
     items = orderBy && orderBy !== null && orderBy !== "" ? items.orderBy(orderBy, false) : items;
     return items.get();
   }
@@ -109,7 +109,7 @@ export default class ActivitiesApi implements IActivityApi {
                     <FieldRef Name='Branch' />
                     <FieldRef Name='ActionTaken' />
                     <FieldRef Name='OPRs' />
-                    <FieldRef Name='IsBigRock' />
+                    <FieldRef Name='IsMarEntry' />
                     <FieldRef Name='IsHistoryEntry' />
                     <FieldRef Name='IsDeleted' />
                   </ViewFields>
@@ -134,7 +134,7 @@ export default class ActivitiesApi implements IActivityApi {
         WeekOf: activity["WeekOf."],
         Branch: activity.Branch,
         ActionTaken: activity.ActionTaken,
-        IsBigRock: activity.IsBigRock === "Yes" ? true : false,
+        IsMarEntry: activity.IsMarEntry === "Yes" ? true : false,
         IsHistoryEntry: activity.IsHistoryEntry === "Yes" ? true : false,
         IsDeleted: activity.IsDeleted === "Yes" ? true : false,
         OPRs: {
@@ -151,8 +151,8 @@ export default class ActivitiesApi implements IActivityApi {
     });
   }
 
-  fetchBigRocksByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any> {
-    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsBigRock eq 1", orderBy);
+  fetchMarEntriesByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any> {
+    return this.fetchActivitiesByDates(startDate, endDate, userId, "IsMarEntry eq 1", orderBy);
   }
 
   fetchHistoryEntriesByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any> {

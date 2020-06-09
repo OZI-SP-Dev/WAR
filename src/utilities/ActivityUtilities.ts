@@ -11,7 +11,7 @@ export default class ActivityUtilities {
 			WeekOf: DateUtilities.getDate(activity.InputWeekOf).day(0).toISOString(),
 			Branch: activity.Branch,
 			ActionTaken: activity.ActionTaken.trim(),
-			IsBigRock: activity.IsBigRock,
+			IsMarEntry: activity.IsMarEntry,
 			IsHistoryEntry: activity.IsHistoryEntry,
 			OPRsId: { results: [] }
 		};
