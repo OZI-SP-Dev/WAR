@@ -182,14 +182,14 @@ class EditActivityModal extends Component {
               Enter at least one action taken.
             </Form.Control.Feedback>
           </Form.Group>
-          {this.props.showBigRockCheck(this.state.activity.Branch) &&
+          {this.props.showMarCheck(this.state.activity.Branch) &&
             <Form.Group>
               <Form.Check
-                label="Big Rock?"
+                label="MAR Entry?"
                 type="checkbox"
-                defaultChecked={this.props.activity.IsBigRock}
-                value={this.state.IsBigRock}
-                onClick={(e) => this.updateActivity(e.target.checked, 'IsBigRock')}
+                defaultChecked={this.props.activity.IsMarEntry}
+                value={this.state.IsMarEntry}
+                onClick={(e) => this.updateActivity(e.target.checked, 'IsMarEntry')}
                 disabled={this.isReadOnly()}
               />
             </Form.Group>}

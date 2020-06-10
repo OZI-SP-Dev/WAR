@@ -10,7 +10,7 @@ import Help from './components/Help/Help';
 import { Review } from './components/Review/Review';
 import { Roles } from './components/Roles/Roles';
 import { RolesProvider } from "./components/Roles/RolesContext";
-import BigRocksReport from './components/WeeklyReport/BigRocksReport';
+import MonthlyActivityReport from './components/WeeklyReport/MonthlyActivityReport';
 import HistoryReport from './components/WeeklyReport/HistoryReport';
 import WeeklyReport from "./components/WeeklyReport/WeeklyReport";
 import { UserContext, UserProvider } from './providers/UserProvider';
@@ -33,8 +33,8 @@ class App extends Component {
                         <Route path="/Help">
                           <Help />
                         </Route>
-                        <Route path="/BigRocks">
-                          <BigRocksReport />
+                        <Route path="/MAR">
+                          <MonthlyActivityReport />
                         </Route>
                         <Route path="/HistoryReport">
                           <HistoryReport />

@@ -57,7 +57,7 @@ class Activities extends Component {
       InputWeekOf: DateUtilities.getDate(date).format("YYYY-MM-DD"),
       Branch: this.props.user.UserPreferences.DefaultOrg ? this.props.user.UserPreferences.DefaultOrg : '',
       ActionTaken: '',
-      IsBigRock: false,
+      IsMarEntry: false,
       IsHistoryEntry: false,
       OPRs: { results: [this.Me] }
     }
@@ -150,7 +150,7 @@ class Activities extends Component {
           error={this.state.saveError}
           canEdit={(act) => RoleUtilities.isActivityEditable(act, this.props.user)}
           minCreateDate={this.state.minCreateDate}
-          showBigRockCheck={(org) => RoleUtilities.userCanSetBigRock(this.props.user, org)}
+          showMarCheck={(org) => RoleUtilities.userCanSetMar(this.props.user, org)}
           showHistoryCheck={(org) => RoleUtilities.userCanSetHistory(this.props.user, org)}
         />
         <Row className="justify-content-center m-3"><h1>My Activities</h1></Row>

@@ -177,7 +177,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                                         error={error}
                                         canEdit={(act: IActivity) => RoleUtilities.isActivityEditable(act, user)}
                                         minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
-                                        showBigRockCheck={(org: string) => RoleUtilities.userCanSetBigRock(user, org)}
+                                        showMarCheck={(org: string) => RoleUtilities.userCanSetMar(user, org)}
                                         showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
                                     />
                                 </div>

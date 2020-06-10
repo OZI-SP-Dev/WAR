@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.16] - 2020-06-09
+### Changed
+- Big Rocks report is now Monthly Activity Report (MAR)
+- Big Rock flag is now MAR Item flag
+- Activities list 'isBigRock' replaced by 'isMarEntry'
+
 ## [1.0.15] - 2020-06-09
 ### Changed
 - The review page now defaults to showing all users' activities if the current user has a role

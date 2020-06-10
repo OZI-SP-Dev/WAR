@@ -23,7 +23,7 @@ export const ActivityCard: React.FunctionComponent<IActivityCardProps> = ({ acti
                     <strong>Branch: </strong><span>{activity.Branch}</span><br />
                     <strong>OPRs:</strong> {activity.OPRs && activity.OPRs.results && activity.OPRs.results.map((OPR: any, index: number, array: any[]) =>
                         (<span key={OPR.Id}> {OPR.Title}{array.length - 1 > index ? ';' : ''} </span>))}<br />
-                    {activity.IsBigRock ? <span className="big-rock">Big Rock</span> : ''}
+                    {activity.IsMarEntry ? <span className="mar">MAR Item</span> : ''}
                     {activity.IsHistoryEntry ? <span className="history">History Item</span> : ''}
                 </Card.Text>
             </Card.Body>
