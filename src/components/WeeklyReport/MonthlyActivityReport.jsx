@@ -21,7 +21,7 @@ class MonthlyActivityReport extends Component {
     submitSearch(startDate, endDate) {
         this.setState({ loadingReport: true });
         let submitEndDate = DateUtilities.getDate(endDate).add(1, 'day');
-        this.activitiesApi.fetchMarEntriesByDates(startDate, submitEndDate, null, "WeekOf").then(r => {
+        this.activitiesApi.fetchMarEntriesByDates(startDate, submitEndDate, null, "Branch").then(r => {
             this.setState({ loadingReport: false, activities: r, reportGenerated: true });
             $(".report-toggle").click();
         }, e =>

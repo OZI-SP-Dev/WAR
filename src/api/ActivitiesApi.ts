@@ -67,7 +67,7 @@ export default class ActivitiesApi implements IActivityApi {
     filterString += additionalFilter ? ` and ${additionalFilter}` : "";
 
     let items: IItems = this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsMarEntry", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString);
-    items = orderBy && orderBy !== null && orderBy !== "" ? items.orderBy(orderBy, false) : items;
+    items = orderBy && orderBy !== null && orderBy !== "" ? items.orderBy(orderBy, true) : items;
     return items.get();
   }
 
