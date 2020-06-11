@@ -1,11 +1,10 @@
 import { Moment } from 'moment';
 import * as React from 'react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Button, Col, Form, FormCheck, Row, Spinner } from "react-bootstrap";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useHistory } from "react-router-dom";
-import { OrgsContext } from "../../providers/OrgsContext";
 import DateUtilities from "../../utilities/DateUtilities";
 import '../WeeklyReport/ReportForm.css';
 import './SearchForm.css';
@@ -17,7 +16,8 @@ export interface ISearchFormProps {
     defaultStartDate: Moment | null,
     defaultEndDate: Moment | null,
     defaultShowUserOnly: boolean,
-    loading: boolean
+    loading: boolean,
+    orgs: string[]
 }
 
 export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISearchFormProps) => {
@@ -40,8 +40,6 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
     const [org, setOrg] = useState<string>(props.defaultOrg);
     const [keywordQuery, setKeywordQuery] = useState<string>(props.defaultQuery);
     const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(props.defaultIncludeSubOrgs);
-
-    const { orgs } = useContext(OrgsContext);
 
     const history = useHistory();
 
@@ -131,8 +129,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                             value={org}
                             onChange={orgOnChange}
                         >
-                            <option>--</option>
-                            {(orgs ? orgs : []).map(org => <option key={org}>{org}</option>)}
+                            <option value=''>--</option>
+                            {props.orgs.map(org => <option key={org}>{org}</option>)}
                         </Form.Control>
                     </Form.Group>
                 </Col>
