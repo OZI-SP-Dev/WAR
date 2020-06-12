@@ -102,6 +102,16 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         return newGroupedActivites;
     }
 
+    const getAllActivities = () => {
+        let allActivities: any[] = []
+        activities.forEach(activitiesByWeek => {
+            activitiesByWeek.activitiesByOrg.forEach(activitiesByOrg => {
+                activitiesByOrg.activities.forEach(activity => allActivities.push(activity));
+            });
+        });
+        return allActivities;
+    }
+
     const submitActivity = async (activity: any) => {
         try {
             setLoading(true);
@@ -111,7 +121,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
             builtActivity = ActivityUtilities.updateActivityEtagFromResponse(response, activity, builtActivity);
 
-            setActivities(ActivityUtilities.replaceActivity(activities, builtActivity));
+            setActivities(groupActivities(ActivityUtilities.replaceActivity(getAllActivities(), builtActivity)));
             setLoading(false);
             setModalActivityId(-1);
         } catch (e) {
@@ -125,7 +135,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         try {
             setDeleting(true);
             await activitiesApi.deleteActivity(await ActivityUtilities.buildActivity(activity));
-            setActivities(ActivityUtilities.filterActivity(activities, activity));
+            setActivities(groupActivities(ActivityUtilities.filterActivity(getAllActivities(), activity)));
             setDeleting(false);
             setModalActivityId(-1);
         } catch (e) {
