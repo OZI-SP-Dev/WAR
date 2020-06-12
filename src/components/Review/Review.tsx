@@ -1,5 +1,6 @@
+import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
-import { Accordion, Card, Container, Row, useAccordionToggle } from "react-bootstrap";
+import { Card, Container, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import { ActivitiesApiConfig, IActivity } from '../../api/ActivitiesApi';
 import { OrgsContext } from "../../providers/OrgsContext";
@@ -11,61 +12,11 @@ import { ActivityCard } from "../Activities/ActivityCard";
 import ActivitySpinner from "../Activities/ActivitySpinner";
 import EditActivityModal from "../Activities/EditActivityModal";
 import CardAccordion from "../CardAccordion/CardAccordion";
+import { CustomToggleAccordion } from "../CustomToggleAccordion/CustomToggleAccordion";
 import { SearchForm } from "./SearchForm";
-import moment from "moment";
 
 export function useQuery(): URLSearchParams {
     return new URLSearchParams(useLocation().search);
-}
-
-export interface ICustomToggleProps {
-    children: any,
-    className?: string,
-    eventKey: any,
-    headerSize: 1 | 2 | 3 | 4 | 5 | 6,
-    defaultOpen?: boolean
-}
-
-function CustomToggle({ children, className, eventKey, headerSize, defaultOpen }: ICustomToggleProps) {
-    const [open, setOpen] = useState<boolean>(defaultOpen === undefined ? true : defaultOpen);
-    const accordionOnClick = useAccordionToggle(eventKey, () =>
-        onClick()
-    );
-
-    const onClick = () => {
-        setOpen(!open)
-    }
-
-    const arrow = <div className={open ? 'arrow-down float-right' : 'arrow-right float-right'} />
-
-    const headers = [
-        <h1 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h1>,
-        <h2 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h2>,
-        <h3 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h3>,
-        <h4 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h4>,
-        <h5 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h5>,
-        <h6 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h6>
-    ]
-
-    return headers[headerSize - 1]
 }
 
 export interface IReviewProps {
@@ -195,7 +146,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
     const isOrgDisplayed = (org: string) => {
         return !urlOrg || urlOrg === org || (urlIncludeSubOrgs === "true" && org.includes(urlOrg));
-    } 
+    }
 
     useEffect(() => {
         fetchActivities();
@@ -219,51 +170,50 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                 />
             </CardAccordion>
             {activities.map(activitiesForWeek =>
-                <Accordion key={activitiesForWeek.week + "_acc"} defaultActiveKey="0" className="mb-3">
-                    <CustomToggle eventKey="0" headerSize={4}>Week of: {DateUtilities.getDate(activitiesForWeek.week).format("DD MMM YYYY")}</CustomToggle>
-                    <Accordion.Collapse eventKey="0">
-                        <div key={activitiesForWeek.week + "_div"}>
-                            {activitiesForWeek.activitiesByOrg.filter(actByOrg => isOrgDisplayed(actByOrg.org)).map(activitiesForOrg =>
-                                <Accordion
-                                    key={activitiesForWeek.week + activitiesForOrg.org + "_acc"}
-                                    defaultActiveKey={activitiesForOrg.activities.length > 0 ? "0" : ""}
-                                    className="mb-3"
-                                >
-                                    <CustomToggle className="ml-3" eventKey="0" headerSize={6} defaultOpen={activitiesForOrg.activities.length > 0}>
-                                        Organization: {activitiesForOrg.org}
-                                    </CustomToggle>
-                                    <Accordion.Collapse eventKey="0">
-                                        <div key={activitiesForWeek.week + activitiesForOrg.org + "_div"}>
-                                            {activitiesForOrg.activities.length > 0 ? activitiesForOrg.activities.map(activity =>
-                                                <div key={`${activity.Id}_div`}>
-                                                    <ActivityCard className={"mb-3"} key={`${activity.Id}_card`} activity={activity} onClick={cardOnClick} />
-                                                    <EditActivityModal
-                                                        key={`${activity.Id}_modal`}
-                                                        showEditModal={modalActivityId === activity.Id}
-                                                        submitEditActivity={submitActivity}
-                                                        handleDelete={deleteActivity}
-                                                        closeEditActivity={closeModal}
-                                                        activity={activity}
-                                                        deleting={deleting}
-                                                        saving={loading}
-                                                        error={error}
-                                                        canEdit={(act: IActivity) => RoleUtilities.isActivityEditable(act, user)}
-                                                        minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
-                                                        showMarCheck={(org: string) => RoleUtilities.userCanSetMar(user, org)}
-                                                        showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
-                                                    />
-                                                </div>) :
-                                                <Card className="text-center">
-                                                    <span>
-                                                        {`There were no activities found for ${activitiesForOrg.org} in the week of ${DateUtilities.getDate(activitiesForWeek.week).format("DD MMM YYYY")}`}
-                                                    </span>
-                                                </Card>}
-                                        </div>
-                                    </Accordion.Collapse>
-                                </Accordion>)}
-                        </div>
-                    </Accordion.Collapse>
-                </Accordion>)}
+                <CustomToggleAccordion
+                    key={activitiesForWeek.week + "_acc"}
+                    className="mb-3"
+                    header={`Week of: ${DateUtilities.getDate(activitiesForWeek.week).format("DD MMM YYYY")}`}
+                    headerSize={4}
+                >
+                    <div key={activitiesForWeek.week + "_div"}>
+                        {activitiesForWeek.activitiesByOrg.filter(actByOrg => isOrgDisplayed(actByOrg.org)).map(activitiesForOrg =>
+                            <CustomToggleAccordion
+                                key={activitiesForWeek.week + activitiesForOrg.org + "_acc"}
+                                defaultOpen={activitiesForOrg.activities.length > 0}
+                                className="mb-3"
+                                header={`Organization: ${activitiesForOrg.org}`}
+                                headerSize={6}
+                            >
+                                <div key={activitiesForWeek.week + activitiesForOrg.org + "_div"}>
+                                    {activitiesForOrg.activities.length > 0 ? activitiesForOrg.activities.map(activity =>
+                                        <div key={`${activity.Id}_div`}>
+                                            <ActivityCard className={"mb-3"} key={`${activity.Id}_card`} activity={activity} onClick={cardOnClick} />
+                                            <EditActivityModal
+                                                key={`${activity.Id}_modal`}
+                                                showEditModal={modalActivityId === activity.Id}
+                                                submitEditActivity={submitActivity}
+                                                handleDelete={deleteActivity}
+                                                closeEditActivity={closeModal}
+                                                activity={activity}
+                                                deleting={deleting}
+                                                saving={loading}
+                                                error={error}
+                                                canEdit={(act: IActivity) => RoleUtilities.isActivityEditable(act, user)}
+                                                minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
+                                                showMarCheck={(org: string) => RoleUtilities.userCanSetMar(user, org)}
+                                                showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
+                                            />
+                                        </div>) :
+                                        <Card className="text-center">
+                                            <span>
+                                                {`There were no activities found for ${activitiesForOrg.org} in the week of ${DateUtilities.getDate(activitiesForWeek.week).format("DD MMM YYYY")}`}
+                                            </span>
+                                        </Card>}
+                                </div>
+                            </CustomToggleAccordion>)}
+                    </div>
+                </CustomToggleAccordion>)}
             <ActivitySpinner show={loading} displayText="Fetching Activities" />
         </Container>
     )
