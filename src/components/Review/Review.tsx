@@ -181,9 +181,11 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                             <CustomToggleAccordion
                                 key={activitiesForWeek.week + activitiesForOrg.org + "_acc"}
                                 defaultOpen={activitiesForOrg.activities.length > 0}
+                                badge={`${activitiesForOrg.activities.length}`}
                                 className="mb-3"
                                 header={`Organization: ${activitiesForOrg.org}`}
                                 headerSize={6}
+                                headerClassName="ml-3"
                             >
                                 <div key={activitiesForWeek.week + activitiesForOrg.org + "_div"}>
                                     {activitiesForOrg.activities.length > 0 ? activitiesForOrg.activities.map(activity =>

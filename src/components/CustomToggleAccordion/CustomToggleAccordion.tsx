@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAccordionToggle, Accordion } from "react-bootstrap";
+import { useAccordionToggle, Accordion, Badge } from "react-bootstrap";
 import React from "react";
 
 interface ICustomToggleProps {
@@ -55,6 +55,7 @@ function CustomToggle({ children, className, eventKey, headerSize, defaultOpen }
 export interface ICustomToggleAccordionProps {
     children: any,
     className: string,
+    badge?: string,
     header: string,
     headerSize: 1 | 2 | 3 | 4 | 5 | 6,
     headerClassName?: string,
@@ -72,6 +73,7 @@ export const CustomToggleAccordion: React.FunctionComponent<ICustomToggleAccordi
                 className={props.headerClassName}
             >
                 {props.header}
+                {props.badge && <Badge className="ml-2" variant="secondary">{props.badge}</Badge>}
             </CustomToggle>
             <Accordion.Collapse eventKey="0">
                 {props.children}
