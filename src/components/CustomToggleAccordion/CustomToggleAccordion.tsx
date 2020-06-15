@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, ElementType } from "react";
 import { useAccordionToggle, Accordion, Badge } from "react-bootstrap";
 import React from "react";
 
@@ -6,11 +6,11 @@ interface ICustomToggleProps {
     children: any,
     className?: string,
     eventKey: any,
-    headerSize: 1 | 2 | 3 | 4 | 5 | 6,
+    as: ElementType,
     defaultOpen?: boolean
 }
 
-function CustomToggle({ children, className, eventKey, headerSize, defaultOpen }: ICustomToggleProps) {
+function CustomToggle({ children, className, eventKey, as, defaultOpen }: ICustomToggleProps) {
     const [open, setOpen] = useState<boolean>(defaultOpen === undefined ? true : defaultOpen);
     const accordionOnClick = useAccordionToggle(eventKey, () =>
         onClick()
@@ -22,34 +22,9 @@ function CustomToggle({ children, className, eventKey, headerSize, defaultOpen }
 
     const arrow = <div className={open ? 'arrow-down float-right' : 'arrow-right float-right'} />
 
-    const headers = [
-        <h1 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h1>,
-        <h2 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h2>,
-        <h3 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h3>,
-        <h4 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h4>,
-        <h5 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h5>,
-        <h6 className={className} style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            {arrow}
-        </h6>
-    ]
-
-    return headers[headerSize - 1]
+    return (
+        React.createElement(as, { className, style: { cursor: 'pointer' }, onClick: accordionOnClick }, children, arrow)
+    )
 }
 
 export interface ICustomToggleAccordionProps {
@@ -57,7 +32,7 @@ export interface ICustomToggleAccordionProps {
     className: string,
     badge?: string,
     header: string,
-    headerSize: 1 | 2 | 3 | 4 | 5 | 6,
+    as: ElementType,
     headerClassName?: string,
     defaultOpen?: boolean
 }
@@ -68,7 +43,7 @@ export const CustomToggleAccordion: React.FunctionComponent<ICustomToggleAccordi
         <Accordion defaultActiveKey={props.defaultOpen || props.defaultOpen === undefined ? "0" : ""} className={props.className}>
             <CustomToggle
                 eventKey="0"
-                headerSize={props.headerSize}
+                as={props.as}
                 defaultOpen={props.defaultOpen || props.defaultOpen === undefined}
                 className={props.headerClassName}
             >
