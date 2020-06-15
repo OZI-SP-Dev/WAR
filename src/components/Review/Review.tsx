@@ -184,7 +184,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                     key={activitiesForWeek.week + "_acc"}
                     className="mb-3"
                     header={`Week of: ${DateUtilities.getDate(activitiesForWeek.week).format("DD MMM YYYY")}`}
-                    headerSize={4}
+                    as={"h4"}
                 >
                     <div key={activitiesForWeek.week + "_div"}>
                         {activitiesForWeek.activitiesByOrg.filter(actByOrg => isOrgDisplayed(actByOrg.org)).map(activitiesForOrg =>
@@ -194,7 +194,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                                 badge={`${activitiesForOrg.activities.length}`}
                                 className="mb-3"
                                 header={`Organization: ${activitiesForOrg.org}`}
-                                headerSize={6}
+                                as={"h6"}
                                 headerClassName="ml-3"
                             >
                                 <div key={activitiesForWeek.week + activitiesForOrg.org + "_div"}>
