@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.18] - 2020-06-12
+### Changed
+- The Review page now groups the activities by Branch as well as WeekOf
+
+### Fixed
+- Bug with MS edge that made the page reload when submitting a search through the search bar or on the Review page
+
+### Added 
+- A badge in the Branch headers that shows the number of activities in that Branch for that WeekOf
+
 ## [1.0.17] - 2020-06-10
 ### Changed
 - Monthly Activity Report formatting updated to match Ms. Eviston's email

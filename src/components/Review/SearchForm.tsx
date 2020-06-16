@@ -1,11 +1,10 @@
 import { Moment } from 'moment';
 import * as React from 'react';
-import { useContext, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Col, Form, FormCheck, Row, Spinner } from "react-bootstrap";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { useHistory } from "react-router-dom";
-import { OrgsContext } from "../../providers/OrgsContext";
+import { Link } from "react-router-dom";
 import DateUtilities from "../../utilities/DateUtilities";
 import '../WeeklyReport/ReportForm.css';
 import './SearchForm.css';
@@ -17,7 +16,8 @@ export interface ISearchFormProps {
     defaultStartDate: Moment | null,
     defaultEndDate: Moment | null,
     defaultShowUserOnly: boolean,
-    loading: boolean
+    loading: boolean,
+    orgs: string[]
 }
 
 export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISearchFormProps) => {
@@ -40,10 +40,6 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
     const [org, setOrg] = useState<string>(props.defaultOrg);
     const [keywordQuery, setKeywordQuery] = useState<string>(props.defaultQuery);
     const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(props.defaultIncludeSubOrgs);
-
-    const { orgs } = useContext(OrgsContext);
-
-    const history = useHistory();
 
     const startDatePickerOnClick = () => {
         setStartDatePickerOpen(true);
@@ -84,9 +80,9 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         setIncludeSubOrgs(e.target.checked);
     }
 
-    const submitSearch = () => {
-        history.push(`/Review?query=${keywordQuery}&org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&showUserOnly=${showUserOnly}`);
-    }
+    useEffect(() => {
+        setKeywordQuery(props.defaultQuery);
+    }, [props.defaultQuery])
 
     const StartDatePickerCustomInput = ({ value }: any) => (
         <>
@@ -109,7 +105,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         </>);
 
     return (
-        <Form className={"mb-3"} onSubmit={submitSearch}>
+        <Form className={"mb-3"}>
             <Row>
                 <Col md={4}>
                     <Form.Group controlId="keywordSearch">
@@ -131,8 +127,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                             value={org}
                             onChange={orgOnChange}
                         >
-                            <option>--</option>
-                            {(orgs ? orgs : []).map(org => <option key={org}>{org}</option>)}
+                            <option value=''>--</option>
+                            {props.orgs.map(org => <option key={org}>{org}</option>)}
                         </Form.Control>
                     </Form.Group>
                 </Col>
@@ -194,16 +190,17 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     />
                 </Col>
             </Row>
-            <Button
-                disabled={props.loading}
-                className="float-right mb-3"
-                variant="primary"
-                type="submit"
-                onSubmit={submitSearch}
-            >
-                {props.loading && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
-                {' '}Submit Search
+            <Link to={`/Review?query=${keywordQuery}&org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&showUserOnly=${showUserOnly}`}>
+                <Button
+                    disabled={props.loading}
+                    className="float-right mb-3"
+                    variant="primary"
+                    type="submit"
+                >
+                    {props.loading && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
+                    {' '}Submit Search
             </Button>
+            </Link>
         </Form>
     );
 }

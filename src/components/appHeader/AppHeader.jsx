@@ -12,14 +12,16 @@ import './AppHeader.css';
 function AppHeader() {
   const [query, setQuery] = useState("");
 
+  let history = useHistory();
+
   const user = useContext(UserContext);
-  const history = useHistory();
 
   const updateQuery = (value) => {
     setQuery(value);
   }
 
-  const handleSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault();
     history.push(`/Review${query !== "" ? "?query=" + query : ""}`);
     setQuery("");
   }
@@ -29,7 +31,7 @@ function AppHeader() {
 
   return (
     <Navbar fixed="top" expand="md" variant="dark" bg="dark" className="p-0 shadow">
-			<Navbar.Brand className={(process.env.REACT_APP_TEST_SYS ? "test " : "") + "col-xs-1 col-sm-3 col-md-2 mr-0"}>Weekly Activity Report</Navbar.Brand>
+      <Navbar.Brand className={(process.env.REACT_APP_TEST_SYS ? "test " : "") + "col-xs-1 col-sm-3 col-md-2 mr-0"}>Weekly Activity Report</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
@@ -67,7 +69,7 @@ function AppHeader() {
               >
                 <button className="nav-link link-button" onClick={() => { ContactUs.setShowContactUs(true) }}>
                   Contact Us
-							</button>
+							  </button>
               </OverlayTrigger>
             )}
           </ContactUsContext.Consumer>
@@ -80,12 +82,11 @@ function AppHeader() {
           </LinkContainer>
         </Nav>
         <Nav className="justify-content-end">
-          <Form className="d-none d-lg-inline-block" inline onSubmit={handleSubmit}>
+          <Form className="d-none d-lg-inline-block" inline onSubmit={(e) => onSubmit(e)}>
             <Form.Control type="text" placeholder="Search" className="mr-sm-1" value={query}
               onChange={(e) => updateQuery(e.target.value)}
             />
-            <Button variant="outline-primary" className="mr-sm-3"
-              onClick={handleSubmit} >
+            <Button variant="outline-primary" className="mr-sm-3" onClick={(e) => onSubmit(e)}>
               Search
             </Button>
           </Form>

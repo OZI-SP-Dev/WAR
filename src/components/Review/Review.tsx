@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Accordion, Container, Row, useAccordionToggle } from "react-bootstrap";
+import moment from "moment";
+import React, { useContext, useEffect, useState } from "react";
+import { Card, Container, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import { ActivitiesApiConfig, IActivity } from '../../api/ActivitiesApi';
+import { OrgsContext } from "../../providers/OrgsContext";
 import ActivityUtilities from "../../utilities/ActivityUtilities";
 import DateUtilities from "../../utilities/DateUtilities";
 import RoleUtilities, { IUserRole } from "../../utilities/RoleUtilities";
@@ -10,33 +12,23 @@ import { ActivityCard } from "../Activities/ActivityCard";
 import ActivitySpinner from "../Activities/ActivitySpinner";
 import EditActivityModal from "../Activities/EditActivityModal";
 import CardAccordion from "../CardAccordion/CardAccordion";
+import { CustomToggleAccordion } from "../CustomToggleAccordion/CustomToggleAccordion";
 import { SearchForm } from "./SearchForm";
-import moment from "moment";
 
 export function useQuery(): URLSearchParams {
     return new URLSearchParams(useLocation().search);
 }
 
-function CustomToggle({ children, eventKey }: { children: any, eventKey: any }) {
-    const [open, setOpen] = useState<boolean>(true);
-    const accordionOnClick = useAccordionToggle(eventKey, () =>
-        onClick()
-    );
-
-    const onClick = () => {
-        setOpen(!open)
-    }
-
-    return (
-        <h4 style={{ cursor: 'pointer' }} onClick={accordionOnClick}>
-            {children}
-            <div className={open ? 'arrow-down float-right' : 'arrow-right float-right'} />
-        </h4>
-    );
-}
-
 export interface IReviewProps {
     user: IUserRole
+}
+
+interface GroupedActivities {
+    week: string,
+    activitiesByOrg: {
+        org: string,
+        activities: any[]
+    }[]
 }
 
 export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
@@ -49,13 +41,15 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     let urlEndDate = query.get("endDate");
     let urlShowUserOnly = query.get("showUserOnly");
 
-    const [activities, setActivities] = useState<any[]>([]);
+    const [activities, setActivities] = useState<GroupedActivities[]>([]);
     const [modalActivityId, setModalActivityId] = useState<number>(-1);
     const [loading, setLoading] = useState<boolean>(true);
     const [deleting, setDeleting] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
 
     const activitiesApi = ActivitiesApiConfig.activitiesApi;
+
+    const { orgs } = useContext(OrgsContext);
 
     const fetchActivities = async () => {
         try {
@@ -68,15 +62,54 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                 submitStartDate = DateUtilities.getDate(urlStartDate).subtract(1, 'day');
             }
             let submitEndDate = urlEndDate ? DateUtilities.getStartOfWeek(urlEndDate) : undefined;
-            let submitUserId = urlShowUserOnly === "false" || (!urlShowUserOnly && RoleUtilities.userHasAnyRole(user)) ? 
+            let submitUserId = urlShowUserOnly === "false" || (!urlShowUserOnly && RoleUtilities.userHasAnyRole(user)) ?
                 undefined : parseInt(user.Id);
-            let newActivities = await activitiesApi.fetchActivitiesByQueryString(submitQuery, submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, submitUserId);
-            setActivities(newActivities);
+            let newActivities: any[] = await activitiesApi.fetchActivitiesByQueryString(submitQuery, submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, submitUserId);
+            setActivities(groupActivities(newActivities));
             setLoading(false);
         } catch (e) {
             console.error(e);
             setLoading(false);
         }
+    }
+
+    const groupActivities = (newActivities: any[]): GroupedActivities[] => {
+        let newGroupedActivites: GroupedActivities[] = [];
+        newActivities.forEach((activity: any) => {
+            let week = DateUtilities.getDate(activity.WeekOf).toISOString();
+            let activitiesWeek: GroupedActivities | undefined = newGroupedActivites.find(act => act.week === week);
+            if (activitiesWeek) {
+                let activitiesByOrg = activitiesWeek.activitiesByOrg.find(actByOrg => actByOrg.org === activity.Branch);
+                activitiesByOrg?.activities.push(activity);
+            } else {
+                activitiesWeek = {
+                    week,
+                    activitiesByOrg: (orgs ? orgs : []).map(org => {
+                        return {
+                            org,
+                            activities: activity.Branch === org ? [activity] : []
+                        }
+                    })
+                }
+                newGroupedActivites.push(activitiesWeek);
+            }
+        });
+        newGroupedActivites.sort((ga1, ga2) => {
+            let date1 = moment(ga1.week);
+            let date2 = moment(ga2.week);
+            return date1.isBefore(date2) ? 1 : date1.isAfter(date2) ? -1 : 0;
+        })
+        return newGroupedActivites;
+    }
+
+    const getAllActivities = () => {
+        let allActivities: any[] = []
+        activities.forEach(activitiesByWeek => {
+            activitiesByWeek.activitiesByOrg.forEach(activitiesByOrg => {
+                activitiesByOrg.activities.forEach(activity => allActivities.push(activity));
+            });
+        });
+        return allActivities;
     }
 
     const submitActivity = async (activity: any) => {
@@ -88,7 +121,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
             builtActivity = ActivityUtilities.updateActivityEtagFromResponse(response, activity, builtActivity);
 
-            setActivities(ActivityUtilities.replaceActivity(activities, builtActivity));
+            setActivities(groupActivities(ActivityUtilities.replaceActivity(getAllActivities(), builtActivity)));
             setLoading(false);
             setModalActivityId(-1);
         } catch (e) {
@@ -102,7 +135,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         try {
             setDeleting(true);
             await activitiesApi.deleteActivity(await ActivityUtilities.buildActivity(activity));
-            setActivities(ActivityUtilities.filterActivity(activities, activity));
+            setActivities(groupActivities(ActivityUtilities.filterActivity(getAllActivities(), activity)));
             setDeleting(false);
             setModalActivityId(-1);
         } catch (e) {
@@ -121,20 +154,8 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         setModalActivityId(activity.Id);
     }
 
-    const getActivityWeeks = (): string[] => {
-        let activityWeeks: string[] = [];
-        activities.forEach(activity => {
-            let week = DateUtilities.getDate(activity.WeekOf);
-            if (!activityWeeks.includes(week.toISOString())) {
-                activityWeeks.push(week.toISOString());
-            }
-        });
-        activityWeeks.sort((d1, d2) => {
-            let date1 = moment(d1);
-            let date2 = moment(d2);
-            return date1.isBefore(date2) ? 1 : date1.isAfter(date2) ? -1 : 0;
-        })
-        return activityWeeks;
+    const isOrgDisplayed = (org: string) => {
+        return !urlOrg || urlOrg === org || (urlIncludeSubOrgs === "true" && org.includes(urlOrg));
     }
 
     useEffect(() => {
@@ -148,43 +169,63 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
             <CardAccordion defaultOpen={false} cardHeader="Search and Filter">
                 <SearchForm
                     defaultQuery={urlQuery ? urlQuery : ''}
-                    defaultOrg={urlOrg ? urlOrg : '--'}
+                    defaultOrg={urlOrg ? urlOrg : ''}
                     defaultIncludeSubOrgs={urlIncludeSubOrgs === "true" ? true : false}
                     defaultStartDate={urlStartDate ? DateUtilities.getDate(urlStartDate) : null}
                     defaultEndDate={urlEndDate ? DateUtilities.getDate(urlEndDate) : null}
                     defaultShowUserOnly={!RoleUtilities.userHasAnyRole(user) && (urlShowUserOnly === "true" || urlShowUserOnly === null) ?
                         true : false}
                     loading={loading}
+                    orgs={orgs ? orgs : []}
                 />
             </CardAccordion>
-            {getActivityWeeks().map(week =>
-                <Accordion key={week + "_acc"} defaultActiveKey="0" className="mb-3">
-                    <CustomToggle eventKey="0">Week of: {DateUtilities.getDate(week).format("DD MMM YYYY")}</CustomToggle>
-                    <Accordion.Collapse eventKey="0">
-                        <div key={week + "_div"}>
-                            {activities.filter(activity => DateUtilities.getDate(activity.WeekOf).toISOString() === week).map(activity =>
-                                <div key={`${activity.Id}_div`}>
-                                    <ActivityCard className={"mb-3"} key={`${activity.Id}_card`} activity={activity} onClick={cardOnClick} />
-                                    <EditActivityModal
-                                        key={`${activity.Id}_modal`}
-                                        showEditModal={modalActivityId === activity.Id}
-                                        submitEditActivity={submitActivity}
-                                        handleDelete={deleteActivity}
-                                        closeEditActivity={closeModal}
-                                        activity={activity}
-                                        deleting={deleting}
-                                        saving={loading}
-                                        error={error}
-                                        canEdit={(act: IActivity) => RoleUtilities.isActivityEditable(act, user)}
-                                        minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
-                                        showMarCheck={(org: string) => RoleUtilities.userCanSetMar(user, org)}
-                                        showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
-                                    />
+            {activities.map(activitiesForWeek =>
+                <CustomToggleAccordion
+                    key={activitiesForWeek.week + "_acc"}
+                    className="mb-3"
+                    header={`Week of: ${DateUtilities.getDate(activitiesForWeek.week).format("DD MMM YYYY")}`}
+                    as={"h4"}
+                >
+                    <div key={activitiesForWeek.week + "_div"}>
+                        {activitiesForWeek.activitiesByOrg.filter(actByOrg => isOrgDisplayed(actByOrg.org)).map(activitiesForOrg =>
+                            <CustomToggleAccordion
+                                key={activitiesForWeek.week + activitiesForOrg.org + "_acc"}
+                                defaultOpen={activitiesForOrg.activities.length > 0}
+                                badge={`${activitiesForOrg.activities.length}`}
+                                className="mb-3"
+                                header={`Organization: ${activitiesForOrg.org}`}
+                                as={"h6"}
+                                headerClassName="ml-3"
+                            >
+                                <div key={activitiesForWeek.week + activitiesForOrg.org + "_div"}>
+                                    {activitiesForOrg.activities.length > 0 ? activitiesForOrg.activities.map(activity =>
+                                        <div key={`${activity.Id}_div`}>
+                                            <ActivityCard className={"mb-3"} key={`${activity.Id}_card`} activity={activity} onClick={cardOnClick} />
+                                            <EditActivityModal
+                                                key={`${activity.Id}_modal`}
+                                                showEditModal={modalActivityId === activity.Id}
+                                                submitEditActivity={submitActivity}
+                                                handleDelete={deleteActivity}
+                                                closeEditActivity={closeModal}
+                                                activity={activity}
+                                                deleting={deleting}
+                                                saving={loading}
+                                                error={error}
+                                                canEdit={(act: IActivity) => RoleUtilities.isActivityEditable(act, user)}
+                                                minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
+                                                showMarCheck={(org: string) => RoleUtilities.userCanSetMar(user, org)}
+                                                showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
+                                            />
+                                        </div>) :
+                                        <Card className="text-center">
+                                            <span>
+                                                {`There were no activities found for ${activitiesForOrg.org} in the week of ${DateUtilities.getDate(activitiesForWeek.week).format("DD MMM YYYY")}`}
+                                            </span>
+                                        </Card>}
                                 </div>
-                            )}
-                        </div>
-                    </Accordion.Collapse>
-                </Accordion>)}
+                            </CustomToggleAccordion>)}
+                    </div>
+                </CustomToggleAccordion>)}
             <ActivitySpinner show={loading} displayText="Fetching Activities" />
         </Container>
     )
