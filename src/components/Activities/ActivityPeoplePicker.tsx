@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
-import { IBasePickerSuggestionsProps, NormalPeoplePicker } from 'office-ui-fabric-react/lib/Pickers';
-import { people } from '@uifabric/example-data';
 import { sp } from "@pnp/sp";
 import "@pnp/sp/profiles";
 import { IPeoplePickerEntity } from '@pnp/sp/profiles';
+import { people } from '@uifabric/example-data';
+import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
+import { IBasePickerSuggestionsProps, NormalPeoplePicker } from 'office-ui-fabric-react/lib/Pickers';
+import * as React from 'react';
 
 const suggestionProps: IBasePickerSuggestionsProps = {
 	suggestionsHeaderText: 'Suggested People',
@@ -34,6 +34,8 @@ type ActivityPeoplePicker = {
 export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker> = ({ defaultValue, updateOPRs, required }) => {
 	const [peopleList] = React.useState<IPersonaProps[]>(people);
 	const [selectedItems, setSelectedItems] = React.useState<IPersonaProps[]>([]);
+
+	const peoplePickerInput = React.useRef<any>(null);
 
 	React.useEffect(() => {
 		let personas: SPPersona[] = [];
@@ -94,6 +96,7 @@ export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker>
 		if (items) {
 			setSelectedItems(items);
 			updateOPRs(items);
+			peoplePickerInput.current?.focus();
 		}
 	};
 
@@ -111,6 +114,7 @@ export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker>
 			selectedItems={selectedItems}
 			onChange={onItemsChange}
 			resolveDelay={300}
+			componentRef={peoplePickerInput}
 		/>
 	);
 };
