@@ -46,7 +46,7 @@ class Report extends Component {
                         loadingReport={this.props.loadingReport}
                     />
                 </CardAccordion>
-                <ReportActivitiesByBranch activities={this.props.activities} reportGenerated={this.props.reportGenerated} />
+						<ReportActivitiesByBranch activities={this.props.activities} reportGenerated={this.props.reportGenerated} hideWeekOf={this.props.hideWeekOf}/>
             </Container>
         );
     }

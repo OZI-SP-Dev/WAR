@@ -39,7 +39,7 @@ export interface IActivity {
 
 export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Moment, userId: number): Promise<any>,
-  fetchActivitiesByDates(startDate?: Moment, endDate?: Moment, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any>,
+	fetchActivitiesByDates(startDate?: Moment, endDate?: Moment, userId?: number, additionalFilter?: string, orderBy?: string, ascending?: boolean): Promise<any>,
   fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Moment, endDate?: Moment, userId?: number): Promise<any>,
   fetchMarEntriesByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any>,
   fetchHistoryEntriesByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any>,
@@ -59,7 +59,7 @@ export default class ActivitiesApi implements IActivityApi {
     return this.fetchActivitiesByDates(minDate, maxDate, userId);
   }
 
-  fetchActivitiesByDates(startDate?: Moment, endDate?: Moment, userId?: number, additionalFilter?: string, orderBy?: string): Promise<any> {
+  fetchActivitiesByDates(startDate?: Moment, endDate?: Moment, userId?: number, additionalFilter?: string, orderBy?: string, ascending?: boolean): Promise<any> {
     let filterString = "IsDeleted ne 1"
     filterString += startDate ? ` and WeekOf ge '${startDate.toISOString()}'` : "";
     filterString += endDate ? ` and WeekOf le '${endDate.toISOString()}'` : "";
@@ -67,7 +67,7 @@ export default class ActivitiesApi implements IActivityApi {
     filterString += additionalFilter ? ` and ${additionalFilter}` : "";
 
     let items: IItems = this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsMarEntry", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString);
-    items = orderBy && orderBy !== null && orderBy !== "" ? items.orderBy(orderBy, false) : items;
+		items = orderBy && orderBy !== null && orderBy !== "" ? items.orderBy(orderBy, ascending === false ? false : true) : items;
     return items.get();
   }
 
@@ -182,7 +182,8 @@ export default class ActivitiesApi implements IActivityApi {
     let etag = activity.__metadata?.etag;
     if (etag) {
       delete activity.__metadata;
-    }
+		}
+		// @ts-ignore
     return this.activitiesList.items.getById(activity.Id).update(activity, etag);
   }
 

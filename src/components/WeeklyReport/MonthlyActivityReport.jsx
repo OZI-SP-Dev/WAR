@@ -21,7 +21,7 @@ class MonthlyActivityReport extends Component {
     submitSearch(startDate, endDate) {
         this.setState({ loadingReport: true });
         let submitEndDate = DateUtilities.getDate(endDate).add(1, 'day');
-        this.activitiesApi.fetchMarEntriesByDates(startDate, submitEndDate, null, "WeekOf").then(r => {
+        this.activitiesApi.fetchMarEntriesByDates(startDate, submitEndDate, null, "Branch").then(r => {
             this.setState({ loadingReport: false, activities: r, reportGenerated: true });
             $(".report-toggle").click();
         }, e =>
@@ -30,7 +30,8 @@ class MonthlyActivityReport extends Component {
     }
 
     render() {
-        return (
+			return (
+            <div className="monthly-activity-report">
             <Report
                 pageHeader="Monthly Activity Report"
                 searchCardHeader="MAR Search"
@@ -38,7 +39,9 @@ class MonthlyActivityReport extends Component {
                 loadingReport={this.state.loadingReport}
                 activities={this.state.activities}
                 reportGenerated={this.state.reportGenerated}
+                hideWeekOf={true}
             />
+			</div>
         );
     }
 }
