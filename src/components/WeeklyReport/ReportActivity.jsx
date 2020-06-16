@@ -10,7 +10,7 @@ class ReportActivity extends Component {
         return (
             <Row className="activity">
                 <p className="preserve-whitespace">
-                    <strong>Week of:</strong> {DateUtilities.getDate(activity.WeekOf).format("MM/DD/YYYY")}<br />
+                    {this.props.hideWeekOf ? '' : <><strong>Week of:</strong> {DateUtilities.getDate(activity.WeekOf).format("MM/DD/YYYY")} <br /></>}
                     <strong>Activity/Purpose:</strong> {activity.Title}<br />
                     <strong>Action Taken/In Work:</strong> {activity.ActionTaken}<br />
                     <strong>OPRs:</strong> {activity.OPRs && activity.OPRs.results && activity.OPRs.results.map((OPR, index, array) =>

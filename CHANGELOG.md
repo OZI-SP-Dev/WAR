@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added 
 - A badge in the Branch headers that shows the number of activities in that Branch for that WeekOf
 
+## [1.0.17] - 2020-06-10
+### Changed
+- Monthly Activity Report formatting updated to match Ms. Eviston's email
+
 ## [1.0.16] - 2020-06-09
 ### Changed
 - Big Rocks report is now Monthly Activity Report (MAR)

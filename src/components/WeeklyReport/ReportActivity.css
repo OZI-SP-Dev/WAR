@@ -2,6 +2,12 @@
     white-space: pre-wrap;
 }
 
+.monthly-activity-report h4 {
+	width: 100%;
+	text-align: center;
+	color: blue;
+}
+
 /* .activity-branch > .activity:nth-of-type(odd) {
   background-color: #dcdcdc;
 } */
