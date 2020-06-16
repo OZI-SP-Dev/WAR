@@ -109,6 +109,7 @@ export default class ActivitiesApi implements IActivityApi {
                     <FieldRef Name='WeekOf' />
                     <FieldRef Name='Branch' />
                     <FieldRef Name='ActionTaken' />
+                    <FieldRef Name='Author' />
                     <FieldRef Name='OPRs' />
                     <FieldRef Name='IsMarEntry' />
                     <FieldRef Name='IsHistoryEntry' />
