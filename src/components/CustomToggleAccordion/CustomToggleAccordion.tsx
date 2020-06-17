@@ -11,7 +11,6 @@ interface ICustomToggleProps {
 
 function CustomToggle({ children, className, eventKey, as, defaultOpen }: ICustomToggleProps) {
     const [open, setOpen] = useState<boolean>(defaultOpen === undefined ? true : defaultOpen);
-    const toggleRef = useRef<any>(null);
     const accordionOnClick = useAccordionToggle(eventKey, () =>
         onClick()
     );
@@ -22,14 +21,14 @@ function CustomToggle({ children, className, eventKey, as, defaultOpen }: ICusto
 
     useEffect(() => {
         if ((!open && defaultOpen) || (open && !defaultOpen)) {
-            toggleRef.current?.click();
+            accordionOnClick();
         }
-    }, [defaultOpen])
+    }, [defaultOpen]);
 
     const arrow = <div className={open ? 'arrow-down float-right' : 'arrow-right float-right'} />
 
     return (
-        React.createElement(as, { className, ref: toggleRef, style: { cursor: 'pointer' }, onClick: accordionOnClick }, children, arrow)
+        React.createElement(as, { className, style: { cursor: 'pointer' }, onClick: accordionOnClick }, children, arrow)
     )
 }
 
