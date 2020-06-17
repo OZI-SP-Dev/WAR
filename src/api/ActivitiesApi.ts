@@ -30,6 +30,7 @@ export interface IActivity {
   IsMarEntry: boolean,
   IsHistoryEntry: boolean,
   IsDeleted?: boolean,
+  AuthorId?: string,
   OPRs?: UserList,
   OPRsId?: UserIdList,
   __metadata?: {
@@ -66,7 +67,7 @@ export default class ActivitiesApi implements IActivityApi {
     filterString += userId && userId !== null ? ` and (AuthorId eq ${userId} or OPRs/Id eq ${userId})` : "";
     filterString += additionalFilter ? ` and ${additionalFilter}` : "";
 
-    let items: IItems = this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsMarEntry", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString);
+    let items: IItems = this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "AuthorId", "OPRs/Title", "OPRs/Id", "Org", "ActionTaken", "IsMarEntry", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString);
 		items = orderBy && orderBy !== null && orderBy !== "" ? items.orderBy(orderBy, ascending === false ? false : true) : items;
     return items.get();
   }
@@ -108,6 +109,7 @@ export default class ActivitiesApi implements IActivityApi {
                     <FieldRef Name='WeekOf' />
                     <FieldRef Name='Branch' />
                     <FieldRef Name='ActionTaken' />
+                    <FieldRef Name='Author' />
                     <FieldRef Name='OPRs' />
                     <FieldRef Name='IsMarEntry' />
                     <FieldRef Name='IsHistoryEntry' />
@@ -137,6 +139,7 @@ export default class ActivitiesApi implements IActivityApi {
         IsMarEntry: activity.IsMarEntry === "Yes" ? true : false,
         IsHistoryEntry: activity.IsHistoryEntry === "Yes" ? true : false,
         IsDeleted: activity.IsDeleted === "Yes" ? true : false,
+        AuthorId: activity.Author[0].id,
         OPRs: {
           results: activity.OPRs.map((OPR: any) => {
             return {

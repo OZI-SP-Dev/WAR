@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.20] - 2020-06-16
+### Fixed
+- Users can now edit activities that they created without being in the OPRs field
+- Branch header accordions will now open/close automatically when a new search fills or empties that Branch's list
+
 ## [1.0.19] - 2020-06-15
 ### Fixed
 - OPR people picker now resets the focus back to the input after selectinga  persona

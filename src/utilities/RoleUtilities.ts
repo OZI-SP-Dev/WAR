@@ -67,8 +67,9 @@ export default class RoleUtilities {
 
     static isActivityEditable(activity: IActivity, user: IUserRole) {
         let isNew = activity.Id < 0;
+        let userIsAuthor = activity.AuthorId && parseInt(activity.AuthorId) === parseInt(user.Id);
         let userIsOPR = !activity.OPRs || activity.OPRs.results.some(info => parseInt(info.Id) === parseInt(user.Id));
         let userHasRights = activity.Branch && user.UsersRoles.some(role => activity.Branch.includes(role.department));
-        return isNew || userIsOPR || userHasRights;
+        return isNew || userIsAuthor || userIsOPR || userHasRights;
     }
 }

@@ -1,6 +1,5 @@
-import { useState, ElementType } from "react";
-import { useAccordionToggle, Accordion, Badge } from "react-bootstrap";
-import React from "react";
+import React, { ElementType, useEffect, useRef, useState } from "react";
+import { Accordion, Badge, useAccordionToggle } from "react-bootstrap";
 
 interface ICustomToggleProps {
     children: any,
@@ -19,6 +18,12 @@ function CustomToggle({ children, className, eventKey, as, defaultOpen }: ICusto
     const onClick = () => {
         setOpen(!open)
     }
+
+    useEffect(() => {
+        if ((!open && defaultOpen) || (open && !defaultOpen)) {
+            accordionOnClick();
+        }
+    }, [defaultOpen]);
 
     const arrow = <div className={open ? 'arrow-down float-right' : 'arrow-right float-right'} />
 
