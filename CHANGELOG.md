@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.21] - 2020-06-24
+### Removed
+- "Org" field from Activites list has been removed; use "Branch" field
+
 ## [1.0.20] - 2020-06-16
 ### Fixed
 - Users can now edit activities that they created without being in the OPRs field
