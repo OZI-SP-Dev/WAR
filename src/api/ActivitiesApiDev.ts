@@ -50,12 +50,12 @@ export default class ActivitiesApiDev implements IActivityApi {
 
 	async fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Moment, userId: number): Promise<any> {
 		await this.sleep();
-		return this.activities;
+		return { results: this.activities };
 	}
 
 	async fetchActivitiesByDates(startDate: Moment, endDate: Moment, userId: number): Promise<any> {
 		await this.sleep();
-		return this.activities;
+		return { results: this.activities };
 	}
 
 	async fetchActivitiesByQueryString(query: string): Promise<any> {
@@ -65,12 +65,12 @@ export default class ActivitiesApiDev implements IActivityApi {
 
 	async fetchMarEntriesByDates(startDate: Moment, endDate: Moment, userId: number) {
 		await this.sleep();
-		return this.activities.filter(activity => activity.IsMarEntry);
+		return { results: this.activities.filter(activity => activity.IsMarEntry) };
 	}
 
 	async fetchHistoryEntriesByDates(startDate: Moment, endDate: Moment, userId: number) {
 		await this.sleep();
-		return this.activities.filter(activity => activity.IsHistoryEntry);
+		return { results: this.activities.filter(activity => activity.IsHistoryEntry) };
 	}
 
 	async deleteActivity(activity: IActivity): Promise<any> {

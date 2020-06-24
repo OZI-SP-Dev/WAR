@@ -69,7 +69,7 @@ export default class ActivitiesApi implements IActivityApi {
 
     let items: IItems = this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "AuthorId", "OPRs/Title", "OPRs/Id", "ActionTaken", "IsMarEntry", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString);
 		items = orderBy && orderBy !== null && orderBy !== "" ? items.orderBy(orderBy, ascending === false ? false : true) : items;
-    return items.get();
+    return items.getPaged();
   }
 
   async fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Moment, endDate?: Moment, userId?: number): Promise<IActivity> {

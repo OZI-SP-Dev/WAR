@@ -38,16 +38,22 @@ class Activities extends Component {
     this.fetchItems(4, DateUtilities.getStartOfWeek());
   }
 
-  fetchItems = (numWeeks, weekStart) => {
-    this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id).then(r => {
-      const listData = this.state.listData.concat(r);
-      this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
-      this.addNewWeeks(numWeeks, weekStart);
-    }, e => {
-      //TODO better error handling
-      this.setState({ loadingMoreWeeks: false, isLoading: false });
-    });
-  }
+  fetchItems = async (numWeeks, weekStart) => {
+		try {
+			let items = await this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id);
+			let results = items.results;
+			while (items.hasNext) {
+				items = await items.getNext();
+				results = results.concat(items.results);
+			}
+			const listData = this.state.listData.concat(results);
+			this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
+			this.addNewWeeks(numWeeks, weekStart);
+		} catch (e) {
+			console.log('error fetching activities: ' + e);
+			this.setState({ loadingMoreWeeks: false, isLoading: false });
+		}
+	}
 
   newItem = (date) => {
     const item = {
