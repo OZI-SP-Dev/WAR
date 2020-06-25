@@ -23,9 +23,7 @@ export default class RolesApi implements IRolesApi {
 	rolesList = spWebContext.lists.getByTitle("Roles");
 
 	async fetchRoles(): Promise<any> {
-		//const spRoles = await this.rolesList.items.fields.select("ID", "Title", "User", "User/Title", "User/ID").expand("User").get();
 		const spRoles = await this.rolesList.items.select("Id", "Title", "User/Title", "User/Id", "Department").expand("User").get();
-		//const spRoles = await this.rolesList.items.get();
 		let roles: IRole[] = spRoles.map((role: { Id: number, Title: string; User: { Title: string; Id: string; }, Department: string }) => {
 			const newRole: IRole = {
 				imageInitials: role.User.Title.substr(role.User.Title.indexOf(' ') + 1, 1) + role.User.Title.substr(0, 1),

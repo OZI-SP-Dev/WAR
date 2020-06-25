@@ -1,4 +1,4 @@
-import React, { ElementType, useEffect, useRef, useState } from "react";
+import React, { ElementType, useEffect, useState } from "react";
 import { Accordion, Badge, useAccordionToggle } from "react-bootstrap";
 
 interface ICustomToggleProps {

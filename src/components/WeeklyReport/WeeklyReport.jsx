@@ -19,15 +19,21 @@ class WeeklyReport extends Component {
         this.activitiesApi = ActivitiesApiConfig.activitiesApi;
     }
 
-    submitSearch(startDate, endDate) {
+    async submitSearch(startDate, endDate) {
         this.setState({ loadingReport: true });
         let submitEndDate = DateUtilities.getDate(endDate).add(1, 'day');
-        this.activitiesApi.fetchActivitiesByDates(startDate, submitEndDate, null, null, "WeekOf").then(r => {
-            this.setState({ loadingReport: false, activities: r, reportGenerated: true });
+        try {
+            let items = await this.activitiesApi.fetchActivitiesByDates(startDate, submitEndDate, null, null, "WeekOf");
+            let results = items.results;
+            while (items.hasNext) {
+                items = await items.getNext();
+                results = results.concat(items.results);
+            }
+            this.setState({ loadingReport: false, activities: results, reportGenerated: true });
             $(".report-toggle").click();
-        }, e =>
-            this.setState({ loadingReport: false, errorMessage: `Error while trying to fetch Activities. ${e}`, reportGenerated: true })
-        );
+        } catch (e) {
+            this.setState({ loadingReport: false, errorMessage: `Error while trying to fetch WAR Activities. ${e}`, reportGenerated: true });
+        }
     }
 
     render() {

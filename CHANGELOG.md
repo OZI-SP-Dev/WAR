@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.22] - 2020-06-24
+### Changed
+- Activities are now fetched using .getPaged() to allow for large datasets to be reported
+- Activity page and WAR/MAR/History reports updated to handle paging
+
 ## [1.0.21] - 2020-06-24
 ### Removed
 - "Org" field from Activites list has been removed; use "Branch" field

@@ -18,15 +18,21 @@ class MonthlyActivityReport extends Component {
         this.activitiesApi = ActivitiesApiConfig.activitiesApi;
     }
 
-    submitSearch(startDate, endDate) {
+    async submitSearch(startDate, endDate) {
         this.setState({ loadingReport: true });
         let submitEndDate = DateUtilities.getDate(endDate).add(1, 'day');
-        this.activitiesApi.fetchMarEntriesByDates(startDate, submitEndDate, null, "Branch").then(r => {
-            this.setState({ loadingReport: false, activities: r, reportGenerated: true });
+        try {
+            let items = await this.activitiesApi.fetchMarEntriesByDates(startDate, submitEndDate, null, "Branch");
+            let activities = items.results;
+            while (items.hasNext) {
+                items = await items.getNext();
+                activities = activities.concat(items.results);
+            }
+            this.setState({ loadingReport: false, activities, reportGenerated: true });
             $(".report-toggle").click();
-        }, e =>
+        } catch (e) {
             this.setState({ loadingReport: false, errorMessage: `Error while trying to fetch MAR Activities. ${e}`, reportGenerated: true })
-        );
+        }
     }
 
     render() {
