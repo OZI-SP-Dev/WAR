@@ -16,7 +16,7 @@ export const OrgsProvider: React.FunctionComponent = ({ children }) => {
 
     const fetchOrgs = async () => {
         const fetchedOrgs = await orgsApi.fetchOrgs();
-        setOrgs(fetchedOrgs ? fetchedOrgs.map(org => org.Title) : []);
+        setOrgs(fetchedOrgs ? fetchedOrgs.map(org => org.Title).sort((org1, org2) => org1 > org2 ? 1 : org1 < org2 ? -1 : 0) : []);
         setLoading(false);
     }
 
