@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.23] - 2020-09-17
+### Changed
+- Org list is now fetched using orderBy so they show up sorted in all lists
+
 ## [1.0.22] - 2020-06-24
 ### Changed
 - Activities are now fetched using .getPaged() to allow for large datasets to be reported
