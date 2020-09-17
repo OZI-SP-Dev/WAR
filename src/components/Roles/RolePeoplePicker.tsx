@@ -10,6 +10,8 @@ import { IRole, RolesApiConfig } from "../../api/RolesApi";
 import RoleUtilities from '../../utilities/RoleUtilities';
 import { RolesContext } from "./RolesContext";
 
+declare var _spPageContextInfo: any;
+
 const suggestionProps: IBasePickerSuggestionsProps = {
 	suggestionsHeaderText: 'Suggested People',
 	mostRecentlyUsedHeaderText: 'Suggested Contacts',
@@ -80,7 +82,8 @@ export const RolePeoplePicker: React.FunctionComponent<IRolePeoplePicker> = ({ r
 			} else {
 				sp.setup({
 					sp: {
-						baseUrl: process.env.REACT_APP_API_URL
+						//baseUrl: process.env.REACT_APP_API_URL
+						baseUrl: _spPageContextInfo.webAbsoluteUrl
 					}
 				});
 				const results = await sp.profiles.clientPeoplePickerSearchUser({

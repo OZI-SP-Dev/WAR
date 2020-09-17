@@ -6,6 +6,8 @@ import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
 import { IBasePickerSuggestionsProps, NormalPeoplePicker } from 'office-ui-fabric-react/lib/Pickers';
 import * as React from 'react';
 
+declare var _spPageContextInfo: any;
+
 const suggestionProps: IBasePickerSuggestionsProps = {
 	suggestionsHeaderText: 'Suggested People',
 	mostRecentlyUsedHeaderText: 'Suggested Contacts',
@@ -57,7 +59,8 @@ export const ActivityPeoplePicker: React.FunctionComponent<ActivityPeoplePicker>
 			} else {
 				sp.setup({
 					sp: {
-						baseUrl: process.env.REACT_APP_API_URL
+						//baseUrl: process.env.REACT_APP_API_URL
+						baseUrl: _spPageContextInfo.webAbsoluteUrl
 					}
 				});
 				const results = await sp.profiles.clientPeoplePickerSearchUser({

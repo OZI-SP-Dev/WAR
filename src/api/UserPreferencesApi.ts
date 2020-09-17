@@ -28,7 +28,7 @@ export default class UserPreferencesApi implements IUserPreferencesApi {
     async submitPreferences(userId: string, defaultOrg: string): Promise<any> {
         let userPreferences: IUserPreferences | null = await this.fetchPreferences(userId);
         if (userPreferences) {
-            return this.userPreferencesList.items.getById(userPreferences.Id).update({ DefaultOrg: defaultOrg });
+            return this.userPreferencesList.items.getById(Number(userPreferences.Id)).update({ DefaultOrg: defaultOrg });
         } else {
             return this.userPreferencesList.items.add({
                 Title: `${userId}`,

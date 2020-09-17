@@ -34,7 +34,8 @@ export const ContactUsModal = (props) => {
 		setSending(true);
 		sp.setup({
 			sp: {
-				baseUrl: process.env.REACT_APP_API_URL
+				//baseUrl: process.env.REACT_APP_API_URL
+				baseUrl: window._spPageContextInfo.webAbsoluteUrl
 			}
 		});
 		let sendmailProps = { ...emailProps };

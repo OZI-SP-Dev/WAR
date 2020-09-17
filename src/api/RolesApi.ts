@@ -41,11 +41,13 @@ export default class RolesApi implements IRolesApi {
 	}
 
 	async addRole(role: IRole): Promise<any> {
-		let ensuredUser = await spWebContext.ensureUser(role.Email);
-		console.log(ensuredUser);
-		role.SPUserId = ensuredUser.data.Id;
-		// Let the Department field be null if it is for an Admin role, otherwise the roles should have a Department
-		return this.rolesList.items.add({ Title: role.RoleName, UserId: role.SPUserId, Department: role.RoleName === RoleUtilities.ADMIN ? null : role.Department });
+		if (role.Email) {
+			let ensuredUser = await spWebContext.ensureUser(role.Email);
+			console.log(ensuredUser);
+			role.SPUserId = ensuredUser.data.Id.toString();
+			// Let the Department field be null if it is for an Admin role, otherwise the roles should have a Department
+			return this.rolesList.items.add({ Title: role.RoleName, UserId: role.SPUserId, Department: role.RoleName === RoleUtilities.ADMIN ? null : role.Department });
+		}
 	}
 
 	removeRole(roleId: number): Promise<any> {

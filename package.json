@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@fluentui/react": "^7.105.9",
+    "@microsoft/sp-page-context": "^1.11.0",
     "@pnp/sp": "^2.0.3",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -12,12 +13,13 @@
     "@types/react-router-bootstrap": "^0.24.5",
     "@uifabric/example-data": "^7.0.9",
     "bootstrap": "^4.4.1",
+    "concat": "^1.0.3",
     "env-cmd": "^10.1.0",
     "eslint-plugin-flowtype": "^3.13.0",
     "fibers": "^4.0.2",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.1",
     "moment": "^2.24.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.0",
     "react-datepicker": "^2.14.1",
@@ -25,18 +27,16 @@
     "react-redux": "^7.2.0",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.3.1",
+    "react-scripts": "^3.4.3",
     "redux": "^4.0.5",
     "sass": "^1.26.3",
     "typescript": "^3.8.3"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build:war-dev": "env-cmd -f ./.env.war-dev.json react-scripts build&&npm run rename",
-    "build:war-test": "env-cmd -f ./.env.war-test.json react-scripts build&&npm run rename",
-    "build:war-prod": "env-cmd -f ./.env.war-prod.json react-scripts build&&npm run rename",
-    "build:rob-test": "env-cmd -f ./.env.rob-test.json react-scripts build&&npm run rename",
-    "rename": "node -e \"require('fs').rename('build/index.html', 'build/index.aspx', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\"",
+    "build": "react-scripts build&&npm run mergeaspx",
+    "build:war-test": "env-cmd -f ./.env.war-test.json react-scripts build&&npm run mergeaspx",
+    "mergeaspx": "concat -o build/index.aspx build/index.aspx build/index.html",
     "test": "react-scripts test"
   },
   "eslintConfig": {
@@ -59,6 +59,6 @@
   "devDependencies": {
     "@types/jquery": "^3.3.34",
     "@types/react-datepicker": "^2.11.0",
-    "eslint-plugin-react-hooks": "^4.0.0"
+    "eslint-plugin-react-hooks": "^1.7.0"
   }
 }
