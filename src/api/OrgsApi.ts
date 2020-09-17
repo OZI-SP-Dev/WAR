@@ -15,7 +15,7 @@ export default class OrgsApi implements IOrgsApi {
     orgsList = spWebContext.lists.getByTitle("Orgs");
 
     fetchOrgs(): Promise<IOrgs[] | null | undefined> {
-        return this.orgsList.items.select("Id", "Title").orderBy("Title", true).getAll();
+        return this.orgsList.items.select("Id", "Title").orderBy("Title", true).get();
     }
 }
 
