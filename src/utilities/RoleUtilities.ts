@@ -72,4 +72,57 @@ export default class RoleUtilities {
         let userHasRights = activity.Branch && user.UsersRoles.some(role => activity.Branch.includes(role.department));
         return isNew || userIsAuthor || userIsOPR || userHasRights;
     }
+
+    /**
+     * Get the default org for review for the given user. If the user is a BRANCH_CHIEF or DIV_CHIEF then
+     * it will return the org that they are a chief for. 
+     * 
+     * If they are chief for multiple orgs: 
+     * * If they're nested orgs, return top level org. 
+     * * If not nested, returns an empty string, no default org for review.
+     * 
+     * @param user the user that we're getting the default org for review for
+     */
+    static getReviewDefaultOrg(user: IUserRole): string {
+        let defaultOrg = '';
+        let chiefOrgs: string[] = this.getChiefOrgsForUser(user);
+        if (chiefOrgs.length === 1) {
+            defaultOrg = chiefOrgs[0];
+        } else if (chiefOrgs.length > 1) {
+            defaultOrg = this.getParentOrg(chiefOrgs);
+        }
+        return defaultOrg;
+    }
+
+    /**
+     * Get an array of the unique orgs for which the user has either of the chief roles for
+     * 
+     * @param user the user that we're getting the orgs of their roles for
+     */
+    private static getChiefOrgsForUser(user: IUserRole): string[] {
+        let chiefOrgs: string[] = [];
+        user.UsersRoles.forEach(userRole => {
+            if ((userRole.role === this.BRANCH_CHIEF || userRole.role === this.DIV_CHIEF) && !chiefOrgs.includes(userRole.department)) {
+                chiefOrgs.push(userRole.department);
+            }
+        })
+        return chiefOrgs;
+    }
+
+    /**
+     * Returns the parent org of the array of orgs given, if none found then returns an empty string.
+     * A parent org would be an org that every org contains so ABC is a parent of ABCD and ABCE.
+     * 
+     * @param orgs array of orgs to search for the parent within
+     */
+    private static getParentOrg(orgs: string[]): string {
+        let parent = orgs[0];
+        while (parent.length > 1) {
+            if (orgs.every(o => o.includes(parent))) {
+                return parent;
+            }
+            parent = parent.substring(0, parent.length - 1);
+        }
+        return '';
+    }
 }
