@@ -72,4 +72,39 @@ export default class RoleUtilities {
         let userHasRights = activity.Branch && user.UsersRoles.some(role => activity.Branch.includes(role.department));
         return isNew || userIsAuthor || userIsOPR || userHasRights;
     }
+
+    static getReviewDefaultOrgs(user: IUserRole): { org: string, includeSubOrgs: boolean } {
+        let defaultOrgs = { org: '', includeSubOrgs: false };
+        let chiefOrgs: string[] = [];
+        for (let userRole of user.UsersRoles) {
+            if ((userRole.role === this.BRANCH_CHIEF || userRole.role === this.DIV_CHIEF) && !chiefOrgs.includes(userRole.department)) {
+                chiefOrgs.push(userRole.department);
+            }
+        }
+        if (chiefOrgs.length === 1) {
+            defaultOrgs.org = chiefOrgs[0];
+            defaultOrgs.includeSubOrgs = chiefOrgs[0].length < 4;
+        } else if (chiefOrgs.length > 1) {
+            // parent org would be an org that every org contains so ABC is a parent of ABCD and ABCE
+            let parentOrg = chiefOrgs.find(org => chiefOrgs.every(o => o.includes(org)));
+            if (parentOrg) {
+                defaultOrgs.org = parentOrg;
+                defaultOrgs.includeSubOrgs = true;
+            } else {
+                // we know that there is no parent that the user is assigned as the chief
+                // so now we need to learn if there is a common parent among the children that they are assigned
+                let parent = chiefOrgs[0];
+                let isParent = false;
+                while (!isParent && parent.length > 2) {
+                    parent = parent.substring(0, parent.length - 1); // cut off last letter
+                    isParent = chiefOrgs.every(o => o.includes(parent));
+                }
+                if (isParent) {
+                    defaultOrgs.org = parent;
+                    defaultOrgs.includeSubOrgs = true;
+                }
+            }
+        }
+        return defaultOrgs;
+    }
 }
