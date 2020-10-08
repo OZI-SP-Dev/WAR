@@ -73,38 +73,56 @@ export default class RoleUtilities {
         return isNew || userIsAuthor || userIsOPR || userHasRights;
     }
 
-    static getReviewDefaultOrgs(user: IUserRole): { org: string, includeSubOrgs: boolean } {
-        let defaultOrgs = { org: '', includeSubOrgs: false };
+    /**
+     * Get the default org for review for the given user. If the user is a BRANCH_CHIEF or DIV_CHIEF then
+     * it will return the org that they are a chief for. 
+     * 
+     * If they are chief for multiple orgs: 
+     * * If they're nested orgs, return top level org. 
+     * * If not nested, returns an empty string, no default org for review.
+     * 
+     * @param user the user that we're getting the default org for review for
+     */
+    static getReviewDefaultOrg(user: IUserRole): string {
+        let defaultOrg = '';
+        let chiefOrgs: string[] = this.getChiefOrgsForUser(user);
+        if (chiefOrgs.length === 1) {
+            defaultOrg = chiefOrgs[0];
+        } else if (chiefOrgs.length > 1) {
+            defaultOrg = this.getParentOrg(chiefOrgs);
+        }
+        return defaultOrg;
+    }
+
+    /**
+     * Get an array of the unique orgs for which the user has either of the chief roles for
+     * 
+     * @param user the user that we're getting the orgs of their roles for
+     */
+    private static getChiefOrgsForUser(user: IUserRole): string[] {
         let chiefOrgs: string[] = [];
-        for (let userRole of user.UsersRoles) {
+        user.UsersRoles.forEach(userRole => {
             if ((userRole.role === this.BRANCH_CHIEF || userRole.role === this.DIV_CHIEF) && !chiefOrgs.includes(userRole.department)) {
                 chiefOrgs.push(userRole.department);
             }
-        }
-        if (chiefOrgs.length === 1) {
-            defaultOrgs.org = chiefOrgs[0];
-            defaultOrgs.includeSubOrgs = chiefOrgs[0].length < 4;
-        } else if (chiefOrgs.length > 1) {
-            // parent org would be an org that every org contains so ABC is a parent of ABCD and ABCE
-            let parentOrg = chiefOrgs.find(org => chiefOrgs.every(o => o.includes(org)));
-            if (parentOrg) {
-                defaultOrgs.org = parentOrg;
-                defaultOrgs.includeSubOrgs = true;
-            } else {
-                // we know that there is no parent that the user is assigned as the chief
-                // so now we need to learn if there is a common parent among the children that they are assigned
-                let parent = chiefOrgs[0];
-                let isParent = false;
-                while (!isParent && parent.length > 2) {
-                    parent = parent.substring(0, parent.length - 1); // cut off last letter
-                    isParent = chiefOrgs.every(o => o.includes(parent));
-                }
-                if (isParent) {
-                    defaultOrgs.org = parent;
-                    defaultOrgs.includeSubOrgs = true;
-                }
+        })
+        return chiefOrgs;
+    }
+
+    /**
+     * Returns the parent org of the array of orgs given, if none found then returns an empty string.
+     * A parent org would be an org that every org contains so ABC is a parent of ABCD and ABCE.
+     * 
+     * @param orgs array of orgs to search for the parent within
+     */
+    private static getParentOrg(orgs: string[]): string {
+        let parent = orgs[0];
+        while (parent.length > 1) {
+            if (orgs.every(o => o.includes(parent))) {
+                return parent;
             }
+            parent = parent.substring(0, parent.length - 1);
         }
-        return defaultOrgs;
+        return '';
     }
 }
