@@ -8,9 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
-## [1.0.24] - 2020-10-08
+## [1.0.25] - 2020-10-09
 ### Changed
-- Navigating to the Review page of Branch Chiefs and Div Chiefs now filters by the Orgs that they are Chiefs for
+- Navigating to the Review page now uses a date range of 'last week' if the current day is before Wednesday and 'this week' otherwise
 
 ## [1.0.23] - 2020-09-17
 ### Changed
