@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - Navigating to the Review page now uses a date range of 'last week' if the current day is before Wednesday and 'this week' otherwise
 
+## [1.0.24] - 2020-10-08
+### Changed
+- Navigating to the Review page of Branch Chiefs and Div Chiefs now filters by the Orgs that they are Chiefs for
+
 ## [1.0.23] - 2020-09-17
 ### Changed
 - Org list is now fetched using orderBy so they show up sorted in all lists
