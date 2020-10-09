@@ -118,10 +118,12 @@ export default class RoleUtilities {
     private static getParentOrg(orgs: string[]): string {
         let parent = orgs[0];
         while (parent.length > 1) {
-            if (orgs.every(o => o.includes(parent))) {
-                return parent;
+            // assign parent in the loop because of ts loop reference error 'no-loop-func'
+            let newParent = parent;
+            if (orgs.every(o => o.includes(newParent))) {
+                return newParent;
             }
-            parent = parent.substring(0, parent.length - 1);
+            parent = newParent.substring(0, newParent.length - 1);
         }
         return '';
     }

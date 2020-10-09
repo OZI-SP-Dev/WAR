@@ -1,7 +1,7 @@
 {
   "name": "weekly-activity-report",
   "homepage": ".",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "private": true,
   "dependencies": {
     "@fluentui/react": "^7.105.9",
