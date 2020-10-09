@@ -27,7 +27,10 @@ function AppHeader() {
   }
 
   let reviewStartDate = DateUtilities.getStartOfWeek();
-  reviewStartDate.subtract(7, 'days');
+  // if before wednesday, show last week
+  if (DateUtilities.getToday().day() < 3) {
+    reviewStartDate.subtract(7, 'days');
+  }
 
   return (
     <Navbar fixed="top" expand="md" variant="dark" bg="dark" className="p-0 shadow">
@@ -42,7 +45,7 @@ function AppHeader() {
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to={`/Review?org=${RoleUtilities.getReviewDefaultOrg(user)}&includeSubOrgs=true&startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek().toISOString()}`}>
+            <LinkContainer to={`/Review?org=${RoleUtilities.getReviewDefaultOrg(user)}&includeSubOrgs=true&startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}`}>
               <NavDropdown.Item>Review</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />
