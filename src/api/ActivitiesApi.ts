@@ -41,7 +41,7 @@ export interface IActivity {
 export interface IActivityApi {
   fetchActivitiesByNumWeeks(numWeeks: number, weekStart: Moment, userId: number): Promise<any>,
 	fetchActivitiesByDates(startDate?: Moment, endDate?: Moment, userId?: number, additionalFilter?: string, orderBy?: string, ascending?: boolean): Promise<any>,
-  fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Moment, endDate?: Moment, userId?: number): Promise<any>,
+  fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Moment, endDate?: Moment, isHistory?: boolean, isMAR?: boolean, userId?: number): Promise<any>,
   fetchMarEntriesByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any>,
   fetchHistoryEntriesByDates(startDate: Moment, endDate: Moment, userId: number, orderBy?: string): Promise<any>,
   deleteActivity(activity: IActivity): Promise<any>,
@@ -72,7 +72,7 @@ export default class ActivitiesApi implements IActivityApi {
     return items.getPaged();
   }
 
-  async fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Moment, endDate?: Moment, userId?: number): Promise<IActivity> {
+  async fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Moment, endDate?: Moment, isHistory?: boolean, isMAR?: boolean, userId?: number): Promise<IActivity> {
 
     let conditions: string[] = ["<Neq><FieldRef Name='IsDeleted'/><Value Type='Boolean'>1</Value></Neq>"];
     if (query) {
@@ -86,6 +86,12 @@ export default class ActivitiesApi implements IActivityApi {
     }
     if (endDate) {
       conditions.push(`<Leq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${endDate.toISOString()}</Value></Leq>`);
+    }
+    if (isHistory) {
+      conditions.push("<Eq><FieldRef Name='IsHistoryEntry'/><Value Type='Boolean'>1</Value></Eq>");
+    } 
+    if (isMAR) {
+      conditions.push("<Eq><FieldRef Name='IsMarEntry'/><Value Type='Boolean'>1</Value></Eq>");
     }
     if (userId) {
       conditions.push(`<Or><Eq><FieldRef Name='Author' LookupId='True'/><Value Type='Lookup'>${userId}</Value></Eq>
