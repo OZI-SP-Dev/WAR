@@ -5,6 +5,7 @@ import { Button, Col, Form, FormCheck, Row, Spinner } from "react-bootstrap";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
+import { spWebContext } from '../../providers/SPWebContext';
 import DateUtilities from "../../utilities/DateUtilities";
 import { SPPersona } from '../Activities/ActivityPeoplePicker';
 import { PeoplePicker } from '../PeoplePicker/PeoplePicker';
@@ -19,7 +20,7 @@ export interface ISearchFormProps {
     defaultEndDate: Moment | null,
     defaultIsHistory: boolean,
     defaultIsMAR: boolean,
-    defaultOpr: SPPersona | null,
+    defaultOpr: string | null,
     loading: boolean,
     orgs: string[]
 }
@@ -56,7 +57,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         includeSubOrgs: props.defaultIncludeSubOrgs,
         startDate: initialStartWeek,
         endDate: initialEndWeek,
-        opr: props.defaultOpr,
+        opr: null,
         isHistory: props.defaultIsHistory,
         isMAR: props.defaultIsMAR
     });
@@ -89,8 +90,24 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
     }
 
     useEffect(() => {
-        updateSearchForm("query", props.defaultQuery);
-    }, [props.defaultQuery])
+        updateSearchForm("query", props.defaultQuery); // eslint-disable-next-line
+    }, [props.defaultQuery]);
+
+    const getOpr = async () => {
+        if (props.defaultOpr) {
+            let person = (await spWebContext.ensureUser(props.defaultOpr)).data;
+            updateSearchForm("opr", {
+                text: person.Title,
+                imageInitials: person.Title.substr(person.Title.indexOf(' ') + 1, 1) + person.Title.substr(0, 1),
+                Email: person.Email,
+                SPUserId: person.Id.toString()
+            });
+        }
+    }
+
+    useEffect(() => {
+        getOpr(); // eslint-disable-next-line
+    }, [props.defaultOpr])
 
     const StartDatePickerCustomInput = ({ value }: any) => (
         <>

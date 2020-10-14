@@ -179,12 +179,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                     defaultEndDate={urlEndDate ? DateUtilities.getDate(urlEndDate) : null}
                     defaultIsHistory={urlIsHistory === "true" ? true : false}
                     defaultIsMAR={urlIsMAR === "true" ? true : false}
-                    defaultOpr={!RoleUtilities.userHasAnyRole(user) && !urlOpr ? null : {
-                        text: user.Title,
-                        imageInitials: user.Title.substr(user.Title.indexOf(' ') + 1, 1) + user.Title.substr(0, 1),
-                        SPUserId: user.Id,
-                        Email: user.Email
-                    }}
+                    defaultOpr={urlOpr ? urlOpr : null}
                     loading={loading}
                     orgs={orgs ? orgs : []}
                 />
