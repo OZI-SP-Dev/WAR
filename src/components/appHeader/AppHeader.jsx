@@ -45,7 +45,7 @@ function AppHeader() {
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to={`/Review?org=${RoleUtilities.getReviewDefaultOrg(user)}&includeSubOrgs=true&startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}`}>
+            <LinkContainer to={`/Review?org=${RoleUtilities.getReviewDefaultOrg(user)}&includeSubOrgs=true&startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
               <NavDropdown.Item>Review</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />

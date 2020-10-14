@@ -5,7 +5,10 @@ import { Button, Col, Form, FormCheck, Row, Spinner } from "react-bootstrap";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
+import { spWebContext } from '../../providers/SPWebContext';
 import DateUtilities from "../../utilities/DateUtilities";
+import { SPPersona } from '../Activities/ActivityPeoplePicker';
+import { PeoplePicker } from '../PeoplePicker/PeoplePicker';
 import '../WeeklyReport/ReportForm.css';
 import './SearchForm.css';
 
@@ -15,9 +18,22 @@ export interface ISearchFormProps {
     defaultIncludeSubOrgs: boolean,
     defaultStartDate: Moment | null,
     defaultEndDate: Moment | null,
-    defaultShowUserOnly: boolean,
+    defaultIsHistory: boolean,
+    defaultIsMAR: boolean,
+    defaultOpr: string | null,
     loading: boolean,
     orgs: string[]
+}
+
+interface ISearchForm {
+    query: string,
+    org: string,
+    includeSubOrgs: boolean,
+    startDate: Moment,
+    endDate: Moment,
+    opr: SPPersona | null,
+    isHistory: boolean,
+    isMAR: boolean
 }
 
 export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISearchFormProps) => {
@@ -30,16 +46,21 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
 
     const [startDatePickerOpen, setStartDatePickerOpen] = useState<boolean>(false);
     const [endDatePickerOpen, setEndDatePickerOpen] = useState<boolean>(false);
-    const [showUserOnly, setShowUserOnly] = useState<boolean>(props.defaultShowUserOnly);
-    const [startDate, setStartDate] = useState<Moment>(initialStartWeek);
-    const [endDate, setEndDate] = useState<Moment>(initialEndWeek);
     const [startHighlightDates, setStartHighlightDates] =
         useState<Date[]>(DateUtilities.getWeek(initialStartWeek));
     const [endHighlightDates, setEndHighlightDates] =
         useState<Date[]>(DateUtilities.getWeek(initialEndWeek));
-    const [org, setOrg] = useState<string>(props.defaultOrg);
-    const [keywordQuery, setKeywordQuery] = useState<string>(props.defaultQuery);
-    const [includeSubOrgs, setIncludeSubOrgs] = useState<boolean>(props.defaultIncludeSubOrgs);
+
+    const [searchForm, setSearchForm] = useState<ISearchForm>({
+        query: props.defaultQuery,
+        org: props.defaultOrg,
+        includeSubOrgs: props.defaultIncludeSubOrgs,
+        startDate: initialStartWeek,
+        endDate: initialEndWeek,
+        opr: null,
+        isHistory: props.defaultIsHistory,
+        isMAR: props.defaultIsMAR
+    });
 
     const startDatePickerOnClick = () => {
         setStartDatePickerOpen(true);
@@ -54,35 +75,39 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         setEndDatePickerOpen(false);
     }
 
-    const userSwitchOnClick = (e: any) => {
-        setShowUserOnly(e.target.checked);
+    const updateSearchForm = (fieldUpdating: string, newValue: any): void => {
+        setSearchForm({ ...searchForm, [fieldUpdating]: newValue });
     }
 
     const onChangeStartDate = (date: Date) => {
-        setStartDate(DateUtilities.getStartOfWeek(date));
+        updateSearchForm("startDate", DateUtilities.getStartOfWeek(date));
         setStartHighlightDates(DateUtilities.getWeek(date));
     }
 
     const onChangeEndDate = (date: Date) => {
-        setEndDate(DateUtilities.getEndOfWeek(date));
+        updateSearchForm("endDate", DateUtilities.getEndOfWeek(date));
         setEndHighlightDates(DateUtilities.getWeek(date));
     }
 
-    const orgOnChange = (e: any) => {
-        setOrg(e.target.value);
-    }
+    useEffect(() => {
+        updateSearchForm("query", props.defaultQuery); // eslint-disable-next-line
+    }, [props.defaultQuery]);
 
-    const keywordQueryOnChange = (e: any) => {
-        setKeywordQuery(e.target.value);
-    }
-
-    const includeSubOrgSwitchOnClick = (e: any) => {
-        setIncludeSubOrgs(e.target.checked);
+    const getOpr = async () => {
+        if (props.defaultOpr) {
+            let person = (await spWebContext.ensureUser(props.defaultOpr)).data;
+            updateSearchForm("opr", {
+                text: person.Title,
+                imageInitials: person.Title.substr(person.Title.indexOf(' ') + 1, 1) + person.Title.substr(0, 1),
+                Email: person.Email,
+                SPUserId: person.Id.toString()
+            });
+        }
     }
 
     useEffect(() => {
-        setKeywordQuery(props.defaultQuery);
-    }, [props.defaultQuery])
+        getOpr(); // eslint-disable-next-line
+    }, [props.defaultOpr])
 
     const StartDatePickerCustomInput = ({ value }: any) => (
         <>
@@ -113,8 +138,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                         <Form.Control
                             type="text"
                             placeholder="Search for a keyword"
-                            value={keywordQuery}
-                            onChange={keywordQueryOnChange}
+                            value={searchForm.query}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSearchForm("query", e.target.value)}
                         />
                     </Form.Group>
                 </Col>
@@ -124,8 +149,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     <Form.Group controlId="orgSearch">
                         <Form.Label>Organization</Form.Label>
                         <Form.Control as="select"
-                            value={org}
-                            onChange={orgOnChange}
+                            value={searchForm.org}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSearchForm("org", e.target.value)}
                         >
                             <option value=''>--</option>
                             {props.orgs.map(org => <option key={org}>{org}</option>)}
@@ -140,8 +165,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                             className="mb-3"
                             type="switch"
                             label="Include Sub-Organizations?"
-                            checked={includeSubOrgs}
-                            onChange={includeSubOrgSwitchOnClick}
+                            checked={searchForm.includeSubOrgs}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSearchForm("includeSubOrgs", e.target.checked)}
                         />
                     </Form.Group>
                 </Col>
@@ -151,10 +176,10 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     <Form.Group controlId="weekOfStart">
                         <DatePicker
                             className="weekly-report-date-picker"
-                            selected={DateUtilities.momentToDate(startDate)}
+                            selected={DateUtilities.momentToDate(searchForm.startDate)}
                             onChange={onChangeStartDate}
                             highlightDates={startHighlightDates}
-                            maxDate={DateUtilities.momentToDate(endDate)}
+                            maxDate={DateUtilities.momentToDate(searchForm.endDate)}
                             customInput={<StartDatePickerCustomInput />}
                             open={startDatePickerOpen}
                             onClickOutside={clickOutside}
@@ -166,10 +191,10 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     <Form.Group controlId="weekOfEnd">
                         <DatePicker
                             className="weekly-report-date-picker"
-                            selected={DateUtilities.momentToDate(endDate)}
+                            selected={DateUtilities.momentToDate(searchForm.endDate)}
                             onChange={onChangeEndDate}
                             highlightDates={endHighlightDates}
-                            minDate={DateUtilities.momentToDate(startDate)}
+                            minDate={DateUtilities.momentToDate(searchForm.startDate)}
                             maxDate={DateUtilities.momentToDate(DateUtilities.getDate())}
                             customInput={<EndDatePickerCustomInput />}
                             open={endDatePickerOpen}
@@ -180,17 +205,39 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                 </Col>
             </Row>
             <Row>
-                <Col>
-                    <FormCheck
-                        id="userCheck"
-                        type="switch"
-                        label="Show only my Activities"
-                        checked={showUserOnly}
-                        onChange={userSwitchOnClick}
+                <Col md="6">
+                    <Form.Label>OPR (Last Name, First Name):</Form.Label>
+                    <Form.Control
+                        as={PeoplePicker}
+                        defaultValue={searchForm.opr ? [searchForm.opr] : undefined}
+                        updatePeople={(p: SPPersona[]) => {
+                            let persona = p[0];
+                            updateSearchForm('opr', persona ? persona : null);
+                        }}
                     />
                 </Col>
             </Row>
-            <Link to={`/Review?query=${keywordQuery}&org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&showUserOnly=${showUserOnly}`}>
+            <Row className="mt-3">
+                <Col md="2">
+                    <FormCheck
+                        id="historyCheck"
+                        type="checkbox"
+                        label="History Activity"
+                        checked={searchForm.isHistory}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSearchForm("isHistory", e.target.checked)}
+                    />
+                </Col>
+                <Col md="2">
+                    <FormCheck
+                        id="marCheck"
+                        type="checkbox"
+                        label="MAR Activity"
+                        checked={searchForm.isMAR}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSearchForm("isMAR", e.target.checked)}
+                    />
+                </Col>
+            </Row>
+            <Link to={`/Review?query=${searchForm.query}&org=${searchForm.org}&includeSubOrgs=${searchForm.includeSubOrgs}&startDate=${searchForm.startDate.toISOString()}&endDate=${searchForm.endDate.toISOString()}&isHistory=${searchForm.isHistory}&isMAR=${searchForm.isMAR}&opr=${searchForm.opr ? searchForm.opr.Email : ''}`}>
                 <Button
                     disabled={props.loading}
                     className="float-right mb-3"

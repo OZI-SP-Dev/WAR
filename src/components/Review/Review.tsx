@@ -4,6 +4,7 @@ import { Card, Container, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import { ActivitiesApiConfig, IActivity } from '../../api/ActivitiesApi';
 import { OrgsContext } from "../../providers/OrgsContext";
+import { spWebContext } from "../../providers/SPWebContext";
 import ActivityUtilities from "../../utilities/ActivityUtilities";
 import DateUtilities from "../../utilities/DateUtilities";
 import RoleUtilities, { IUserRole } from "../../utilities/RoleUtilities";
@@ -39,7 +40,9 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     let urlIncludeSubOrgs = query.get("includeSubOrgs");
     let urlStartDate = query.get("startDate");
     let urlEndDate = query.get("endDate");
-    let urlShowUserOnly = query.get("showUserOnly");
+    let urlIsHistory = query.get("isHistory");
+    let urlIsMAR = query.get("isMAR");
+    let urlOpr = query.get("opr");
 
     const [activities, setActivities] = useState<GroupedActivities[]>([]);
     const [modalActivityId, setModalActivityId] = useState<number>(-1);
@@ -62,9 +65,10 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                 submitStartDate = DateUtilities.getDate(urlStartDate).subtract(1, 'day');
             }
             let submitEndDate = urlEndDate ? DateUtilities.getStartOfWeek(urlEndDate) : undefined;
-            let submitUserId = urlShowUserOnly === "false" || (!urlShowUserOnly && RoleUtilities.userHasAnyRole(user)) ?
-                undefined : parseInt(user.Id);
-            let newActivities: any[] = await activitiesApi.fetchActivitiesByQueryString(submitQuery, submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, submitUserId);
+            let submitIsHistory = urlIsHistory === "true" ? true : false;
+            let submitIsMAR = urlIsMAR === "true" ? true : false;
+            let submitUserId = urlOpr ? (await spWebContext.ensureUser(urlOpr)).data.Id : undefined;
+            let newActivities: any[] = await activitiesApi.fetchActivitiesByQueryString(submitQuery, submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, submitIsHistory, submitIsMAR, submitUserId);
             setActivities(groupActivities(newActivities));
             setLoading(false);
         } catch (e) {
@@ -161,7 +165,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     useEffect(() => {
         fetchActivities();
         // eslint-disable-next-line
-    }, [urlQuery, urlOrg, urlIncludeSubOrgs, urlStartDate, urlEndDate, urlShowUserOnly]);
+    }, [urlQuery, urlOrg, urlIncludeSubOrgs, urlStartDate, urlEndDate, urlIsHistory, urlIsMAR, urlOpr]);
 
     return (
         <Container fluid>
@@ -173,8 +177,9 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                     defaultIncludeSubOrgs={urlIncludeSubOrgs === "true" ? true : false}
                     defaultStartDate={urlStartDate ? DateUtilities.getDate(urlStartDate) : null}
                     defaultEndDate={urlEndDate ? DateUtilities.getDate(urlEndDate) : null}
-                    defaultShowUserOnly={!RoleUtilities.userHasAnyRole(user) && (urlShowUserOnly === "true" || urlShowUserOnly === null) ?
-                        true : false}
+                    defaultIsHistory={urlIsHistory === "true" ? true : false}
+                    defaultIsMAR={urlIsMAR === "true" ? true : false}
+                    defaultOpr={urlOpr ? urlOpr : null}
                     loading={loading}
                     orgs={orgs ? orgs : []}
                 />
