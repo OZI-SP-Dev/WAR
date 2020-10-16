@@ -85,11 +85,11 @@ export default class RoleUtilities {
      */
     static getReviewDefaultOrg(user: IUserRole): string {
         let defaultOrg = '';
-        let chiefOrgs: string[] = this.getChiefOrgsForUser(user);
-        if (chiefOrgs.length === 1) {
-            defaultOrg = chiefOrgs[0];
-        } else if (chiefOrgs.length > 1) {
-            defaultOrg = this.getParentOrg(chiefOrgs);
+        let roleOrgs: string[] = this.getOrgsForUserRoles(user);
+        if (roleOrgs.length === 1) {
+            defaultOrg = roleOrgs[0];
+        } else if (roleOrgs.length > 1) {
+            defaultOrg = this.getParentOrg(roleOrgs);
         }
         return defaultOrg;
     }
@@ -99,14 +99,14 @@ export default class RoleUtilities {
      * 
      * @param user the user that we're getting the orgs of their roles for
      */
-    private static getChiefOrgsForUser(user: IUserRole): string[] {
-        let chiefOrgs: string[] = [];
+    private static getOrgsForUserRoles(user: IUserRole): string[] {
+        let roleOrgs: string[] = [];
         user.UsersRoles.forEach(userRole => {
-            if ((userRole.role === this.BRANCH_CHIEF || userRole.role === this.DIV_CHIEF) && !chiefOrgs.includes(userRole.department)) {
-                chiefOrgs.push(userRole.department);
+            if ((userRole.role === this.BRANCH_CHIEF || userRole.role === this.DIV_CHIEF || userRole.role === this.REVIEWER) && !roleOrgs.includes(userRole.department)) {
+                roleOrgs.push(userRole.department);
             }
         })
-        return chiefOrgs;
+        return roleOrgs;
     }
 
     /**
