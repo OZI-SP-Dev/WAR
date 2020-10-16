@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.27] - 2020-10-16
+### Changed
+- MAR report page now will only show Activities at their 3 ltr level or higher
+
 ## [1.0.26] - 2020-10-14
 ### Added
 - IsHistory and IsMAR fields to the search form on the Review page
