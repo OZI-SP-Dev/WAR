@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import DateUtilities from '../../utilities/DateUtilities';
 import Report from './Report';
+import ReportActivitiesByBranch from './ReportActivitiesByBranch';
 
 class HistoryReport extends Component {
 
@@ -42,9 +43,13 @@ class HistoryReport extends Component {
                 searchCardHeader="History Entries Search"
                 submitSearch={(startDate, endDate) => this.submitSearch(startDate, endDate)}
                 loadingReport={this.state.loadingReport}
-                activities={this.state.activities}
                 reportGenerated={this.state.reportGenerated}
-            />
+            >
+                <ReportActivitiesByBranch
+                    activities={this.state.activities}
+                    reportGenerated={this.state.reportGenerated}
+                />
+            </Report>
         );
     }
 }

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Container, Row } from 'react-bootstrap';
 import DateUtilities from '../../utilities/DateUtilities';
 import CardAccordion from '../CardAccordion/CardAccordion';
-import ReportActivitiesByBranch from './ReportActivitiesByBranch';
 import ReportForm from './ReportForm';
 
 class Report extends Component {
@@ -46,7 +45,7 @@ class Report extends Component {
                         loadingReport={this.props.loadingReport}
                     />
                 </CardAccordion>
-						<ReportActivitiesByBranch activities={this.props.activities} reportGenerated={this.props.reportGenerated} hideWeekOf={this.props.hideWeekOf}/>
+                {this.props.children}
             </Container>
         );
     }

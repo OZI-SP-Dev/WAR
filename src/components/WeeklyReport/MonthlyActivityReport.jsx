@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { ActivitiesApiConfig } from '../../api/ActivitiesApi';
 import DateUtilities from '../../utilities/DateUtilities';
 import Report from './Report';
+import ReportActivitiesByParent from './ReportActivitiesByParent';
 
 class MonthlyActivityReport extends Component {
 
@@ -36,18 +37,22 @@ class MonthlyActivityReport extends Component {
     }
 
     render() {
-			return (
+        return (
             <div className="monthly-activity-report">
-            <Report
-                pageHeader="Monthly Activity Report"
-                searchCardHeader="MAR Search"
-                submitSearch={(startDate, endDate) => this.submitSearch(startDate, endDate)}
-                loadingReport={this.state.loadingReport}
-                activities={this.state.activities}
-                reportGenerated={this.state.reportGenerated}
-                hideWeekOf={true}
-            />
-			</div>
+                <Report
+                    pageHeader="Monthly Activity Report"
+                    searchCardHeader="MAR Search"
+                    submitSearch={(startDate, endDate) => this.submitSearch(startDate, endDate)}
+                    loadingReport={this.state.loadingReport}
+                    reportGenerated={this.state.reportGenerated}
+                >
+                    <ReportActivitiesByParent
+                        activities={this.state.activities}
+                        reportGenerated={this.state.reportGenerated}
+                        hideWeekOf
+                    />
+                </Report>
+            </div>
         );
     }
 }
