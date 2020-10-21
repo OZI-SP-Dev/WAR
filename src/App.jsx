@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import { OrgsProvider } from "./providers/OrgsContext";
 import './App.css';
 import Activities from './components/Activities/Activities';
 import AppHeader from './components/appHeader/AppHeader';
@@ -10,9 +9,10 @@ import Help from './components/Help/Help';
 import { Review } from './components/Review/Review';
 import { Roles } from './components/Roles/Roles';
 import { RolesProvider } from "./components/Roles/RolesContext";
-import MonthlyActivityReport from './components/WeeklyReport/MonthlyActivityReport';
-import HistoryReport from './components/WeeklyReport/HistoryReport';
-import WeeklyReport from "./components/WeeklyReport/WeeklyReport";
+import { HistoryReport } from './components/WeeklyReport/HistoryReport';
+import { MonthlyActivityReport } from './components/WeeklyReport/MonthlyActivityReport';
+import { WeeklyReport } from "./components/WeeklyReport/WeeklyReport";
+import { OrgsProvider } from "./providers/OrgsContext";
 import { UserContext, UserProvider } from './providers/UserProvider';
 import RoleUtilities from './utilities/RoleUtilities';
 
