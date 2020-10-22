@@ -12,6 +12,7 @@ import ReportActivitiesByBranch from './ReportActivitiesByBranch';
 export const HistoryReport: FunctionComponent = () => {
 
     let query = useQuery();
+    let urlQuery = query.get("query");
     let urlOrg = query.get("org");
     let urlIncludeSubOrgs = query.get("includeSubOrgs");
     let urlStartDate = query.get("startDate");
@@ -25,12 +26,13 @@ export const HistoryReport: FunctionComponent = () => {
     const history = useHistory();
     const activitiesApi = ActivitiesApiConfig.activitiesApi;
 
-    const submitSearch = async (startDate: Moment | null, endDate: Moment | null, org: string, includeSubOrgs: boolean, oprEmail: string) => {
-        history.push(`/HistoryReport?org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate ? startDate.toISOString() : ''}&endDate=${endDate ? endDate.toISOString() : ''}&opr=${oprEmail}`);
+    const submitSearch = async (keyword: string, startDate: Moment | null, endDate: Moment | null, org: string, includeSubOrgs: boolean, oprEmail: string) => {
+        history.push(`/HistoryReport?query=${keyword}&org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate ? startDate.toISOString() : ''}&endDate=${endDate ? endDate.toISOString() : ''}&opr=${oprEmail}`);
         setLoadingReport(true);
     }
 
     useEffect(() => {
+        // load the report when loadingReport is set to true, this avoids an async issue with the fetch not getting the new URL params in time
         if (loadingReport) {
             fetchActivities();
         }
@@ -64,6 +66,7 @@ export const HistoryReport: FunctionComponent = () => {
             pageHeader="Historical Report"
             searchCardHeader="History Entries Search"
             submitSearch={submitSearch}
+            defaultQuery={urlQuery ? urlQuery : ''}
             defaultOrg={urlOrg ? urlOrg : ''}
             defaultIncludeSubOrgs={urlIncludeSubOrgs === "true" ? true : false}
             defaultStartDate={urlStartDate ? DateUtilities.getDate(urlStartDate) : null}

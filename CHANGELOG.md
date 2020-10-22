@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.29] - 2020-10-22
+### Added
+- Filters for Org, OPR, and keyword search added to the WAR, MAR, and HistoryReport pages
+
 ## [1.0.28] - 2020-10-16
 ### Fixed
 - Reviewers now also will have their reviewer role's org(s) as the default org for the Review page filter

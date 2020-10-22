@@ -12,6 +12,7 @@ import ReportActivitiesByBranch from './ReportActivitiesByBranch';
 export const WeeklyReport: FunctionComponent = () => {
 
     let query = useQuery();
+    let urlQuery = query.get("query");
     let urlOrg = query.get("org");
     let urlIncludeSubOrgs = query.get("includeSubOrgs");
     let urlStartDate = query.get("startDate");
@@ -25,12 +26,13 @@ export const WeeklyReport: FunctionComponent = () => {
     const history = useHistory();
     const activitiesApi = ActivitiesApiConfig.activitiesApi;
 
-    const submitSearch = async (startDate: Moment | null, endDate: Moment | null, org: string, includeSubOrgs: boolean, oprEmail: string) => {
-        history.push(`/WAR?org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate ? startDate.toISOString() : ''}&endDate=${endDate ? endDate.toISOString() : ''}&opr=${oprEmail}`);
+    const submitSearch = async (keyword: string, startDate: Moment | null, endDate: Moment | null, org: string, includeSubOrgs: boolean, oprEmail: string) => {
+        history.push(`/WAR?query=${keyword}&org=${org}&includeSubOrgs=${includeSubOrgs}&startDate=${startDate ? startDate.toISOString() : ''}&endDate=${endDate ? endDate.toISOString() : ''}&opr=${oprEmail}`);
         setLoadingReport(true);
     }
 
     useEffect(() => {
+        // load the report when loadingReport is set to true, this avoids an async issue with the fetch not getting the new URL params in time
         if (loadingReport) {
             fetchActivities();
         }
@@ -39,6 +41,7 @@ export const WeeklyReport: FunctionComponent = () => {
 
     const fetchActivities = async () => {
         try {
+            let submitQuery = urlQuery ? urlQuery : '';
             let submitOrg = urlOrg ? urlOrg.replace('--', '') : undefined;
             let submitIncludeSubOrgs = urlIncludeSubOrgs === "true" ? true : false;
             let submitStartDate = undefined;
@@ -47,7 +50,7 @@ export const WeeklyReport: FunctionComponent = () => {
             }
             let submitEndDate = urlEndDate ? DateUtilities.getStartOfWeek(urlEndDate) : undefined;
             let submitUserId = urlOpr ? (await spWebContext.ensureUser(urlOpr)).data.Id : undefined;
-            let newActivities: any[] = await activitiesApi.fetchActivitiesByQueryString('', submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, undefined, undefined, submitUserId);
+            let newActivities: any[] = await activitiesApi.fetchActivitiesByQueryString(submitQuery, submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, undefined, undefined, submitUserId);
             setActivities(newActivities);
             setLoadingReport(false);
             setReportGenerated(true);
@@ -64,6 +67,7 @@ export const WeeklyReport: FunctionComponent = () => {
             pageHeader="Weekly Activity Report"
             searchCardHeader="Weekly Report Search"
             submitSearch={submitSearch}
+            defaultQuery={urlQuery ? urlQuery : ''}
             defaultOrg={urlOrg ? urlOrg : ''}
             defaultIncludeSubOrgs={urlIncludeSubOrgs === "true" ? true : false}
             defaultStartDate={urlStartDate ? DateUtilities.getDate(urlStartDate) : null}

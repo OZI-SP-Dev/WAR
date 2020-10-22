@@ -15,15 +15,17 @@ export interface IReportProps {
     pageHeader: string,
     searchCardHeader: string,
     loadingReport: boolean,
+    defaultQuery: string,
     defaultOrg: string,
     defaultIncludeSubOrgs: boolean,
     defaultStartDate: Moment | null,
     defaultEndDate: Moment | null,
     defaultOpr: string | null,
-    submitSearch: (startDate: Moment | null, endDate: Moment | null, org: string, includeSubOrgs: boolean, oprEmail: string) => void
+    submitSearch: (keyword: string, startDate: Moment | null, endDate: Moment | null, org: string, includeSubOrgs: boolean, oprEmail: string) => void
 }
 
 interface IReportForm {
+    query: string,
     startDate: Moment | null,
     endDate: Moment | null,
     org: string,
@@ -40,6 +42,7 @@ export const Report: FunctionComponent<IReportProps> = (props) => {
     const initialEndWeek: Moment = props.defaultEndDate ? DateUtilities.getEndOfWeek(props.defaultEndDate) : DateUtilities.getEndOfWeek();
 
     const [reportForm, setReportForm] = useState<IReportForm>({
+        query: props.defaultQuery,
         startDate: initialStartWeek,
         endDate: initialEndWeek,
         org: props.defaultOrg,
@@ -146,6 +149,19 @@ export const Report: FunctionComponent<IReportProps> = (props) => {
                     </Row>
                     <Row>
                         <Col md={4}>
+                            <Form.Group controlId="keywordSearch">
+                                <Form.Label>Keyword</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Search for a keyword"
+                                    value={reportForm.query}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateReportForm("query", e.target.value)}
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md={4}>
                             <Form.Group controlId="orgSearch">
                                 <Form.Label>Organization</Form.Label>
                                 <Form.Control as="select"
@@ -188,7 +204,7 @@ export const Report: FunctionComponent<IReportProps> = (props) => {
                         disabled={props.loadingReport}
                         className="float-right mb-3"
                         variant="primary"
-                        onClick={() => props.submitSearch(reportForm.startDate, reportForm.endDate, reportForm.org, reportForm.includeSubOrgs, reportForm.opr && reportForm.opr.Email ? reportForm.opr.Email : '')}>
+                        onClick={() => props.submitSearch(reportForm.query, reportForm.startDate, reportForm.endDate, reportForm.org, reportForm.includeSubOrgs, reportForm.opr && reportForm.opr.Email ? reportForm.opr.Email : '')}>
                         {props.loadingReport && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
                         {' '}Generate Report
                 </Button>
