@@ -9,7 +9,7 @@ import { spWebContext } from '../../providers/SPWebContext';
 import DateUtilities from "../../utilities/DateUtilities";
 import { SPPersona } from '../Activities/ActivityPeoplePicker';
 import { PeoplePicker } from '../PeoplePicker/PeoplePicker';
-import '../WeeklyReport/ReportForm.css';
+import '../WeeklyReport/Report.css';
 import './SearchForm.css';
 
 export interface ISearchFormProps {

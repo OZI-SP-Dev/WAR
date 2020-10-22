@@ -49,13 +49,13 @@ function AppHeader() {
               <NavDropdown.Item>Review</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />
-            <LinkContainer to="/WAR">
+            <LinkContainer to={`/WAR?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
               <NavDropdown.Item>WAR</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to="/MAR">
+            <LinkContainer to={`/MAR?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
               <NavDropdown.Item>MAR</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to="/HistoryReport">
+            <LinkContainer to={`/HistoryReport?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
               <NavDropdown.Item>History</NavDropdown.Item>
             </LinkContainer>
           </NavDropdown>
@@ -96,7 +96,7 @@ function AppHeader() {
           <Persona className="mr-2 d-none d-md-inline-block" {...user.Persona} hidePersonaDetails size={PersonaSize.size32} />
         </Nav>
       </Navbar.Collapse>
-    </Navbar>
+    </Navbar >
   );
 }
 
