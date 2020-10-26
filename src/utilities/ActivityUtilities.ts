@@ -50,10 +50,11 @@ export default class ActivityUtilities {
 			// Updated item - set etag on the activity
 			newActivity.__metadata = { etag: ('"' + res.data['odata.etag'].split(',')[1]) };
 		} else {
-			// New item - set Id, WeekOf, and etag
+			// New item - set Id, WeekOf, author, and etag
 			newActivity.Id = res.data.Id;
 			newActivity.WeekOf = res.data.WeekOf;
 			newActivity.__metadata = { etag: res.data.__metadata.etag };
+			newActivity.AuthorId = res.data.AuthorId;
 		}
 		return newActivity;
 	}
