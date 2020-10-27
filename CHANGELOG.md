@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.31] - 2020-10-27
+### Changed
+- Division/Branch Chiefs can now edit items regardless of time frame
+
 ## [1.0.30] - 2020-10-26
 ### Fixed
 - Bug that prevented users from editing some activities right after they are created

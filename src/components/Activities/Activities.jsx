@@ -158,6 +158,7 @@ class Activities extends Component {
           minCreateDate={this.state.minCreateDate}
           showMarCheck={(org) => RoleUtilities.userCanSetMar(this.props.user, org)}
           showHistoryCheck={(org) => RoleUtilities.userCanSetHistory(this.props.user, org)}
+          userIsOrgChief={(org) => RoleUtilities.userIsBranchChiefOrHigher(this.props.user, org)}
         />
         <Row className="justify-content-center m-3"><h1>My Activities</h1></Row>
         {this.state.loadedWeeks.map(date =>

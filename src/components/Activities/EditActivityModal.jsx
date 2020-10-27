@@ -90,7 +90,7 @@ class EditActivityModal extends Component {
   }
 
   isReadOnly() {
-    return !this.props.canEdit(this.props.activity) || DateUtilities.getDate(this.props.activity.WeekOf) < this.props.minCreateDate;
+    return !this.props.canEdit(this.props.activity) || (DateUtilities.getDate(this.props.activity.WeekOf) < this.props.minCreateDate && !this.props.userIsOrgChief(this.props.activity.Branch));
   }
 
   render() {
