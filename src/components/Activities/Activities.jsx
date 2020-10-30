@@ -39,33 +39,33 @@ class Activities extends Component {
   }
 
   fetchItems = async (numWeeks, weekStart) => {
-		try {
-			let items = await this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id);
-			let results = items.results;
-			while (items.hasNext) {
-				items = await items.getNext();
-				results = results.concat(items.results);
-			}
-			const listData = this.state.listData.concat(results);
-			this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
-			this.addNewWeeks(numWeeks, weekStart);
-		} catch (e) {
-			console.log('error fetching activities: ' + e);
-			this.setState({ loadingMoreWeeks: false, isLoading: false });
-		}
-	}
+    try {
+      let items = await this.activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, this.props.user.Id);
+      let results = items.results;
+      while (items.hasNext) {
+        items = await items.getNext();
+        results = results.concat(items.results);
+      }
+      const listData = this.state.listData.concat(results);
+      this.setState({ loadingMoreWeeks: false, isLoading: false, listData });
+      this.addNewWeeks(numWeeks, weekStart);
+    } catch (e) {
+      console.log('error fetching activities: ' + e);
+      this.setState({ loadingMoreWeeks: false, isLoading: false });
+    }
+  }
 
-  newItem = (date) => {
+  newItem = (date, activity) => {
     const item = {
       Id: -1,
-      Title: '',
+      Title: activity ? "Copy of " + activity.Title : '',
       WeekOf: DateUtilities.getStartOfWeek(date).toISOString(),
       InputWeekOf: DateUtilities.getDate(date).format("YYYY-MM-DD"),
-      Branch: this.props.user.UserPreferences.DefaultOrg ? this.props.user.UserPreferences.DefaultOrg : '',
-      ActionTaken: '',
+      Branch: activity ? activity.Branch : this.props.user.UserPreferences.DefaultOrg ? this.props.user.UserPreferences.DefaultOrg : '',
+      ActionTaken: activity ? activity.ActionTaken : '',
       IsMarEntry: false,
       IsHistoryEntry: false,
-      OPRs: { results: [this.Me] }
+      OPRs: activity ? activity.OPRs : { results: [this.Me] }
     }
     this.setState({ showEditModal: true, editActivity: item });
   }
@@ -170,6 +170,7 @@ class Activities extends Component {
             cardOnClick={(action) => this.cardOnClick(action)}
             disableNewButton={this.state.showEditModal}
             showNewButton={date >= this.state.minCreateDate}
+            copyOnClick={(activity => this.newItem(DateUtilities.getStartOfWeek(), activity))}
           />)}
         <Button disabled={loadingMoreWeeks} className="float-right mb-3" variant="primary" onClick={this.loadMoreWeeks}>
           {loadingMoreWeeks && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
