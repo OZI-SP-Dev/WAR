@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Alert, Button, Col, Modal, Spinner } from 'react-bootstrap';
-import DeletePopover from './DeletePopover';
+import ConfirmSubmitPopover from './ConfirmSubmitPopover';
 
 class ActivityModal extends Component {
   constructor(props) {
@@ -29,14 +29,16 @@ class ActivityModal extends Component {
           <Col style={{ paddingLeft: 0 }}>
             {!this.props.readOnly && this.props.showDeleteButton &&
               <>
-                <DeletePopover
+                <ConfirmSubmitPopover
+                  title="Confirm Delete"
+                  text="Are you sure you would like to delete this Activity?"
                   show={this.state.showDeletePopover}
                   target={this.state.deletePopoverTarget}
-                  handleDelete={this.props.handleDelete}
-                  deleting={this.props.deleting}
-                  saving={this.props.saving}
+                  handleSubmit={this.props.handleDelete}
+                  submitting={this.props.deleting || this.props.saving}
                   handleClosePopoverClick={() => this.setState({ showDeletePopover: false })}
                   handleClickOutside={() => this.setState({ showDeletePopover: false })}
+                  buttonVariant="danger"
                 />
                 <Button
                   className="float-left"

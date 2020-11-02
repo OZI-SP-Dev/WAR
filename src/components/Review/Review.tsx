@@ -220,6 +220,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                                                 minCreateDate={RoleUtilities.getMinActivityCreateDate(user)}
                                                 showMarCheck={(org: string) => RoleUtilities.userCanSetMar(user, org)}
                                                 showHistoryCheck={(org: string) => RoleUtilities.userCanSetHistory(user, org)}
+                                                userIsOrgChief={(org: string) => RoleUtilities.userIsBranchChiefOrHigher(user, org)}
                                             />
                                         </div>) :
                                         <Card className="text-center">
