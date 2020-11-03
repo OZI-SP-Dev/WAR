@@ -18,11 +18,6 @@ export const ActivityCard: React.FunctionComponent<IActivityCardProps> = ({ acti
     const [showCopyPopover, setShowCopyPopover] = useState<boolean>(false);
     const [popoverTarget, setPopoverTarget] = useState<any>(null);
 
-    const closePopover = (e: any) => {
-        e.stopPropagation(); // don't want the card's onClick to be called
-        setShowCopyPopover(false)
-    }
-
     return (
         <Card className={`activity ${className}`}
             onClick={(e: any) => {
@@ -44,8 +39,8 @@ export const ActivityCard: React.FunctionComponent<IActivityCardProps> = ({ acti
                                 setShowCopyPopover(false);
                                 copyOnClick(activity);
                             }}
-                            handleClosePopoverClick={closePopover}
-                            handleClickOutside={closePopover}
+                            handleClosePopoverClick={() => setShowCopyPopover(false)}
+                            handleClickOutside={() => setShowCopyPopover(false)}
                             buttonVariant="primary"
                         />
                         <IconButton onClick={(e) => {
