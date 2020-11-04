@@ -54,6 +54,7 @@ class ActivityAccordion extends Component {
                   weekStart={this.startWeek}
                   actions={filteredActions}
                   onClick={this.props.cardOnClick}
+                  copyOnClick={this.props.copyOnClick}
                 />
               </Row>
               <Row>

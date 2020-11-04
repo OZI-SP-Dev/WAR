@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.32] - 2020-11-03
+### Added
+- Ability for the user to copy an activity from the home/Activities page
+
 ## [1.0.31] - 2020-10-27
 ### Changed
 - Division/Branch Chiefs can now edit items regardless of time frame

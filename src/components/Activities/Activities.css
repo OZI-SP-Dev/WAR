@@ -2,6 +2,10 @@
     cursor: pointer;
 }
 
+.activity-copy i {
+    color: gray;
+}
+
 .spinner {
     position: fixed;
     top: 50%;

@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Button, Overlay, Popover, Spinner } from 'react-bootstrap';
 import ReactDOM from 'react-dom';
 
-class DeletePopover extends Component {
-    constructor(props) {
-        super(props);
+class ConfirmSubmitPopover extends Component {
+    constructor() {
+        super();
 
         this.handleClickOutside = this.handleClickOutside.bind(this);
     }
@@ -21,7 +21,7 @@ class DeletePopover extends Component {
         let popoverDom = ReactDOM.findDOMNode(this);
 
         if (!popoverDom || !popoverDom.contains(event.target)) {
-            this.props.handleClickOutside();
+            this.props.handleClickOutside(event);
         }
     }
 
@@ -33,24 +33,24 @@ class DeletePopover extends Component {
                 target={this.props.target}
             >
                 <Popover id={"delete-popover"}>
-                    <Popover.Title as="h3">Confirm Delete</Popover.Title>
+                    <Popover.Title as="h3">{this.props.title}</Popover.Title>
                     <Popover.Content>
-                        <p>Are you sure you would like to delete this Activity?</p>
+                        <p>{this.props.text}</p>
                         <Button
                             className="float-left mb-2"
                             variant="secondary"
-                            onClick={this.props.handleClosePopoverClick}
+                            onClick={(e) => this.props.handleClosePopoverClick(e)}
                         >
                             Close
                         </Button>
                         <Button
                             className="float-right mb-2"
-                            disabled={this.props.saving || this.props.deleting}
-                            variant="danger"
-                            onClick={this.props.handleDelete}
+                            disabled={this.props.submitting}
+                            variant={this.props.buttonVariant}
+                            onClick={(e) => this.props.handleSubmit(e)}
                         >
-                            {this.props.deleting && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
-                            {' '}Delete
+                            {this.props.submitting && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
+                            {' '}Confirm
                         </Button>
                     </Popover.Content>
                 </Popover>
@@ -59,4 +59,4 @@ class DeletePopover extends Component {
     }
 }
 
-export default DeletePopover;
+export default ConfirmSubmitPopover;
