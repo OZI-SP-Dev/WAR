@@ -4,6 +4,13 @@ import DateUtilities from "./DateUtilities";
 
 export default class ActivityUtilities {
 
+	/**
+	 * Creates and returns an IActivity that is ready to be submitted to the IActivitiesApi.
+	 * This method will turn all of the raw input data fields into the nicely formatted data that the API needs.
+	 * 
+	 * @param activity The activity as built from the input forms.
+	 * it needs {Id: number, Title: string, InputWeekOf: string | Moment, Branch: string, ActionTaken: string, IsMarEntry: boolean, IsHistoryEntry: boolean}
+	 */
 	static async buildActivity(activity: any): Promise<IActivity> {
 		let builtActivity: any = {
 			Id: activity.Id,
@@ -44,6 +51,13 @@ export default class ActivityUtilities {
 		return builtActivity;
 	}
 
+	/**
+	 * Creates and returns an updated IActivity after submitting/updating an IActivity.
+	 * 
+	 * @param res The Result from the IActivity submit, should be {data: {'odata.etag': string}}
+	 * @param oldActivity The old activity before being built using buildActivity()
+	 * @param activity The activity that was submitted to the IActivitiesApi
+	 */
 	static updateActivityEtagFromResponse(res: any, oldActivity: any, activity: any) {
 		let newActivity = { ...activity, OPRs: oldActivity.OPRs };
 		if (res.data['odata.etag']) {
@@ -59,10 +73,22 @@ export default class ActivityUtilities {
 		return newActivity;
 	}
 
+	/**
+	 * Returns an array of IActivity that is the given activityList without the given activity.
+	 * 
+	 * @param activityList The IActivity array to filter
+	 * @param activity The IActivity to be filtered out of the given activityList
+	 */
 	static filterActivity(activityList: any[], activity: any): any[] {
 		return activityList.filter(act => act.Id !== activity.Id);
 	}
 
+	/**
+	 * Returns a copy of the given activityList that has the IActivity with the same ID as the given newActivity replaced with newActivity.
+	 * 
+	 * @param activityList The IActivity array that needs an IActivity replaced with newActivity
+	 * @param newActivity The IActivity that will replace the IActivity with the same ID in activityList
+	 */
 	static replaceActivity(activityList: any[], newActivity: any): any[] {
 		let retActivityList = [...activityList];
 		// rather than filter out the old activity, update if it already existed
