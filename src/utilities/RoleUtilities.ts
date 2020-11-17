@@ -20,10 +20,23 @@ export default class RoleUtilities {
 
     static allRoles = [RoleUtilities.ADMIN, RoleUtilities.BRANCH_CHIEF, RoleUtilities.DIV_CHIEF, RoleUtilities.REVIEWER];
 
+    /**
+     * Returns true if the given user has a Role, false otherwise.
+     * 
+     * @param user The IUserRole being checked for a role.
+     */
     static userHasAnyRole(user: IUserRole): boolean {
         return user.UsersRoles.some((role) => this.allRoles.includes(role.role));
     }
 
+    /**
+     * Returns true if the given user is a Branch Chief or higher, false otherwise. 
+     * If the org param is given then it will check only for that org, so if the 
+     * user is a Branch Chief for a role other than the one given, it will not consider it. 
+     * 
+     * @param user The IUserRole being checked for Branch Chief or higher roles.
+     * @param org (Optional) The org that the given user is being checked for roles in.
+     */
     static userIsBranchChiefOrHigher(user: IUserRole, org?: string): boolean {
         return org === undefined ?
             user.UsersRoles.some(role =>
@@ -34,18 +47,40 @@ export default class RoleUtilities {
                     && org.includes(role.department)));
     }
 
+    /**
+     * Returns true if the given user is allowed to access the Admin page.
+     * 
+     * @param user The IUserRole being checked.
+     */
     static userCanAccessAdminPage(user: IUserRole): boolean {
         return this.userIsBranchChiefOrHigher(user);
     }
 
+    /**
+     * Returns true if the given user is allowed to set an Activity as a MAR entry for the given org.
+     * 
+     * @param user The IUserRole being checked.
+     * @param org The org that the user is being checked against .
+     */
     static userCanSetMar(user: IUserRole, org: string): boolean {
         return this.userIsBranchChiefOrHigher(user, org);
     }
 
+    /**
+     * Returns true if the given user is allowed to set an Activity as a Historical entry for the given org.
+     *
+     * @param user The IUserRole being checked.
+     * @param org The org that the user is being checked against.
+     */
     static userCanSetHistory(user: IUserRole, org: string): boolean {
         return this.userIsBranchChiefOrHigher(user, org);
     }
 
+    /**
+     * Returns an array of roles that the given user is allowed to edit.
+     * 
+     * @param user The IUserRole being checked.
+     */
     static getEditableRoles(user: IUserRole): string[] {
         let userRoles: string[] = user.UsersRoles.map(userRole => userRole.role);
         let editableRoles: string[] = [];
@@ -57,6 +92,11 @@ export default class RoleUtilities {
         return editableRoles;
     }
 
+    /**
+     * Returns the minimum date that the given user is allowed to create Activities for.
+     * 
+     * @param user The IUserRole being checked.
+     */
     static getMinActivityCreateDate(user: IUserRole): Moment {
         let weekStart = DateUtilities.getStartOfWeek();
         if (this.userHasAnyRole(user)) {
@@ -65,6 +105,12 @@ export default class RoleUtilities {
         return weekStart;
     }
 
+    /**
+     * Returns true if the given user is allowed to edit the given IActivity.
+     * 
+     * @param activity The IActivity that is being checked for editability by the given user.
+     * @param user The user trying to edit the given IActivity.
+     */
     static isActivityEditable(activity: IActivity, user: IUserRole) {
         let isNew = activity.Id < 0;
         let userIsAuthor = activity.AuthorId && parseInt(activity.AuthorId) === parseInt(user.Id);

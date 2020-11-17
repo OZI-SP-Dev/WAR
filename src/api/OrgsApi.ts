@@ -2,6 +2,9 @@ import { spWebContext } from '../providers/SPWebContext';
 import OrgsApiDev from './OrgsApiDev';
 
 export interface IOrgsApi {
+    /**
+     * Returns all IOrgs that are in the system.
+     */
     fetchOrgs(): Promise<IOrgs[] | null | undefined>
 }
 

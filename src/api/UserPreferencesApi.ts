@@ -2,7 +2,21 @@ import { spWebContext } from '../providers/SPWebContext';
 import UserPreferencesApiDev from './UserPreferencesApiDev';
 
 export interface IUserPreferencesApi {
+
+    /**
+     * Returns the IUserPreferences for the given user
+     * 
+     * @param userId The ID of the user whose IUserPreferences will be returned
+     */
     fetchPreferences(userId: string): Promise<IUserPreferences | null | undefined>,
+
+    /**
+     * Submits IUserPreferences for the given user. If the user already has IUserPreferences then it will update the existing preferences.
+     * If the user has never submitted preferences before then this will submit a new IUserPreferences.
+     * 
+     * @param userId 
+     * @param defaultOrg 
+     */
     submitPreferences(userId: string, defaultOrg: string): Promise<any>
 }
 

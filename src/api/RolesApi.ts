@@ -5,17 +5,33 @@ import "@pnp/sp/site-users/web";
 import RoleUtilities from '../utilities/RoleUtilities';
 
 export interface IRolesApi {
+
+	/**
+	 * Returns all of the IRoles that are in the system
+	 */
 	fetchRoles(): Promise<any>,
+
+	/**
+	 * Submits a new IRole. The user with the new role will have any privileges associated with the role after refreshing.
+	 * 
+	 * @param role The IRole to be saved
+	 */
 	addRole(role: IRole): Promise<any>,
+
+	/**
+	 * Removes a role from a user.
+	 * 
+	 * @param roleId The ID of the IRole to be removed.
+	 */
 	removeRole(roleId: number): Promise<any>
 }
 
 export interface IRole extends IPersonaProps {
-	RoleName?: string,
-	AccountName?: string,
-	Department?: string,
-	Email?: string,
-	SPUserId?: string,
+	RoleName?: string, // The Role, in ['Admin', 'Reviewer', 'Branch Chief', 'Div Chief']
+	AccountName?: string, 
+	Department?: string, // The Org/Branch/Department that the User will have the Role for
+	Email?: string, // The Email of the user
+	SPUserId?: string, // The ID of the user
 	ItemID?: number
 }
 
