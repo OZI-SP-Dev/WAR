@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.34] - 2020-12-02
+### Fixed
+- Dependancy vulnerabilities in package.json
+
 ## [1.0.33] - 2020-11-13
 ### Added
 - Better documentation for API and utilities code
