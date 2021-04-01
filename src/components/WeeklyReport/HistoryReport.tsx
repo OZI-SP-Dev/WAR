@@ -12,12 +12,12 @@ import ReportActivitiesByBranch from './ReportActivitiesByBranch';
 export const HistoryReport: FunctionComponent = () => {
 
     let query = useQuery();
-    let urlQuery = query.get("query");
-    let urlOrg = query.get("org");
-    let urlIncludeSubOrgs = query.get("includeSubOrgs");
-    let urlStartDate = query.get("startDate");
-    let urlEndDate = query.get("endDate");
-    let urlOpr = query.get("opr");
+    let urlQuery = query.params.get("query");
+    let urlOrg = query.params.get("org");
+    let urlIncludeSubOrgs = query.params.get("includeSubOrgs");
+    let urlStartDate = query.params.get("startDate");
+    let urlEndDate = query.params.get("endDate");
+    let urlOpr = query.params.get("opr");
 
     const [loadingReport, setLoadingReport] = useState(false);
     const [activities, setActivities] = useState<IActivity[]>([]);

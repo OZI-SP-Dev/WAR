@@ -22,7 +22,8 @@ function AppHeader() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    history.push(`/Review${query !== "" ? "?query=" + query : ""}`);
+    // the empty startDate/endDate indicates an open date range for the search
+    history.push(`/Review${query !== "" ? "?query=" + query : ""}&startDate=&endDate=`);
     setQuery("");
   }
 
@@ -45,7 +46,7 @@ function AppHeader() {
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to={`/Review?org=${RoleUtilities.getReviewDefaultOrg(user)}&includeSubOrgs=true&startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
+            <LinkContainer to="/Review">
               <NavDropdown.Item>Review</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />

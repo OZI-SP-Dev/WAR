@@ -152,7 +152,7 @@ export default class ActivitiesApi implements IActivityApi {
       conditions.push(`<${includeSubOrgs ? "Contains" : "Eq"}><FieldRef Name='Branch'/><Value Type='Text'>${org}</Value></${includeSubOrgs ? "Contains" : "Eq"}>`);
     }
     if (startDate) {
-      conditions.push(`<Geq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${startDate.toISOString()}</Value></Geq>`);
+      conditions.push(`<Geq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${startDate.subtract(1, 'day').toISOString()}</Value></Geq>`);
     }
     if (endDate) {
       conditions.push(`<Leq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${endDate.toISOString()}</Value></Leq>`);

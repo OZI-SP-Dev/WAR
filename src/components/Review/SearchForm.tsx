@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Col, Form, FormCheck, Row, Spinner } from "react-bootstrap";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
@@ -29,8 +29,8 @@ interface ISearchForm {
     query: string,
     org: string,
     includeSubOrgs: boolean,
-    startDate: Moment,
-    endDate: Moment,
+    startDate?: Moment,
+    endDate?: Moment,
     opr: SPPersona | null,
     isHistory: boolean,
     isMAR: boolean
@@ -79,14 +79,14 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         setSearchForm({ ...searchForm, [fieldUpdating]: newValue });
     }
 
-    const onChangeStartDate = (date: Date) => {
-        updateSearchForm("startDate", DateUtilities.getStartOfWeek(date));
-        setStartHighlightDates(DateUtilities.getWeek(date));
+    const onChangeStartDate = (date?: Date | null) => {
+        updateSearchForm("startDate", date ? DateUtilities.getStartOfWeek(date) : undefined);
+        setStartHighlightDates(date ? DateUtilities.getWeek(date) : []);
     }
 
-    const onChangeEndDate = (date: Date) => {
-        updateSearchForm("endDate", DateUtilities.getEndOfWeek(date));
-        setEndHighlightDates(DateUtilities.getWeek(date));
+    const onChangeEndDate = (date?: Date | null) => {
+        updateSearchForm("endDate", date ? DateUtilities.getEndOfWeek(date) : undefined);
+        setEndHighlightDates(date ? DateUtilities.getWeek(date) : []);
     }
 
     useEffect(() => {
@@ -176,31 +176,33 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     <Form.Group controlId="weekOfStart">
                         <DatePicker
                             className="weekly-report-date-picker"
-                            selected={DateUtilities.momentToDate(searchForm.startDate)}
+                            selected={searchForm.startDate ? DateUtilities.momentToDate(searchForm.startDate) : undefined}
                             onChange={onChangeStartDate}
                             highlightDates={startHighlightDates}
-                            maxDate={DateUtilities.momentToDate(searchForm.endDate)}
+                            maxDate={searchForm.endDate ? DateUtilities.momentToDate(searchForm.endDate) : undefined}
                             customInput={<StartDatePickerCustomInput />}
                             open={startDatePickerOpen}
                             onClickOutside={clickOutside}
                             shouldCloseOnSelect={false}
                         />
+                        <Button variant="link" onClick={() => onChangeStartDate(null)}>clear</Button>
                     </Form.Group>
                 </Col>
                 <Col md={3}>
                     <Form.Group controlId="weekOfEnd">
                         <DatePicker
                             className="weekly-report-date-picker"
-                            selected={DateUtilities.momentToDate(searchForm.endDate)}
+                            selected={searchForm.endDate ? DateUtilities.momentToDate(searchForm.endDate) : undefined}
                             onChange={onChangeEndDate}
                             highlightDates={endHighlightDates}
-                            minDate={DateUtilities.momentToDate(searchForm.startDate)}
+                            minDate={searchForm.startDate ? DateUtilities.momentToDate(searchForm.startDate) : undefined}
                             maxDate={DateUtilities.momentToDate(DateUtilities.getDate())}
                             customInput={<EndDatePickerCustomInput />}
                             open={endDatePickerOpen}
                             onClickOutside={clickOutside}
                             shouldCloseOnSelect={false}
                         />
+                        <Button variant="link" onClick={() => onChangeEndDate(null)}>clear</Button>
                     </Form.Group>
                 </Col>
             </Row>
@@ -237,7 +239,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                     />
                 </Col>
             </Row>
-            <Link to={`/Review?query=${searchForm.query}&org=${searchForm.org}&includeSubOrgs=${searchForm.includeSubOrgs}&startDate=${searchForm.startDate.toISOString()}&endDate=${searchForm.endDate.toISOString()}&isHistory=${searchForm.isHistory}&isMAR=${searchForm.isMAR}&opr=${searchForm.opr ? searchForm.opr.Email : ''}`}>
+            <Link to={`/Review?query=${searchForm.query}&org=${searchForm.org}&includeSubOrgs=${searchForm.includeSubOrgs}&startDate=${searchForm.startDate ? searchForm.startDate.toISOString() : ''}&endDate=${searchForm.endDate ? searchForm.endDate.toISOString() : ''}&isHistory=${searchForm.isHistory}&isMAR=${searchForm.isMAR}&opr=${searchForm.opr ? searchForm.opr.Email : ''}`}>
                 <Button
                     disabled={props.loading}
                     className="float-right mb-3"
