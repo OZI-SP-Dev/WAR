@@ -5,19 +5,25 @@ import { useHistory } from 'react-router-dom';
 import { ActivitiesApiConfig, IActivity } from '../../api/ActivitiesApi';
 import { spWebContext } from '../../providers/SPWebContext';
 import DateUtilities from '../../utilities/DateUtilities';
+import RoleUtilities, { IUserRole } from '../../utilities/RoleUtilities';
 import { useQuery } from '../Review/Review';
 import { Report } from './Report';
 import ReportActivitiesByParent from './ReportActivitiesByParent';
 
-export const MonthlyActivityReport: FunctionComponent = () => {
+export interface IMonthlyActivityReportProps {
+    user: IUserRole
+}
+
+export const MonthlyActivityReport: FunctionComponent<IMonthlyActivityReportProps> = ({ user }) => {
 
     let query = useQuery();
-    let urlQuery = query.params.get("query");
-    let urlOrg = query.params.get("org");
-    let urlIncludeSubOrgs = query.params.get("includeSubOrgs");
-    let urlStartDate = query.params.get("startDate");
-    let urlEndDate = query.params.get("endDate");
-    let urlOpr = query.params.get("opr");
+    let defaultQuery = query.getParamOrDefaultString(query.params.get("query"), '', '');
+    let defaultOrg = query.getParamOrDefaultString(query.params.get("org"), RoleUtilities.getReviewDefaultOrg(user), '');
+    let defaultIncludeSubOrgs = query.getParamOrDefaultBoolean(query.params.get("includeSubOrgs"), true);
+    let defaultStartDate = query.getParamOrDefaultDateTime(query.params.get("startDate"), DateUtilities.getToday().day() >= 3
+        ? DateUtilities.getStartOfWeek() : DateUtilities.getStartOfWeek().subtract(7, 'days'));
+    let defaultEndDate = query.getParamOrDefaultDateTime(query.params.get("endDate"), defaultStartDate);
+    let defaultOpr = query.getParamOrDefaultString(query.params.get("opr"), !RoleUtilities.userHasAnyRole(user) ? user.Email : '', '');
 
     const [loadingReport, setLoadingReport] = useState(false);
     const [activities, setActivities] = useState<IActivity[]>([]);
@@ -41,15 +47,8 @@ export const MonthlyActivityReport: FunctionComponent = () => {
 
     const fetchActivities = async () => {
         try {
-            let submitOrg = urlOrg ? urlOrg.replace('--', '') : undefined;
-            let submitIncludeSubOrgs = urlIncludeSubOrgs === "true" ? true : false;
-            let submitStartDate = undefined;
-            if (urlStartDate) {
-                submitStartDate = DateUtilities.getDate(urlStartDate).subtract(1, 'day');
-            }
-            let submitEndDate = urlEndDate ? DateUtilities.getStartOfWeek(urlEndDate) : undefined;
-            let submitUserId = urlOpr ? (await spWebContext.ensureUser(urlOpr)).data.Id : undefined;
-            let newActivities: any[] = await activitiesApi.fetchActivitiesByQueryString('', submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, undefined, true, submitUserId);
+            let submitUserId = defaultOpr ? (await spWebContext.ensureUser(defaultOpr)).data.Id : undefined;
+            let newActivities: any[] = await activitiesApi.fetchActivitiesByQueryString(defaultQuery, defaultOrg, defaultIncludeSubOrgs, defaultStartDate, defaultEndDate, undefined, true, submitUserId);
             setActivities(newActivities);
             setLoadingReport(false);
             setReportGenerated(true);
@@ -67,12 +66,12 @@ export const MonthlyActivityReport: FunctionComponent = () => {
                 pageHeader="Monthly Activity Report"
                 searchCardHeader="MAR Search"
                 submitSearch={submitSearch}
-                defaultQuery={urlQuery ? urlQuery : ''}
-                defaultOrg={urlOrg ? urlOrg : ''}
-                defaultIncludeSubOrgs={urlIncludeSubOrgs === "true" ? true : false}
-                defaultStartDate={urlStartDate ? DateUtilities.getDate(urlStartDate) : null}
-                defaultEndDate={urlEndDate ? DateUtilities.getDate(urlEndDate) : null}
-                defaultOpr={urlOpr ? urlOpr : null}
+                defaultQuery={defaultQuery}
+                defaultOrg={defaultOrg}
+                defaultIncludeSubOrgs={defaultIncludeSubOrgs}
+                defaultStartDate={defaultStartDate}
+                defaultEndDate={defaultEndDate}
+                defaultOpr={defaultOpr}
                 loadingReport={loadingReport}
             >
                 <ReportActivitiesByParent

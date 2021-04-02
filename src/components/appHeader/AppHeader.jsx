@@ -27,12 +27,6 @@ function AppHeader() {
     setQuery("");
   }
 
-  let reviewStartDate = DateUtilities.getStartOfWeek();
-  // if before wednesday, show last week
-  if (DateUtilities.getToday().day() < 3) {
-    reviewStartDate.subtract(7, 'days');
-  }
-
   return (
     <Navbar fixed="top" expand="md" variant="dark" bg="dark" className="p-0 shadow">
       <Navbar.Brand className={(process.env.REACT_APP_TEST_SYS ? "test " : "") + "col-xs-1 col-sm-3 col-md-2 mr-0"}>Weekly Activity Report</Navbar.Brand>
@@ -50,13 +44,13 @@ function AppHeader() {
               <NavDropdown.Item>Review</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />
-            <LinkContainer to={`/WAR?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
+            <LinkContainer to="/WAR">
               <NavDropdown.Item>WAR</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to={`/MAR?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
+            <LinkContainer to="/MAR">
               <NavDropdown.Item>MAR</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to={`/HistoryReport?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
+            <LinkContainer to="HistoryReport">
               <NavDropdown.Item>History</NavDropdown.Item>
             </LinkContainer>
           </NavDropdown>

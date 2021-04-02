@@ -128,6 +128,7 @@ export const Report: FunctionComponent<IReportProps> = (props) => {
                                     onClickOutside={() => setStartDatePickerOpen(false)}
                                     shouldCloseOnSelect={false}
                                 />
+                                <Button variant="link" onClick={() => updateStartDate(null)}>clear</Button>
                             </Form.Group>
                         </Col>
                         <Col md={3}>
@@ -144,6 +145,7 @@ export const Report: FunctionComponent<IReportProps> = (props) => {
                                     onClickOutside={() => setEndDatePickerOpen(false)}
                                     shouldCloseOnSelect={false}
                                 />
+                                <Button variant="link" onClick={() => updateEndDate(null)}>clear</Button>
                             </Form.Group>
                         </Col>
                     </Row>
