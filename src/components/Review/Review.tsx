@@ -26,7 +26,7 @@ export function useQuery(): {
         params: new URLSearchParams(useLocation().search),
         getParamOrDefaultString: (param: any, nullDefaultValue: string, blankDefaultValue?: string) => param === null ? nullDefaultValue : param ? param : blankDefaultValue,
         getParamOrDefaultDateTime: (param: string | null, nullDefaultValue: Moment, blankDefaultValue?: Moment) => param === null ? nullDefaultValue : param ? DateUtilities.getDate(param) : blankDefaultValue,
-        getParamOrDefaultBoolean: (param: "true" | "false" | string | null, nullDefaultValue: boolean, blankDefaultValue?: any) => param === null ? nullDefaultValue : param === "true" ? true : false
+        getParamOrDefaultBoolean: (param: "true" | "false" | string | null, nullDefaultValue: boolean) => param === null ? nullDefaultValue : param === "true" ? true : false
     };
 }
 
@@ -56,14 +56,14 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     let urlOpr = query.params.get("opr");
 
     let defaultQuery = query.getParamOrDefaultString(urlQuery, '', '');
-    let defaultOrg = query.getParamOrDefaultString(urlOrg, RoleUtilities.getReviewDefaultOrg(user));
+    let defaultOrg = query.getParamOrDefaultString(urlOrg, RoleUtilities.getReviewDefaultOrg(user), '');
     let defaultIncludeSubOrgs = query.getParamOrDefaultBoolean(urlIncludeSubOrgs, true);
     let defaultStartDate = query.getParamOrDefaultDateTime(urlStartDate, DateUtilities.getToday().day() >= 3
         ? DateUtilities.getStartOfWeek() : DateUtilities.getStartOfWeek().subtract(7, 'days'));
     let defaultEndDate = query.getParamOrDefaultDateTime(urlEndDate, defaultStartDate);
     let defaultIsHistory = query.getParamOrDefaultBoolean(urlIsHistory, false);
     let defaultIsMAR = query.getParamOrDefaultBoolean(urlIsMAR, false);
-    let defaultOpr = query.getParamOrDefaultString(urlOpr, !RoleUtilities.userHasAnyRole(user) ? user.Email : '');
+    let defaultOpr = query.getParamOrDefaultString(urlOpr, !RoleUtilities.userHasAnyRole(user) ? user.Email : '', '');
 
     const [activities, setActivities] = useState<GroupedActivities[]>([]);
     const [modalActivityId, setModalActivityId] = useState<number>(-1);
