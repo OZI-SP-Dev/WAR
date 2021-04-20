@@ -22,7 +22,7 @@ export const WeeklyReport: FunctionComponent<IWeeklyReportProps> = ({ user }) =>
     let defaultIncludeSubOrgs = query.getParamOrDefaultBoolean(query.params.get("includeSubOrgs"), true);
     let defaultStartDate = query.getParamOrDefaultDateTime(query.params.get("startDate"), DateUtilities.getToday().day() >= 3
         ? DateUtilities.getStartOfWeek() : DateUtilities.getStartOfWeek().subtract(7, 'days'));
-    let defaultEndDate = query.getParamOrDefaultDateTime(query.params.get("endDate"), defaultStartDate);
+    let defaultEndDate = query.getParamOrDefaultDateTime(query.params.get("endDate"), DateUtilities.getDate(defaultStartDate).endOf('week'));
     let defaultOpr = query.getParamOrDefaultString(query.params.get("opr"), !RoleUtilities.userHasAnyRole(user) ? user.Email : '', '');
 
     const [loadingReport, setLoadingReport] = useState(false);

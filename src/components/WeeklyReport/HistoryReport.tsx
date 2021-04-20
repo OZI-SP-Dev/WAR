@@ -20,9 +20,8 @@ export const HistoryReport: FunctionComponent<IHistoryReportProps> = ({ user }) 
     let defaultQuery = query.getParamOrDefaultString(query.params.get("query"), '', '');
     let defaultOrg = query.getParamOrDefaultString(query.params.get("org"), RoleUtilities.getReviewDefaultOrg(user), '');
     let defaultIncludeSubOrgs = query.getParamOrDefaultBoolean(query.params.get("includeSubOrgs"), true);
-    let defaultStartDate = query.getParamOrDefaultDateTime(query.params.get("startDate"), DateUtilities.getToday().day() >= 3
-        ? DateUtilities.getStartOfWeek() : DateUtilities.getStartOfWeek().subtract(7, 'days'));
-    let defaultEndDate = query.getParamOrDefaultDateTime(query.params.get("endDate"), defaultStartDate);
+    let defaultStartDate = query.getParamOrDefaultDateTime(query.params.get("startDate"), DateUtilities.getToday().startOf('year'));
+    let defaultEndDate = query.getParamOrDefaultDateTime(query.params.get("endDate"), DateUtilities.getToday().endOf('week'));
     let defaultOpr = query.getParamOrDefaultString(query.params.get("opr"), !RoleUtilities.userHasAnyRole(user) ? user.Email : '', '');
 
     const [loadingReport, setLoadingReport] = useState(false);

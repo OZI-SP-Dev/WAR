@@ -23,7 +23,7 @@ function AppHeader() {
   const onSubmit = (e) => {
     e.preventDefault();
     // the empty startDate/endDate indicates an open date range for the search
-    history.push(`/Review${query !== "" ? "?query=" + query : ""}&startDate=&endDate=`);
+    history.push(`/Review?query=${query}&startDate=&endDate=`);
     setQuery("");
   }
 

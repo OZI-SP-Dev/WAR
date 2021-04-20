@@ -16,8 +16,8 @@ export interface ISearchFormProps {
     defaultQuery: string,
     defaultOrg: string,
     defaultIncludeSubOrgs: boolean,
-    defaultStartDate: Moment | null,
-    defaultEndDate: Moment | null,
+    defaultStartDate?: Moment,
+    defaultEndDate?: Moment,
     defaultIsHistory: boolean,
     defaultIsMAR: boolean,
     defaultOpr: string | null,
@@ -38,25 +38,19 @@ interface ISearchForm {
 
 export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISearchFormProps) => {
 
-    let initialStartWeek = props.defaultStartDate;
-    if (!initialStartWeek) {
-        initialStartWeek = DateUtilities.getStartOfWeek().subtract(7, 'days');
-    }
-    const initialEndWeek: Moment = props.defaultEndDate ? DateUtilities.getEndOfWeek(props.defaultEndDate) : DateUtilities.getEndOfWeek();
-
     const [startDatePickerOpen, setStartDatePickerOpen] = useState<boolean>(false);
     const [endDatePickerOpen, setEndDatePickerOpen] = useState<boolean>(false);
     const [startHighlightDates, setStartHighlightDates] =
-        useState<Date[]>(DateUtilities.getWeek(initialStartWeek));
+        useState<Date[]>(props.defaultStartDate ? DateUtilities.getWeek(props.defaultStartDate) : []);
     const [endHighlightDates, setEndHighlightDates] =
-        useState<Date[]>(DateUtilities.getWeek(initialEndWeek));
+        useState<Date[]>(props.defaultEndDate ? DateUtilities.getWeek(props.defaultEndDate) : []);
 
     const [searchForm, setSearchForm] = useState<ISearchForm>({
         query: props.defaultQuery,
         org: props.defaultOrg,
         includeSubOrgs: props.defaultIncludeSubOrgs,
-        startDate: initialStartWeek,
-        endDate: initialEndWeek,
+        startDate: props.defaultStartDate,
+        endDate: props.defaultEndDate,
         opr: null,
         isHistory: props.defaultIsHistory,
         isMAR: props.defaultIsMAR

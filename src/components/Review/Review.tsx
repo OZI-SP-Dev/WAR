@@ -60,7 +60,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     let defaultIncludeSubOrgs = query.getParamOrDefaultBoolean(urlIncludeSubOrgs, true);
     let defaultStartDate = query.getParamOrDefaultDateTime(urlStartDate, DateUtilities.getToday().day() >= 3
         ? DateUtilities.getStartOfWeek() : DateUtilities.getStartOfWeek().subtract(7, 'days'));
-    let defaultEndDate = query.getParamOrDefaultDateTime(urlEndDate, defaultStartDate);
+    let defaultEndDate = query.getParamOrDefaultDateTime(urlEndDate, DateUtilities.getDate(defaultStartDate).endOf('week'));
     let defaultIsHistory = query.getParamOrDefaultBoolean(urlIsHistory, false);
     let defaultIsMAR = query.getParamOrDefaultBoolean(urlIsMAR, false);
     let defaultOpr = query.getParamOrDefaultString(urlOpr, !RoleUtilities.userHasAnyRole(user) ? user.Email : '', '');
@@ -176,7 +176,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     useEffect(() => {
         fetchActivities();
         // eslint-disable-next-line
-    }, [urlQuery, urlOrg, urlIncludeSubOrgs, urlStartDate, urlEndDate, urlEndDate, urlIsHistory, urlIsMAR, urlOpr]);
+    }, [urlQuery, urlOrg, urlIncludeSubOrgs, urlStartDate, urlEndDate, urlIsHistory, urlIsMAR, urlOpr]);
 
     return (
         <Container fluid>
@@ -186,8 +186,8 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                     defaultQuery={defaultQuery}
                     defaultOrg={defaultOrg}
                     defaultIncludeSubOrgs={defaultIncludeSubOrgs}
-                    defaultStartDate={defaultStartDate ? DateUtilities.getDate(defaultStartDate) : null}
-                    defaultEndDate={defaultEndDate ? DateUtilities.getDate(defaultEndDate) : null}
+                    defaultStartDate={defaultStartDate ? DateUtilities.getDate(defaultStartDate) : undefined}
+                    defaultEndDate={defaultEndDate ? DateUtilities.getDate(defaultEndDate) : undefined}
                     defaultIsHistory={defaultIsHistory}
                     defaultIsMAR={defaultIsMAR}
                     defaultOpr={defaultOpr ? defaultOpr : null}
