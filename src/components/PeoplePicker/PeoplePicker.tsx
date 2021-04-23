@@ -54,10 +54,12 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 					}
 				});
 				const results = await sp.profiles.clientPeoplePickerSearchUser({
-					AllowEmailAddresses: true,
+					AllowEmailAddresses: false,
 					AllowMultipleEntities: false,
 					MaximumEntitySuggestions: 25,
-					QueryString: filterText
+					QueryString: filterText,
+					PrincipalSource: 15,
+					PrincipalType: 1
 				});
 				let newPersonas: IPersonaProps[] = [];
 				results.forEach((person: IPeoplePickerEntity) => {
