@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment, { Moment } from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { Card, Container, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
@@ -16,8 +16,18 @@ import CardAccordion from "../CardAccordion/CardAccordion";
 import { CustomToggleAccordion } from "../CustomToggleAccordion/CustomToggleAccordion";
 import { SearchForm } from "./SearchForm";
 
-export function useQuery(): URLSearchParams {
-    return new URLSearchParams(useLocation().search);
+export function useQuery(): {
+    params: URLSearchParams,
+    getParamOrDefaultString: (param: string | null, nullDefaultValue: string, blankDefaultValue?: string) => any,
+    getParamOrDefaultDateTime: (param: string | null, nullDefaultValue: Moment, blankDefaultValue?: Moment) => any,
+    getParamOrDefaultBoolean: (param: "true" | "false" | string | null, nullDefaultValue: boolean, blankDefaultValue?: any) => boolean
+} {
+    return {
+        params: new URLSearchParams(useLocation().search),
+        getParamOrDefaultString: (param: any, nullDefaultValue: string, blankDefaultValue?: string) => param === null ? nullDefaultValue : param ? param : blankDefaultValue,
+        getParamOrDefaultDateTime: (param: string | null, nullDefaultValue: Moment, blankDefaultValue?: Moment) => param === null ? nullDefaultValue : param ? DateUtilities.getDate(param) : blankDefaultValue,
+        getParamOrDefaultBoolean: (param: "true" | "false" | string | null, nullDefaultValue: boolean) => param === null ? nullDefaultValue : param === "true" ? true : false
+    };
 }
 
 export interface IReviewProps {
@@ -35,14 +45,25 @@ interface GroupedActivities {
 export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
     let query = useQuery();
-    let urlQuery = query.get("query");
-    let urlOrg = query.get("org");
-    let urlIncludeSubOrgs = query.get("includeSubOrgs");
-    let urlStartDate = query.get("startDate");
-    let urlEndDate = query.get("endDate");
-    let urlIsHistory = query.get("isHistory");
-    let urlIsMAR = query.get("isMAR");
-    let urlOpr = query.get("opr");
+
+    let urlQuery = query.params.get("query");
+    let urlOrg = query.params.get("org");
+    let urlIncludeSubOrgs = query.params.get("includeSubOrgs");
+    let urlStartDate = query.params.get("startDate");
+    let urlEndDate = query.params.get("endDate");
+    let urlIsHistory = query.params.get("isHistory");
+    let urlIsMAR = query.params.get("isMAR");
+    let urlOpr = query.params.get("opr");
+
+    let defaultQuery = query.getParamOrDefaultString(urlQuery, '', '');
+    let defaultOrg = query.getParamOrDefaultString(urlOrg, RoleUtilities.getReviewDefaultOrg(user), '');
+    let defaultIncludeSubOrgs = query.getParamOrDefaultBoolean(urlIncludeSubOrgs, true);
+    let defaultStartDate = query.getParamOrDefaultDateTime(urlStartDate, DateUtilities.getToday().day() >= 3
+        ? DateUtilities.getStartOfWeek() : DateUtilities.getStartOfWeek().subtract(7, 'days'));
+    let defaultEndDate = query.getParamOrDefaultDateTime(urlEndDate, DateUtilities.getDate(defaultStartDate).endOf('week'));
+    let defaultIsHistory = query.getParamOrDefaultBoolean(urlIsHistory, false);
+    let defaultIsMAR = query.getParamOrDefaultBoolean(urlIsMAR, false);
+    let defaultOpr = query.getParamOrDefaultString(urlOpr, !RoleUtilities.userHasAnyRole(user) ? user.Email : '', '');
 
     const [activities, setActivities] = useState<GroupedActivities[]>([]);
     const [modalActivityId, setModalActivityId] = useState<number>(-1);
@@ -57,18 +78,8 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     const fetchActivities = async () => {
         try {
             setLoading(true);
-            let submitQuery = urlQuery ? urlQuery : '';
-            let submitOrg = urlOrg ? urlOrg.replace('--', '') : undefined;
-            let submitIncludeSubOrgs = urlIncludeSubOrgs === "true" ? true : false;
-            let submitStartDate = undefined;
-            if (urlStartDate) {
-                submitStartDate = DateUtilities.getDate(urlStartDate).subtract(1, 'day');
-            }
-            let submitEndDate = urlEndDate ? DateUtilities.getStartOfWeek(urlEndDate) : undefined;
-            let submitIsHistory = urlIsHistory === "true" ? true : false;
-            let submitIsMAR = urlIsMAR === "true" ? true : false;
-            let submitUserId = urlOpr ? (await spWebContext.ensureUser(urlOpr)).data.Id : undefined;
-            let newActivities: any[] = await activitiesApi.fetchActivitiesByQueryString(submitQuery, submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, submitIsHistory, submitIsMAR, submitUserId);
+            let submitUserId = defaultOpr ? (await spWebContext.ensureUser(defaultOpr)).data.Id : undefined;
+            let newActivities: any[] = await activitiesApi.fetchActivitiesByQueryString(defaultQuery, defaultOrg, defaultIncludeSubOrgs, defaultStartDate, defaultEndDate, defaultIsHistory, defaultIsMAR, submitUserId);
             setActivities(groupActivities(newActivities));
             setLoading(false);
         } catch (e) {
@@ -159,7 +170,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
     }
 
     const isOrgDisplayed = (org: string) => {
-        return !urlOrg || urlOrg === org || (urlIncludeSubOrgs === "true" && org.includes(urlOrg));
+        return !defaultOrg || defaultOrg === org || (defaultIncludeSubOrgs && org.includes(defaultOrg));
     }
 
     useEffect(() => {
@@ -169,17 +180,17 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
 
     return (
         <Container fluid>
-            <Row className="justify-content-center m-3"><h1>{urlQuery === null ? "Review Activities" : "Search Results"}</h1></Row>
+            <Row className="justify-content-center m-3"><h1>{defaultQuery === null ? "Review Activities" : "Search Results"}</h1></Row>
             <CardAccordion defaultOpen={false} cardHeader="Search and Filter">
                 <SearchForm
-                    defaultQuery={urlQuery ? urlQuery : ''}
-                    defaultOrg={urlOrg ? urlOrg : ''}
-                    defaultIncludeSubOrgs={urlIncludeSubOrgs === "true" ? true : false}
-                    defaultStartDate={urlStartDate ? DateUtilities.getDate(urlStartDate) : null}
-                    defaultEndDate={urlEndDate ? DateUtilities.getDate(urlEndDate) : null}
-                    defaultIsHistory={urlIsHistory === "true" ? true : false}
-                    defaultIsMAR={urlIsMAR === "true" ? true : false}
-                    defaultOpr={urlOpr ? urlOpr : null}
+                    defaultQuery={defaultQuery}
+                    defaultOrg={defaultOrg}
+                    defaultIncludeSubOrgs={defaultIncludeSubOrgs}
+                    defaultStartDate={defaultStartDate ? DateUtilities.getDate(defaultStartDate) : undefined}
+                    defaultEndDate={defaultEndDate ? DateUtilities.getDate(defaultEndDate) : undefined}
+                    defaultIsHistory={defaultIsHistory}
+                    defaultIsMAR={defaultIsMAR}
+                    defaultOpr={defaultOpr ? defaultOpr : null}
                     loading={loading}
                     orgs={orgs ? orgs : []}
                 />

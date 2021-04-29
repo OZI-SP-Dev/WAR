@@ -5,19 +5,24 @@ import { useHistory } from 'react-router-dom';
 import { ActivitiesApiConfig, IActivity } from '../../api/ActivitiesApi';
 import { spWebContext } from '../../providers/SPWebContext';
 import DateUtilities from '../../utilities/DateUtilities';
+import RoleUtilities, { IUserRole } from '../../utilities/RoleUtilities';
 import { useQuery } from '../Review/Review';
 import { Report } from './Report';
 import ReportActivitiesByBranch from './ReportActivitiesByBranch';
 
-export const HistoryReport: FunctionComponent = () => {
+export interface IHistoryReportProps {
+    user: IUserRole
+}
+
+export const HistoryReport: FunctionComponent<IHistoryReportProps> = ({ user }) => {
 
     let query = useQuery();
-    let urlQuery = query.get("query");
-    let urlOrg = query.get("org");
-    let urlIncludeSubOrgs = query.get("includeSubOrgs");
-    let urlStartDate = query.get("startDate");
-    let urlEndDate = query.get("endDate");
-    let urlOpr = query.get("opr");
+    let defaultQuery = query.getParamOrDefaultString(query.params.get("query"), '', '');
+    let defaultOrg = query.getParamOrDefaultString(query.params.get("org"), RoleUtilities.getReviewDefaultOrg(user), '');
+    let defaultIncludeSubOrgs = query.getParamOrDefaultBoolean(query.params.get("includeSubOrgs"), true);
+    let defaultStartDate = query.getParamOrDefaultDateTime(query.params.get("startDate"), DateUtilities.getToday().startOf('year'));
+    let defaultEndDate = query.getParamOrDefaultDateTime(query.params.get("endDate"), DateUtilities.getToday().endOf('week'));
+    let defaultOpr = query.getParamOrDefaultString(query.params.get("opr"), !RoleUtilities.userHasAnyRole(user) ? user.Email : '', '');
 
     const [loadingReport, setLoadingReport] = useState(false);
     const [activities, setActivities] = useState<IActivity[]>([]);
@@ -41,15 +46,8 @@ export const HistoryReport: FunctionComponent = () => {
 
     const fetchActivities = async () => {
         try {
-            let submitOrg = urlOrg ? urlOrg.replace('--', '') : undefined;
-            let submitIncludeSubOrgs = urlIncludeSubOrgs === "true" ? true : false;
-            let submitStartDate = undefined;
-            if (urlStartDate) {
-                submitStartDate = DateUtilities.getDate(urlStartDate).subtract(1, 'day');
-            }
-            let submitEndDate = urlEndDate ? DateUtilities.getStartOfWeek(urlEndDate) : undefined;
-            let submitUserId = urlOpr ? (await spWebContext.ensureUser(urlOpr)).data.Id : undefined;
-            let newActivities: any[] = await activitiesApi.fetchActivitiesByQueryString('', submitOrg, submitIncludeSubOrgs, submitStartDate, submitEndDate, true, undefined, submitUserId);
+            let submitUserId = defaultOpr ? (await spWebContext.ensureUser(defaultOpr)).data.Id : undefined;
+            let newActivities: any[] = await activitiesApi.fetchActivitiesByQueryString(defaultQuery, defaultOrg, defaultIncludeSubOrgs, defaultStartDate, defaultEndDate, true, undefined, submitUserId);
             setActivities(newActivities);
             setLoadingReport(false);
             setReportGenerated(true);
@@ -66,12 +64,12 @@ export const HistoryReport: FunctionComponent = () => {
             pageHeader="Historical Report"
             searchCardHeader="History Entries Search"
             submitSearch={submitSearch}
-            defaultQuery={urlQuery ? urlQuery : ''}
-            defaultOrg={urlOrg ? urlOrg : ''}
-            defaultIncludeSubOrgs={urlIncludeSubOrgs === "true" ? true : false}
-            defaultStartDate={urlStartDate ? DateUtilities.getDate(urlStartDate) : null}
-            defaultEndDate={urlEndDate ? DateUtilities.getDate(urlEndDate) : null}
-            defaultOpr={urlOpr ? urlOpr : null}
+            defaultQuery={defaultQuery}
+            defaultOrg={defaultOrg}
+            defaultIncludeSubOrgs={defaultIncludeSubOrgs}
+            defaultStartDate={defaultStartDate}
+            defaultEndDate={defaultEndDate}
+            defaultOpr={defaultOpr}
             loadingReport={loadingReport}
         >
             <ReportActivitiesByBranch

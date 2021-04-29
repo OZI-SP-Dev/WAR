@@ -22,14 +22,9 @@ function AppHeader() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    history.push(`/Review${query !== "" ? "?query=" + query : ""}`);
+    // the empty startDate/endDate indicates an open date range for the search
+    history.push(`/Review?query=${query}&startDate=&endDate=`);
     setQuery("");
-  }
-
-  let reviewStartDate = DateUtilities.getStartOfWeek();
-  // if before wednesday, show last week
-  if (DateUtilities.getToday().day() < 3) {
-    reviewStartDate.subtract(7, 'days');
   }
 
   return (
@@ -45,17 +40,17 @@ function AppHeader() {
             <LinkContainer to="/Activities">
               <NavDropdown.Item>Activities</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to={`/Review?org=${RoleUtilities.getReviewDefaultOrg(user)}&includeSubOrgs=true&startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
+            <LinkContainer to="/Review">
               <NavDropdown.Item>Review</NavDropdown.Item>
             </LinkContainer>
             <NavDropdown.Divider />
-            <LinkContainer to={`/WAR?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
+            <LinkContainer to="/WAR">
               <NavDropdown.Item>WAR</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to={`/MAR?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
+            <LinkContainer to="/MAR">
               <NavDropdown.Item>MAR</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to={`/HistoryReport?startDate=${reviewStartDate.toISOString()}&endDate=${DateUtilities.getEndOfWeek(reviewStartDate).toISOString()}&opr=${RoleUtilities.userHasAnyRole(user) ? '' : user.Email}`}>
+            <LinkContainer to="HistoryReport">
               <NavDropdown.Item>History</NavDropdown.Item>
             </LinkContainer>
           </NavDropdown>

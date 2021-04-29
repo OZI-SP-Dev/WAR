@@ -35,23 +35,19 @@ interface IReportForm {
 
 export const Report: FunctionComponent<IReportProps> = (props) => {
 
-    let initialStartWeek = props.defaultStartDate;
-    if (!initialStartWeek) {
-        initialStartWeek = DateUtilities.getStartOfWeek();
-    }
-    const initialEndWeek: Moment = props.defaultEndDate ? DateUtilities.getEndOfWeek(props.defaultEndDate) : DateUtilities.getEndOfWeek();
-
     const [reportForm, setReportForm] = useState<IReportForm>({
         query: props.defaultQuery,
-        startDate: initialStartWeek,
-        endDate: initialEndWeek,
+        startDate: props.defaultStartDate,
+        endDate: props.defaultEndDate,
         org: props.defaultOrg,
         includeSubOrgs: props.defaultIncludeSubOrgs,
         opr: null
     });
 
-    const [startHighlightDates, setStartHighlightDates] = useState(DateUtilities.getWeek(initialStartWeek));
-    const [endHighlightDates, setEndHighlightDates] = useState(DateUtilities.getWeek(initialEndWeek));
+    const [startHighlightDates, setStartHighlightDates] =
+        useState<Date[]>(props.defaultStartDate ? DateUtilities.getWeek(props.defaultStartDate) : []);
+    const [endHighlightDates, setEndHighlightDates] =
+        useState<Date[]>(props.defaultEndDate ? DateUtilities.getWeek(props.defaultEndDate) : []);
     const [startDatePickerOpen, setStartDatePickerOpen] = useState<boolean>(false);
     const [endDatePickerOpen, setEndDatePickerOpen] = useState<boolean>(false);
 
@@ -128,6 +124,7 @@ export const Report: FunctionComponent<IReportProps> = (props) => {
                                     onClickOutside={() => setStartDatePickerOpen(false)}
                                     shouldCloseOnSelect={false}
                                 />
+                                <Button variant="link" onClick={() => updateStartDate(null)}>clear</Button>
                             </Form.Group>
                         </Col>
                         <Col md={3}>
@@ -144,6 +141,7 @@ export const Report: FunctionComponent<IReportProps> = (props) => {
                                     onClickOutside={() => setEndDatePickerOpen(false)}
                                     shouldCloseOnSelect={false}
                                 />
+                                <Button variant="link" onClick={() => updateEndDate(null)}>clear</Button>
                             </Form.Group>
                         </Col>
                     </Row>

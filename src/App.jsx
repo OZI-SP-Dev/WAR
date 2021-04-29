@@ -34,13 +34,28 @@ class App extends Component {
                           <Help />
                         </Route>
                         <Route path="/MAR">
-                          <MonthlyActivityReport />
+                          <UserContext.Consumer>
+                            {user => (
+                              user.loading ?
+                                <>Loading...</> :
+                                <MonthlyActivityReport user={user} />)}
+                          </UserContext.Consumer>
                         </Route>
                         <Route path="/HistoryReport">
-                          <HistoryReport />
+                          <UserContext.Consumer>
+                            {user => (
+                              user.loading ?
+                                <>Loading...</> :
+                                <HistoryReport user={user} />)}
+                          </UserContext.Consumer>
                         </Route>
                         <Route path="/WAR">
-                          <WeeklyReport />
+                          <UserContext.Consumer>
+                            {user => (
+                              user.loading ?
+                                <>Loading...</> :
+                                <WeeklyReport user={user} />)}
+                          </UserContext.Consumer>
                         </Route>
                         <Route path="/RoleManagement">
                           <UserContext.Consumer>
