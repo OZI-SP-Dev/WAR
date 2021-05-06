@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RolePeoplePicker } from "./RolePeoplePicker";
+import { RoleForm } from "./RoleForm";
 import { PersonaList } from "./PersonaList";
 import { Card } from "react-bootstrap";
 import { OrgsContext } from '../../providers/OrgsContext';
@@ -17,7 +17,7 @@ export const RolesSubSection: React.FunctionComponent<IRolesSubSection> = ({ rol
 			<Card.Header>WAR {roleType}s</Card.Header>
 			<Card.Body>
 				<Card.Title>
-					<RolePeoplePicker roleType={roleType} orgs={orgs ? orgs : []} />
+					<RoleForm roleType={roleType} orgs={orgs ? orgs : []} />
 				</Card.Title>
 				<PersonaList roleType={roleType} />
 			</Card.Body>

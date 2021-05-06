@@ -7,8 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
 import { spWebContext } from '../../providers/SPWebContext';
 import DateUtilities from "../../utilities/DateUtilities";
-import { SPPersona } from '../Activities/ActivityPeoplePicker';
-import { PeoplePicker } from '../PeoplePicker/PeoplePicker';
+import { PeoplePicker, SPPersona } from '../PeoplePicker/PeoplePicker';
 import '../WeeklyReport/Report.css';
 import './SearchForm.css';
 
