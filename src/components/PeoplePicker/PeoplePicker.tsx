@@ -5,7 +5,7 @@ import { people } from '@uifabric/example-data';
 import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
 import { IBasePickerSuggestionsProps, NormalPeoplePicker } from 'office-ui-fabric-react/lib/Pickers';
 import * as React from 'react';
-import { SPPersona } from "../Activities/ActivityPeoplePicker";
+import { useCachedPeople } from "../../hooks/useCachedPeople";
 
 const suggestionProps: IBasePickerSuggestionsProps = {
 	suggestionsHeaderText: 'Suggested People',
@@ -17,6 +17,13 @@ const suggestionProps: IBasePickerSuggestionsProps = {
 	suggestionsContainerAriaLabel: 'Suggested contacts',
 };
 
+export interface SPPersona extends IPersonaProps {
+	AccountName?: string,
+	Department?: string,
+	Email?: string,
+	SPUserId?: string
+}
+
 interface IPeoplePickerProps {
 	defaultValue?: SPPersona[],
 	readOnly?: boolean,
@@ -26,6 +33,18 @@ interface IPeoplePickerProps {
 }
 
 export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props) => {
+
+	const getEmptyResolveSuggestions = () => {
+		return cachedPeople.getCachedPeople().slice(0, 10);
+	}
+
+	const removeSuggestion = (person: IPersonaProps) => {
+		setSuggestions(cachedPeople.removePersonFromCache(person.text ? person.text : person.title ? person.title : '').slice(0, 10));
+	}
+
+	const cachedPeople = useCachedPeople();
+	// I don't quite understand this but updating suggestions makes it update the rendered suggestions
+	const [, setSuggestions] = React.useState<SPPersona[]>(getEmptyResolveSuggestions);
 	const [peopleList] = React.useState<IPersonaProps[]>(people);
 	const [selectedItems, setSelectedItems] = React.useState<IPersonaProps[]>([]);
 
@@ -37,7 +56,7 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 			personas = [...props.defaultValue];
 		}
 		setSelectedItems(personas);
-	}, [props.defaultValue])
+	}, [props.defaultValue]);
 
 	const onFilterChanged = async (
 		filterText: string,
@@ -71,7 +90,10 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 					};
 					newPersonas.push(persona);
 				});
-				filteredPersonas = newPersonas;
+				filteredPersonas = [
+					...cachedPeople.getCachedPeople().filter(p => p.text?.toLowerCase().includes(filterText.toLowerCase())),
+					...newPersonas
+				];
 			}
 			return filteredPersonas;
 		} else {
@@ -90,6 +112,7 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 	const onItemsChange = (items: any[] | void): void => {
 		if (items) {
 			setSelectedItems(items);
+			items.forEach(i => cachedPeople.cachePerson(i));
 			props.updatePeople(items);
 			peoplePickerInput.current?.focus();
 		}
@@ -112,6 +135,8 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 			resolveDelay={300}
 			componentRef={peoplePickerInput}
 			itemLimit={props.itemLimit ? props.itemLimit : 1}
+			onEmptyResolveSuggestions={getEmptyResolveSuggestions}
+			onRemoveSuggestion={removeSuggestion}
 		/>
 	);
 };

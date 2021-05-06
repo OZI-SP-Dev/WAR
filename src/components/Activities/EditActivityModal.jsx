@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { OrgsContext } from "../../providers/OrgsContext";
 import DateUtilities from '../../utilities/DateUtilities';
 import ActivityModal from './ActivityModal';
-import { ActivityPeoplePicker } from './ActivityPeoplePicker';
+import { PeoplePicker } from '../PeoplePicker/PeoplePicker';
 
 class EditActivityModal extends Component {
   constructor(props) {
@@ -207,11 +207,12 @@ class EditActivityModal extends Component {
           <Form.Group controlId="editActivityOPRs">
             <Form.Label>OPRs</Form.Label>
             <Form.Control
-              as={ActivityPeoplePicker}
-              defaultValue={this.convertOPRsToPersonas(this.props.activity.OPRs)}
-              updateOPRs={(newOPRs) => this.updateOPRs(newOPRs)}
+              as={PeoplePicker}
+              defaultValue={this.convertOPRsToPersonas(this.state.activity.OPRs)}
+              updatePeople={(newOPRs) => this.updateOPRs(newOPRs)}
               readOnly={this.isReadOnly()}
               required={true}
+              itemLimit={25}
               isInvalid={this.isOPRInvalid()}
               isValid={!this.isOPRInvalid()}
             >

@@ -6,9 +6,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { OrgsContext } from '../../providers/OrgsContext';
 import { spWebContext } from '../../providers/SPWebContext';
 import DateUtilities from '../../utilities/DateUtilities';
-import { SPPersona } from '../Activities/ActivityPeoplePicker';
 import CardAccordion from '../CardAccordion/CardAccordion';
-import { PeoplePicker } from '../PeoplePicker/PeoplePicker';
+import { PeoplePicker, SPPersona } from '../PeoplePicker/PeoplePicker';
 import './Report.css';
 
 export interface IReportProps {
