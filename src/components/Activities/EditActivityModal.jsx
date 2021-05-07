@@ -27,7 +27,8 @@ class EditActivityModal extends Component {
         return {
           text: OPR.Title,
           imageInitials: OPR.Title.substr(OPR.Title.indexOf(' ') + 1, 1) + OPR.Title.substr(0, 1),
-          SPUserId: OPR.Id
+          SPUserId: OPR.Id,
+          Email: OPR.Email
         }
       })
     }
