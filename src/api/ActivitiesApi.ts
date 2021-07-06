@@ -6,6 +6,7 @@ import { spWebContext } from '../providers/SPWebContext';
 import DateUtilities from '../utilities/DateUtilities';
 import ActivitiesApiDev from './ActivitiesApiDev';
 
+// test comment, super cool
 export interface UserInfo {
   Id: string,
   Title: string,
