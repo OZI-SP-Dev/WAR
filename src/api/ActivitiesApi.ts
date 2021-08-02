@@ -156,7 +156,8 @@ export default class ActivitiesApi implements IActivityApi {
       conditions.push(`<Geq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${startDate.subtract(1, 'day').toISOString()}</Value></Geq>`);
     }
     if (endDate) {
-      conditions.push(`<Leq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${endDate.toISOString()}</Value></Leq>`);
+      // change endDate to be the day after the start of the week so that it does not erroneously include activities from the succeeding week
+      conditions.push(`<Leq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${endDate.startOf('week').add(1, 'day').toISOString()}</Value></Leq>`);
     }
     if (isHistory) {
       conditions.push("<Eq><FieldRef Name='IsHistoryEntry'/><Value Type='Boolean'>1</Value></Eq>");
