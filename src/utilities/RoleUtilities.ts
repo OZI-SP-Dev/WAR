@@ -119,6 +119,7 @@ export default class RoleUtilities {
         let userIsOPRId = activity.OPRsId && activity.OPRsId.results.some(id => id === parseInt(user.Id));
         let userHasRights = activity.Branch && user.UsersRoles.some(role => activity.Branch.includes(role.department));
         return isNew || userIsAuthor || userIsOPR || userIsOPRId || userHasRights;
+
     }
 
     /**

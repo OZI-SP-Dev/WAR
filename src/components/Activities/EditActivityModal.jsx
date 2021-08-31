@@ -10,7 +10,7 @@ import { PeoplePicker } from '../PeoplePicker/PeoplePicker';
 class EditActivityModal extends Component {
   constructor(props) {
     super(props);
-    let weekStart = DateUtilities.getStartOfWeek(this.props.activity.WeekOf);
+    let weekStart = DateUtilities.getStartOfWeek(this.props.activity?.WeekOf);
     this.state = {
       activity: { ...props.activity },
       validated: false,
