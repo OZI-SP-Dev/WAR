@@ -11,7 +11,8 @@ export interface UserInfo {
   Id: string,
   Title: string,
   SPUserId?: string,
-  text?: string
+  text?: string,
+  Email?: string
 }
 
 export interface UserList {

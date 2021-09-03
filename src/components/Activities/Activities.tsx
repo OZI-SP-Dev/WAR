@@ -1,9 +1,7 @@
 import { Moment } from "moment";
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Row, Spinner } from "react-bootstrap";
 import { ActivitiesApiConfig, IActivity } from "../../api/ActivitiesApi";
-import { UserPreferencesApiConfig } from "../../api/UserPreferencesApi";
 import ActivityUtilities from "../../utilities/ActivityUtilities";
 import DateUtilities from "../../utilities/DateUtilities";
 import RoleUtilities, { IUserRole } from "../../utilities/RoleUtilities";
@@ -15,7 +13,7 @@ export interface IActivitiesProps {
   user: IUserRole
 }
 
-export const Activities: React.FunctionComponent<IActivitiesProps> = (props: IActivitiesProps) => {
+export const Activities: React.FunctionComponent<IActivitiesProps> = (props) => {
 
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -172,9 +170,9 @@ export const Activities: React.FunctionComponent<IActivitiesProps> = (props: IAc
           <ActivityAccordion
             key={date.toISOString()}
             weekOf={date}
-            actions={activities}
+            activities={activities}
             newButtonOnClick={() => newItem(date)}
-            cardOnClick={(action: IActivity) => cardOnClick(action)}
+            cardOnClick={(activity: IActivity) => cardOnClick(activity)}
             disableNewButton={showEditModal}
             showNewButton={date >= minCreateDate}
             copyOnClick={(activity: IActivity) => newItem(DateUtilities.getStartOfWeek(), activity)}

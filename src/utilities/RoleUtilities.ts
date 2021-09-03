@@ -111,13 +111,13 @@ export default class RoleUtilities {
      * @param activity The IActivity that is being checked for editability by the given user.
      * @param user The user trying to edit the given IActivity.
      */
-    static isActivityEditable(activity: IActivity, user: IUserRole) {
+    static isActivityEditable(activity: IActivity, user: IUserRole): boolean {
         let isNew = activity.Id < 0;
-        let userIsAuthor = activity.AuthorId && parseInt(activity.AuthorId) === parseInt(user.Id);
+        let userIsAuthor = activity.AuthorId !== undefined && parseInt(activity.AuthorId) === parseInt(user.Id);
         let userIsOPR = activity.OPRs && activity.OPRs.results.some(info => parseInt(info.Id) === parseInt(user.Id));
         // newly created activities don't have the OPRs field so we need to check the OPRsId field as well
         let userIsOPRId = activity.OPRsId && activity.OPRsId.results.some(id => id === parseInt(user.Id));
-        let userHasRights = activity.Branch && user.UsersRoles.some(role => activity.Branch.includes(role.department));
+        let userHasRights = activity.Branch?.length > 0 && user.UsersRoles.some(role => activity.Branch.includes(role.department));
         return isNew || userIsAuthor || userIsOPR || userIsOPRId || userHasRights;
 
     }

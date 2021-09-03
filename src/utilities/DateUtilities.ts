@@ -39,8 +39,8 @@ export default class DateUtilities {
    * If undefined then it will return the current week's beginning date. If the string is not formatted in a Moment recognized way then
    * this will likely throw an error.
    */
-  static getStartOfWeek(date?: string | Moment | Date): Moment {
-    return moment(date).utc().day(0).startOf('day');
+  static getStartOfWeek(date?: string | Moment | Date | null): Moment {
+    return moment(date ? date : undefined).utc().day(0).startOf('day');
   }
 
   /**
@@ -68,5 +68,9 @@ export default class DateUtilities {
       week.push(this.momentToDate(moment(weekStart).day(i)));
     }
     return week;
+  }
+
+  static datesAreEqual(date1: Moment, date2: Moment): boolean {
+    return date1.isSame(date2, 'days');
   }
 }

@@ -21,6 +21,8 @@ function CustomToggle({ children, className, eventKey, as, defaultOpen }: ICusto
 
     useEffect(() => {
         if ((!open && defaultOpen) || (open && !defaultOpen)) {
+            // TODO: Fix this whole component
+            // @ts-ignore this is painful, but we don't have an event to supply and it is requesting one but works fine without one
             accordionOnClick();
         }
     }, [defaultOpen]);
