@@ -48,7 +48,6 @@ export const ActivityModal: React.FunctionComponent<IActivityModalProps> = (prop
                 handleSubmit={props.handleDelete}
                 submitting={props.deleting || props.saving}
                 handleClosePopoverClick={() => setShowDeletePopover(false)}
-                handleClickOutside={() => setShowDeletePopover(false)}
                 buttonVariant="danger"
               />
               <Button
