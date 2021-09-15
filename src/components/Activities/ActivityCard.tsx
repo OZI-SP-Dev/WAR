@@ -37,8 +37,9 @@ export const ActivityCard: React.FunctionComponent<IActivityCardProps> = (props)
                             handleSubmit={(e: any) => {
                                 e.stopPropagation(); // don't want the card's onClick to be called
                                 setShowCopyPopover(false);
-                                if (props.copyOnClick)
+                                if (props.copyOnClick) {
                                     props.copyOnClick(props.activity);
+                                }
                             }}
                             handleClosePopoverClick={() => setShowCopyPopover(false)}
                             buttonVariant="primary"

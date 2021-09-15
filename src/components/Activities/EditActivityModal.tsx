@@ -99,9 +99,6 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (pr
   const onDateChange = (date: Date | Moment | string | null) => {
     let selectedDate = DateUtilities.getStartOfWeek(date);
     let highlightDates = DateUtilities.getWeek(selectedDate);
-    //let newActivity = { ...activity };
-    //activity.InputWeekOf = selectedDate;
-    //setActivity(newActivity);
     setSelectedDate(DateUtilities.momentToDate(selectedDate));
     setHighlightDates(highlightDates);
   }
