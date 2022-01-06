@@ -88,13 +88,14 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (pr
 
   const validateActivity = () => {
     const form = document.getElementById("EditActivityModal");
-    if (form instanceof HTMLSelectElement && form.checkValidity() === false || isOPRInvalid()) {
-      setValidated(true);
-    } else {
+    if ((form instanceof HTMLFormElement && form.checkValidity() === true) && !isOPRInvalid()) {
       props.submitEditActivity(activity);
       setValidated(false);
+    } else {
+      setValidated(true);
     }
   }
+
 
   const onDateChange = (date: Date | Moment | string | null) => {
     let selectedDate = DateUtilities.getStartOfWeek(date);
