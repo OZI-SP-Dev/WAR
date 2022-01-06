@@ -36,6 +36,7 @@ export default class ActivityUtilities {
 				return OPR.Id;
 			} else if (OPR.Email) {
 				let ensuredUser = await spWebContext.ensureUser(OPR.Email);
+				OPR.Id =  ensuredUser.data.Id; // Set the ID so we don't look up user again when editing a new item
 				return ensuredUser.data.Id;
 			}
 		});

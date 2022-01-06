@@ -73,7 +73,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (pr
     newActivity.OPRs = {
       results: value.map((newOPR) => {
         return {
-          Id: newOPR.SPUserId ? newOPR.SPUserId : '-1',
+          Id: newOPR.SPUserId ? newOPR.SPUserId : '', // Don't set to "-1" if not found or it will not try resolving in buildActivities
           Title: newOPR.text ? newOPR.text : '',
           Email: newOPR.Email
         }
