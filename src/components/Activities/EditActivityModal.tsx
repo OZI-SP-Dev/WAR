@@ -56,7 +56,6 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (pr
     editActivity.OPRs = {
       results: props.activity.OPRs ? [...props.activity.OPRs.results] : []
     };
-    //editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
     setActivity(editActivity);
     setValidated(false);
     setSelectedDate(DateUtilities.momentToDate(weekStart));
@@ -101,6 +100,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (pr
     let selectedDate = DateUtilities.getStartOfWeek(date);
     let highlightDates = DateUtilities.getWeek(selectedDate);
     setSelectedDate(DateUtilities.momentToDate(selectedDate));
+    updateActivity(selectedDate.toISOString(),'WeekOf');
     setHighlightDates(highlightDates);
   }
 
