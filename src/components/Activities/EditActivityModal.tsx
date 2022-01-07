@@ -56,7 +56,6 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (pr
     editActivity.OPRs = {
       results: props.activity.OPRs ? [...props.activity.OPRs.results] : []
     };
-    //editActivity.InputWeekOf = editActivity.WeekOf.split('T', 1)[0];
     setActivity(editActivity);
     setValidated(false);
     setSelectedDate(DateUtilities.momentToDate(weekStart));
@@ -73,7 +72,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (pr
     newActivity.OPRs = {
       results: value.map((newOPR) => {
         return {
-          Id: newOPR.SPUserId ? newOPR.SPUserId : '-1',
+          Id: newOPR.SPUserId ? newOPR.SPUserId : '', // Don't set to "-1" if not found or it will not try resolving in buildActivities
           Title: newOPR.text ? newOPR.text : '',
           Email: newOPR.Email
         }
@@ -88,18 +87,20 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (pr
 
   const validateActivity = () => {
     const form = document.getElementById("EditActivityModal");
-    if (form instanceof HTMLSelectElement && form.checkValidity() === false || isOPRInvalid()) {
-      setValidated(true);
-    } else {
+    if ((form instanceof HTMLFormElement && form.checkValidity() === true) && !isOPRInvalid()) {
       props.submitEditActivity(activity);
       setValidated(false);
+    } else {
+      setValidated(true);
     }
   }
+
 
   const onDateChange = (date: Date | Moment | string | null) => {
     let selectedDate = DateUtilities.getStartOfWeek(date);
     let highlightDates = DateUtilities.getWeek(selectedDate);
     setSelectedDate(DateUtilities.momentToDate(selectedDate));
+    updateActivity(selectedDate.toISOString(),'WeekOf');
     setHighlightDates(highlightDates);
   }
 

@@ -9,13 +9,13 @@ export default class ActivityUtilities {
 	 * This method will turn all of the raw input data fields into the nicely formatted data that the API needs.
 	 * 
 	 * @param activity The activity as built from the input forms.
-	 * it needs {Id: number, Title: string, InputWeekOf: string | Moment, Branch: string, ActionTaken: string, IsMarEntry: boolean, IsHistoryEntry: boolean}
+	 * it needs {Id: number, Title: string, WeekOf: string | Moment, Branch: string, ActionTaken: string, IsMarEntry: boolean, IsHistoryEntry: boolean}
 	 */
 	static async buildActivity(activity: any): Promise<IActivity> {
 		let builtActivity: any = {
 			Id: activity.Id,
 			Title: activity.Title,
-			WeekOf: DateUtilities.getDate(activity.InputWeekOf).day(0).toISOString(),
+			WeekOf: DateUtilities.getDate(activity.WeekOf).day(0).toISOString(),
 			Branch: activity.Branch,
 			ActionTaken: activity.ActionTaken.trim(),
 			IsMarEntry: activity.IsMarEntry,
@@ -36,6 +36,7 @@ export default class ActivityUtilities {
 				return OPR.Id;
 			} else if (OPR.Email) {
 				let ensuredUser = await spWebContext.ensureUser(OPR.Email);
+				OPR.Id =  ensuredUser.data.Id; // Set the ID so we don't look up user again when editing a new item
 				return ensuredUser.data.Id;
 			}
 		});
