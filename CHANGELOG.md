@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.36] - 2021-01-10
+### Fixed
+- Correctly show Active item in NavBar
+- Correctly Route to specific role in RoleManagement
+
+## [1.0.35] - 2021-01-07
+### Fixed
+- Correctly allow multiple OPRs to be saved
+- Correctly save activities selected as Previous with Previous Week Of
+- Fix to allow the Validation Checks to run properly
+
 ## [1.0.34] - 2020-12-02
 ### Fixed
 - Dependency vulnerabilities in package.json
