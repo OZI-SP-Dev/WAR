@@ -57,7 +57,7 @@ class App extends Component {
                                 <WeeklyReport user={user} />)}
                           </UserContext.Consumer>
                         </Route>
-                        <Route path="/RoleManagement">
+                        <Route path="/RoleManagement/:role?">
                           <UserContext.Consumer>
                             {user => (
                               user.loading ?
