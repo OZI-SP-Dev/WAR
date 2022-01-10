@@ -33,27 +33,29 @@ function AppHeader() {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <LinkContainer to="/">
+          <LinkContainer exact to="/">
             <Nav.Link>Home</Nav.Link>
           </LinkContainer>
-          <NavDropdown title="Reports" id="basic-nav-dropdown">
-            <LinkContainer to="/Activities">
-              <NavDropdown.Item>Activities</NavDropdown.Item>
-            </LinkContainer>
-            <LinkContainer to="/Review">
-              <NavDropdown.Item>Review</NavDropdown.Item>
-            </LinkContainer>
-            <NavDropdown.Divider />
-            <LinkContainer to="/WAR">
-              <NavDropdown.Item>WAR</NavDropdown.Item>
-            </LinkContainer>
-            <LinkContainer to="/MAR">
-              <NavDropdown.Item>MAR</NavDropdown.Item>
-            </LinkContainer>
-            <LinkContainer to="HistoryReport">
-              <NavDropdown.Item>History</NavDropdown.Item>
-            </LinkContainer>
-          </NavDropdown>
+          <LinkContainer to="/:isReport(Activities|Review|WAR|MAR|HistoryReport)">
+            <NavDropdown  title="Reports" id="basic-nav-dropdown">
+              <LinkContainer to="/Activities">
+                <NavDropdown.Item>Activities</NavDropdown.Item>
+              </LinkContainer>
+              <LinkContainer to="/Review">
+                <NavDropdown.Item>Review</NavDropdown.Item>
+              </LinkContainer>
+              <NavDropdown.Divider />
+              <LinkContainer to="/WAR">
+                <NavDropdown.Item>WAR</NavDropdown.Item>
+              </LinkContainer>
+              <LinkContainer to="/MAR">
+                <NavDropdown.Item>MAR</NavDropdown.Item>
+              </LinkContainer>
+              <LinkContainer to="HistoryReport">
+                <NavDropdown.Item>History</NavDropdown.Item>
+              </LinkContainer>
+            </NavDropdown>
+          </LinkContainer>
           <ContactUsContext.Consumer>
             {ContactUs => (
               <OverlayTrigger
