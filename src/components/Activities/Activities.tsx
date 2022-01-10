@@ -61,7 +61,6 @@ export const Activities: React.FunctionComponent<IActivitiesProps> = (props) => 
       Id: -1,
       Title: activity ? "Copy of " + activity.Title : '',
       WeekOf: DateUtilities.getStartOfWeek(date).toISOString(),
-      // InputWeekOf: DateUtilities.getDate(date).format("YYYY-MM-DD"),
       Branch: activity ? activity.Branch : props.user.UserPreferences.DefaultOrg ? props.user.UserPreferences.DefaultOrg : '',
       ActionTaken: activity ? activity.ActionTaken : '',
       IsMarEntry: false,
