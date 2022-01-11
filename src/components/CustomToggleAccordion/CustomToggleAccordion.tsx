@@ -1,38 +1,6 @@
 import React, { ElementType, useEffect, useState } from "react";
-import { Accordion, Badge, useAccordionToggle } from "react-bootstrap";
+import { Accordion, Badge } from "react-bootstrap";
 
-interface ICustomToggleProps {
-    children: any,
-    className?: string,
-    eventKey: any,
-    as: ElementType,
-    defaultOpen?: boolean
-}
-
-function CustomToggle({ children, className, eventKey, as, defaultOpen }: ICustomToggleProps) {
-    const [open, setOpen] = useState<boolean>(defaultOpen === undefined ? true : defaultOpen);
-    const accordionOnClick = useAccordionToggle(eventKey, () =>
-        onClick()
-    );
-
-    const onClick = () => {
-        setOpen(!open)
-    }
-
-    useEffect(() => {
-        if ((!open && defaultOpen) || (open && !defaultOpen)) {
-            // TODO: Fix this whole component
-            // @ts-ignore this is painful, but we don't have an event to supply and it is requesting one but works fine without one
-            accordionOnClick();
-        }
-    }, [defaultOpen]);
-
-    const arrow = <div className={open ? 'arrow-down float-right' : 'arrow-right float-right'} />
-
-    return (
-        React.createElement(as, { className, style: { cursor: 'pointer' }, onClick: accordionOnClick }, children, arrow)
-    )
-}
 
 export interface ICustomToggleAccordionProps {
     children: any,
@@ -46,17 +14,30 @@ export interface ICustomToggleAccordionProps {
 
 export const CustomToggleAccordion: React.FunctionComponent<ICustomToggleAccordionProps> = (props) => {
 
+    let [isOpen,setOpen]=useState((props.defaultOpen || props.defaultOpen === undefined) ? "0" : "");
+
+    const accordionClicked = () => {
+        setOpen((isOpen
+            )=>(isOpen ? "" : "0"));
+    }
+
+    // If the defaultOpen value changes, then set the open/close status accordingly
+    useEffect(() => {
+            setOpen((props.defaultOpen || props.defaultOpen === undefined) ? "0" : "");
+    }, [props.defaultOpen]);
+
     return (
-        <Accordion defaultActiveKey={props.defaultOpen || props.defaultOpen === undefined ? "0" : ""} className={props.className}>
-            <CustomToggle
+        <Accordion activeKey={isOpen} className={props.className}>
+            <Accordion.Toggle
                 eventKey="0"
                 as={props.as}
-                defaultOpen={props.defaultOpen || props.defaultOpen === undefined}
                 className={props.headerClassName}
+                onClick={accordionClicked}
             >
                 {props.header}
                 {props.badge && <Badge className="ml-2" variant="secondary">{props.badge}</Badge>}
-            </CustomToggle>
+                <div className={isOpen ? 'arrow-down float-right' : 'arrow-right float-right'} />
+            </Accordion.Toggle>
             <Accordion.Collapse eventKey="0">
                 {props.children}
             </Accordion.Collapse>
