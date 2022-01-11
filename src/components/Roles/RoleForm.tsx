@@ -1,6 +1,5 @@
 import "@pnp/sp/profiles";
 import { IPersonaProps } from 'office-ui-fabric-react/lib/Persona';
-import { IBasePickerSuggestionsProps } from 'office-ui-fabric-react/lib/Pickers';
 import * as React from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { IRole, RolesApiConfig } from "../../api/RolesApi";
