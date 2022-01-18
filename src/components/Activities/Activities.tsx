@@ -143,6 +143,7 @@ export const Activities: React.FunctionComponent<IActivitiesProps> = (props) => 
 
   useEffect(() => {
     fetchItems(4, DateUtilities.getStartOfWeek());
+    // eslint-disable-next-line --- OK to ingore for now as will only run once at load
   }, []);
 
   return (
