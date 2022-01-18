@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import { Button, Col, Form, FormCheck, Row, Spinner } from "react-bootstrap";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
@@ -102,7 +102,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
         getOpr(); // eslint-disable-next-line
     }, [props.defaultOpr])
 
-    const StartDatePickerCustomInput = ({ value }: any) => (
+    const StartDatePickerCustomInput = forwardRef(({ value } : any, ref) => (
         <>
             <Form.Label>Search Week Start</Form.Label>
             <Form.Control
@@ -110,9 +110,9 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                 value={value}
                 onClick={startDatePickerOnClick}
             />
-        </>);
+        </>));
 
-    const EndDatePickerCustomInput = ({ value }: any) => (
+    const EndDatePickerCustomInput = forwardRef(({ value } : any, ref) => (
         <>
             <Form.Label>Search Week End</Form.Label>
             <Form.Control
@@ -120,7 +120,7 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (props: ISe
                 value={value}
                 onClick={endDatePickerOnClick}
             />
-        </>);
+        </>));
 
     return (
         <Form className={"mb-3"}>
