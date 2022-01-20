@@ -38,7 +38,7 @@ export const Activities: React.FunctionComponent<IActivitiesProps> = (props) => 
 
   const fetchItems = async (numWeeks: number, weekStart: Moment) => {
     try {
-      let items = await activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, parseInt(props.user.Id));
+      let items = await activitiesApi.fetchActivitiesByNumWeeks(numWeeks, weekStart, props.user.Id);
       let results = items.results;
       while (items.hasNext) {
         items = await items.getNext();

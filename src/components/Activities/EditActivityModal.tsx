@@ -35,7 +35,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (pr
   const [datePickerOpen, setDatePickerOpen] = useState<boolean>(false);
 
   const convertOPRsToPersonas = (OPRs?: UserList) => {
-    let personas: { text: string; imageInitials: string; SPUserId: string; Email: any; }[] = [];
+    let personas: SPPersona[] = [];
     if (OPRs && OPRs.results) {
       personas = OPRs.results.map(OPR => {
         return {
@@ -72,7 +72,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (pr
     newActivity.OPRs = {
       results: value.map((newOPR) => {
         return {
-          Id: newOPR.SPUserId ? newOPR.SPUserId : '', // Don't set to "-1" if not found or it will not try resolving in buildActivities
+          Id: newOPR.SPUserId ? newOPR.SPUserId : 0, // Set to 0 if not defined -- we can then look up the user when processing
           Title: newOPR.text ? newOPR.text : '',
           Email: newOPR.Email
         }

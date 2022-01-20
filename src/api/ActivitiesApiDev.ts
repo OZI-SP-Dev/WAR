@@ -15,7 +15,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 			IsMarEntry: false, 
 			IsHistoryEntry: true,
 			AuthorId: '1',
-			OPRs: { results: [{ Id: '1', Title: 'Robert Porterfield' }, { Id: '2', Title: 'Jeremy Clark' }] },
+			OPRs: { results: [{ Id: 1, Title: 'Robert Porterfield' }, { Id: 2, Title: 'Jeremy Clark' }] },
 			__metadata: {etag: '"1"'}
 		},
 		{
@@ -27,7 +27,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 			IsMarEntry: false, 
 			IsHistoryEntry: false,
 			AuthorId: '2',
-			OPRs: { results: [{ Id: '1', Title: 'Robert Porterfield' }] },
+			OPRs: { results: [{ Id: 1, Title: 'Robert Porterfield' }] },
 			__metadata: { etag: '"1"' }
 		},
 		{
@@ -39,7 +39,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 			IsMarEntry: true, 
 			IsHistoryEntry: true,
 			AuthorId: '1',
-			OPRs: { results: [{ Id: '2', Title: 'Jeremy Clark' }] },
+			OPRs: { results: [{ Id: 2, Title: 'Jeremy Clark' }] },
 			__metadata: { etag: '"1"' }
 		}
 	];
@@ -88,7 +88,7 @@ export default class ActivitiesApiDev implements IActivityApi {
 		}
 		if (activity.OPRsId) {
 			let results: UserInfo[] = activity.OPRsId.results.map((OPRId, index) => {
-				return { Id: index.toString(), Title: "Some Title" }
+				return { Id: index, Title: "Some Title" }
 			});
 			activity.OPRs = { results: results };
 		}
