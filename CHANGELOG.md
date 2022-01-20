@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
+## [1.0.37] - 2021-01-20
+### Fixed
+- Removed hardcoded SharePoint URL and instead utilize the current hosted Web
+- Update Id and SPUserId to be number field types to match what SP provides back
+- Added a basic error catch wrapper around adding a new role to fix TS error and catch any SP server errors
+
 ## [1.0.36] - 2021-01-10
 ### Fixed
 - Correctly show Active item in NavBar
