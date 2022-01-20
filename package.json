@@ -29,7 +29,6 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build:war-dev": "env-cmd -f ./.env.war-dev.json react-scripts build&&npm run mergeaspx",
     "build:war-test": "env-cmd -f ./.env.war-test.json react-scripts build&&npm run mergeaspx",
     "build:war-prod": "react-scripts build&&npm run mergeaspx",
     "mergeaspx": "(cat build/index.html >> build/index.aspx)&&(rm build/index.html)",
