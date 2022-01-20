@@ -67,7 +67,7 @@ export default class RolesApi implements IRolesApi {
 		}
 		else
 		{
-			// If the people picker doesn't return an eamil address for the user, we can't look them up ensure
+			// If the people picker doesn't return an email address for the user, we can't look them up ensure
 			throw Error("Failed to add user.  Unable to locate email address for selected user.");
 		}
 	}
