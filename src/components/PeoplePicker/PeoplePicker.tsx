@@ -21,7 +21,7 @@ export interface SPPersona extends IPersonaProps {
 	AccountName?: string,
 	Department?: string,
 	Email?: string,
-	SPUserId?: string
+	SPUserId?: number
 }
 
 interface IPeoplePickerProps {
@@ -67,11 +67,6 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 			if (process.env.NODE_ENV === 'development') {
 				filteredPersonas = filterPromise(filterPersonasByText(filterText));
 			} else {
-				sp.setup({
-					sp: {
-						baseUrl: process.env.REACT_APP_API_URL
-					}
-				});
 				const results = await sp.profiles.clientPeoplePickerSearchUser({
 					AllowEmailAddresses: false,
 					AllowMultipleEntities: false,

@@ -8,9 +8,9 @@ import ActivitiesApiDev from './ActivitiesApiDev';
 
 // test comment, super cool
 export interface UserInfo {
-  Id: string,
+  Id: number,
   Title: string,
-  SPUserId?: string,
+  SPUserId?: number,
   text?: string,
   Email?: string
 }

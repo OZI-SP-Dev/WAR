@@ -31,7 +31,7 @@ export interface IRole extends IPersonaProps {
 	AccountName?: string, 
 	Department?: string, // The Org/Branch/Department that the User will have the Role for
 	Email?: string, // The Email of the user
-	SPUserId?: string, // The ID of the user
+	SPUserId?: number, // The ID of the user
 	ItemID?: number
 }
 
@@ -40,7 +40,7 @@ export default class RolesApi implements IRolesApi {
 
 	async fetchRoles(): Promise<any> {
 		const spRoles = await this.rolesList.items.select("Id", "Title", "User/Title", "User/Id", "Department").expand("User").get();
-		let roles: IRole[] = spRoles.map((role: { Id: number, Title: string; User: { Title: string; Id: string; }, Department: string }) => {
+		let roles: IRole[] = spRoles.map((role: { Id: number, Title: string; User: { Title: string; Id: number; }, Department: string }) => {
 			const newRole: IRole = {
 				imageInitials: role.User.Title.substr(role.User.Title.indexOf(' ') + 1, 1) + role.User.Title.substr(0, 1),
 				RoleName: role.Title,
@@ -56,12 +56,20 @@ export default class RolesApi implements IRolesApi {
 		return roles;
 	}
 
-	async addRole(role: IRole): Promise<any> {
-		let ensuredUser = await spWebContext.ensureUser(role.Email);
-		console.log(ensuredUser);
-		role.SPUserId = ensuredUser.data.Id;
-		// Let the Department field be null if it is for an Admin role, otherwise the roles should have a Department
-		return this.rolesList.items.add({ Title: role.RoleName, UserId: role.SPUserId, Department: role.RoleName === RoleUtilities.ADMIN ? null : role.Department });
+	async addRole(role: IRole): Promise<any> { 
+		if(role.Email)
+		{
+			let ensuredUser = await spWebContext.ensureUser(role.Email);
+			console.log(ensuredUser);
+			role.SPUserId = ensuredUser.data.Id;
+			// Let the Department field be null if it is for an Admin role, otherwise the roles should have a Department
+			return this.rolesList.items.add({ Title: role.RoleName, UserId: role.SPUserId, Department: role.RoleName === RoleUtilities.ADMIN ? null : role.Department });
+		}
+		else
+		{
+			// If the people picker doesn't return an email address for the user, we can't look them up ensure
+			throw Error("Failed to add user.  Unable to locate email address for selected user.");
+		}
 	}
 
 	removeRole(roleId: number): Promise<any> {

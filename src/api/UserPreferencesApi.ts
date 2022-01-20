@@ -8,7 +8,7 @@ export interface IUserPreferencesApi {
      * 
      * @param userId The ID of the user whose IUserPreferences will be returned
      */
-    fetchPreferences(userId: string): Promise<IUserPreferences | null | undefined>,
+    fetchPreferences(userId: number): Promise<IUserPreferences | null | undefined>,
 
     /**
      * Submits IUserPreferences for the given user. If the user already has IUserPreferences then it will update the existing preferences.
@@ -17,15 +17,15 @@ export interface IUserPreferencesApi {
      * @param userId 
      * @param defaultOrg 
      */
-    submitPreferences(userId: string, defaultOrg: string): Promise<any>
+    submitPreferences(userId: number, defaultOrg: string): Promise<any>
 }
 
 export interface IUserPreferences {
-    Id: string,
+    Id: number,
     Title: string,
     User: {
         Title: string,
-        Id: string
+        Id: number
     },
     DefaultOrg: string,
     updateDefaultOrg?: (defaultOrg: string) => void
@@ -34,19 +34,19 @@ export interface IUserPreferences {
 export default class UserPreferencesApi implements IUserPreferencesApi {
     userPreferencesList = spWebContext.lists.getByTitle("UserPreferences");
 
-    async fetchPreferences(userId: string): Promise<IUserPreferences | null> {
+    async fetchPreferences(userId: number): Promise<IUserPreferences | null> {
         let userPreferences: IUserPreferences[] = await this.userPreferencesList.items.select("Id", "Title", "User/Title", "User/Id", "DefaultOrg").expand("User").filter(`UserId eq ${userId}`).get();
         return userPreferences.length > 0 ? userPreferences[0] : null;
     }
 
-    async submitPreferences(userId: string, defaultOrg: string): Promise<any> {
+    async submitPreferences(userId: number, defaultOrg: string): Promise<any> {
         let userPreferences: IUserPreferences | null = await this.fetchPreferences(userId);
         if (userPreferences) {
             return this.userPreferencesList.items.getById(userPreferences.Id).update({ DefaultOrg: defaultOrg });
         } else {
             return this.userPreferencesList.items.add({
                 Title: `${userId}`,
-                UserId: `${userId}`,
+                UserId: userId,
                 DefaultOrg: defaultOrg
             });
         }

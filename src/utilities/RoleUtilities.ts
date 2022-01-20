@@ -5,7 +5,7 @@ import DateUtilities from "./DateUtilities";
 
 export interface IUserRole {
     Title: string,
-    Id: string,
+    Id: number,
     Email: string,
     UsersRoles: { role: string, department: string }[],
     UserPreferences: IUserPreferences
@@ -113,10 +113,10 @@ export default class RoleUtilities {
      */
     static isActivityEditable(activity: IActivity, user: IUserRole): boolean {
         let isNew = activity.Id < 0;
-        let userIsAuthor = activity.AuthorId !== undefined && parseInt(activity.AuthorId) === parseInt(user.Id);
-        let userIsOPR = activity.OPRs && activity.OPRs.results.some(info => parseInt(info.Id) === parseInt(user.Id));
+        let userIsAuthor = activity.AuthorId !== undefined && parseInt(activity.AuthorId) === user.Id;
+        let userIsOPR = activity.OPRs && activity.OPRs.results.some(info => info.Id === user.Id);
         // newly created activities don't have the OPRs field so we need to check the OPRsId field as well
-        let userIsOPRId = activity.OPRsId && activity.OPRsId.results.some(id => id === parseInt(user.Id));
+        let userIsOPRId = activity.OPRsId && activity.OPRsId.results.some(id => id === user.Id);
         let userHasRights = activity.Branch?.length > 0 && user.UsersRoles.some(role => activity.Branch.includes(role.department));
         return isNew || userIsAuthor || userIsOPR || userIsOPRId || userHasRights;
 
