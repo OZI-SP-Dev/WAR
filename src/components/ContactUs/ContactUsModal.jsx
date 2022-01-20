@@ -32,11 +32,6 @@ export const ContactUsModal = (props) => {
 	const sendEmail = () => {
 		//call sharepoint function
 		setSending(true);
-		sp.setup({
-			sp: {
-				baseUrl: process.env.REACT_APP_API_URL
-			}
-		});
 		let sendmailProps = { ...emailProps };
 		//use regex in order to replace all
 		sendmailProps.Body = sendmailProps.Body
