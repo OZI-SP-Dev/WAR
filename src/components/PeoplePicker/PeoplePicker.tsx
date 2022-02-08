@@ -65,7 +65,7 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 		if (filterText) {
 			let filteredPersonas: IPersonaProps[] | Promise<IPersonaProps[]>;
 			if (process.env.NODE_ENV === 'development') {
-				filteredPersonas = filterPromise(filterPersonasByText(filterText));
+				filteredPersonas = filterPersonasByText(filterText);
 			} else {
 				const results = await sp.profiles.clientPeoplePickerSearchUser({
 					AllowEmailAddresses: false,
@@ -85,11 +85,25 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 					};
 					newPersonas.push(persona);
 				});
+
 				filteredPersonas = [
 					...cachedPeople.getCachedPeople().filter(p => p.text?.toLowerCase().includes(filterText.toLowerCase())),
 					...newPersonas
 				];
+
 			}
+
+			// If people were already selected, then do not list them as possible additions
+			if (currentPersonas && filteredPersonas) {
+				filteredPersonas = removeDuplicates(filteredPersonas, currentPersonas)
+			}
+
+			// Build in a delay if in the dev environment
+			if (process.env.NODE_ENV === 'development') 
+			{
+				filteredPersonas = filterPromise(filteredPersonas);
+			}
+
 			return filteredPersonas;
 		} else {
 			return [];
@@ -115,6 +129,17 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 
 	const isInvalid = (): boolean => {
 		return selectedItems.length ? false : true;
+	}
+
+	const removeDuplicates = (personas: IPersonaProps[], possibleDupes: IPersonaProps[]): IPersonaProps[] => {
+		return personas.filter(persona => !listContainsPersona(persona, possibleDupes));
+	}
+
+	const listContainsPersona = (persona: IPersonaProps, personas: IPersonaProps[]): boolean => {
+		if (!personas || !personas.length || personas.length === 0) {
+			return false;
+		}
+		return personas.filter(item => item.text === persona.text).length > 0;
 	}
 
 	return (
