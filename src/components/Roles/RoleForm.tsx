@@ -9,16 +9,6 @@ import RoleUtilities from '../../utilities/RoleUtilities';
 import { PeoplePicker, SPPersona } from "../PeoplePicker/PeoplePicker";
 import { RolesContext } from "./RolesContext";
 
-const suggestionProps: IBasePickerSuggestionsProps = {
-	suggestionsHeaderText: 'Suggested People',
-	mostRecentlyUsedHeaderText: 'Suggested Contacts',
-	noResultsFoundText: 'No results found',
-	loadingText: 'Loading',
-	showRemoveButtons: true,
-	suggestionsAvailableAlertText: 'People Picker Suggestions available',
-	suggestionsContainerAriaLabel: 'Suggested contacts',
-};
-
 export interface IRoleForm {
 	roleType: string,
 	orgs: string[]
