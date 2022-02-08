@@ -43,7 +43,7 @@ export const RoleForm: React.FunctionComponent<IRoleForm> = ({ roleType, orgs })
 						let newRole: IRole = { ...newpersona };
 						newRole.RoleName = roleType;
 						newRole.Department = selectedDepartment;
-						newRole.text = `${newpersona.text}${roleType !== RoleUtilities.ADMIN && newRole.Department !== null ? " for Department " + newRole.Department : ""}`;
+						newRole.secondaryText = `${roleType !== RoleUtilities.ADMIN && newRole.Department !== null ? " for Department " + newRole.Department : ""}`;
 						let updatedRole = await rolesApi.addRole(newRole);
 						newRole.ItemID = updatedRole.Id || updatedRole.ItemID;
 						newRolesList.push(newRole);
@@ -96,6 +96,7 @@ export const RoleForm: React.FunctionComponent<IRoleForm> = ({ roleType, orgs })
 							<Form.Control.Feedback type='invalid'>Please provide a department for the {roleType}</Form.Control.Feedback>
 						</Form.Group>}
 					<Button className="float-right" onClick={personasPicked}>Add {roleType}</Button>
+
 				</Form>
 			</Col>
 		</Row >
