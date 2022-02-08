@@ -93,8 +93,18 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 					newPersonas.push(persona);
 				});
 
+				// Create list of matching cached suggestions
+				let cachedResults = cachedPeople.getCachedPeople().filter(p => p.text?.toLowerCase().includes(filterText.toLowerCase()));
+
+				// If we have a cached entry, remove the matching entry from newPersonas, so it is only listed once
+				if(cachedResults && newPersonas)
+				{
+					newPersonas = removeDuplicates(newPersonas,cachedResults);
+				}
+
+				// Return a listing of the cached matching entries, followed by the matching user entries
 				filteredPersonas = [
-					...cachedPeople.getCachedPeople().filter(p => p.text?.toLowerCase().includes(filterText.toLowerCase())),
+					...cachedResults,
 					...newPersonas
 				];
 
