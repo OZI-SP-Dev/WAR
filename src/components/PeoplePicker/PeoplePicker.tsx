@@ -34,8 +34,15 @@ interface IPeoplePickerProps {
 
 export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props) => {
 
-	const getEmptyResolveSuggestions = () => {
-		return cachedPeople.getCachedPeople().slice(0, 10);
+	const getEmptyResolveSuggestions = (selectedItems? : IPersonaProps[] | undefined): IPersonaProps[] =>  {
+		let cachedResults = cachedPeople.getCachedPeople();
+
+		//Remove already selected users from the initial suggestions
+		if(selectedItems){
+			cachedResults = removeDuplicates(cachedResults,selectedItems);
+		}
+
+		return cachedResults.slice(0, 10);
 	}
 
 	const removeSuggestion = (person: IPersonaProps) => {
@@ -44,7 +51,7 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 
 	const cachedPeople = useCachedPeople();
 	// I don't quite understand this but updating suggestions makes it update the rendered suggestions
-	const [, setSuggestions] = React.useState<SPPersona[]>(getEmptyResolveSuggestions);
+	const [, setSuggestions] = React.useState<IPersonaProps[]>(getEmptyResolveSuggestions);
 	const [peopleList] = React.useState<IPersonaProps[]>(people);
 	const [selectedItems, setSelectedItems] = React.useState<IPersonaProps[]>([]);
 
