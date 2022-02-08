@@ -62,7 +62,17 @@ export default class RolesApi implements IRolesApi {
 			let ensuredUser = await spWebContext.ensureUser(role.Email);
 			console.log(ensuredUser);
 			role.SPUserId = ensuredUser.data.Id;
-			// Let the Department field be null if it is for an Admin role, otherwise the roles should have a Department
+			
+			// Query SharePoint to see if this user already has the same Role and Department
+			const roles = await this.rolesList.items.select("Id", "Title", "User/Title", "User/Id", "Department").expand("User").filter(`UserId eq ${role.SPUserId} and Title eq '${role.RoleName}' and Department eq '${role.Department}'`).get();
+			
+			// If the user already has this permission, then throw error stating permission already granted
+			if(roles.length >= 1)
+			{
+				throw Error("Failed to add user.  User already exists with that role and department.");
+			}
+			
+			// Let the Departmaent field be null if it is for an Admin role, otherwise the roles should have a Department
 			return this.rolesList.items.add({ Title: role.RoleName, UserId: role.SPUserId, Department: role.RoleName === RoleUtilities.ADMIN ? null : role.Department });
 		}
 		else
