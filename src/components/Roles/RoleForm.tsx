@@ -45,7 +45,8 @@ export const RoleForm: React.FunctionComponent<IRoleForm> = ({ roleType, orgs })
 						newRole.Department = selectedDepartment;
 						newRole.secondaryText = `${roleType !== RoleUtilities.ADMIN && newRole.Department !== null ? " for Department " + newRole.Department : ""}`;
 						let updatedRole = await rolesApi.addRole(newRole);
-						newRole.ItemID = updatedRole.Id || updatedRole.ItemID;
+						// SharePoint returns a data object with Id, the DevApi just returns ItemID
+						newRole.ItemID = updatedRole?.data?.Id || updatedRole.ItemID;
 						newRolesList.push(newRole);
 					}
 					catch(e)
