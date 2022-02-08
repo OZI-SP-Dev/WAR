@@ -4,7 +4,6 @@ import { Button, Form, Nav, Navbar, NavDropdown, OverlayTrigger, Tooltip } from 
 import { LinkContainer } from 'react-router-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { UserContext } from '../../providers/UserProvider';
-import DateUtilities from '../../utilities/DateUtilities';
 import RoleUtilities from '../../utilities/RoleUtilities';
 import { ContactUsContext } from '../ContactUs/ContactUsProvider';
 import './AppHeader.css';
