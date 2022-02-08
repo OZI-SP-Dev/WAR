@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [1.0.38] - 2022-01-20
 ### Fixed
-- User's cannot be added to the same department/role they already hold
+- Users cannot be added to the same department/role they already hold
 - Correctly display user's department after adding them to a role
 - Correctly delete a role entry if it was added and page not refreshed
 - Don't allow user to select the same OPR more than once on an Activity
