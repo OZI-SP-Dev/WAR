@@ -128,12 +128,16 @@ export default class ActivitiesApi implements IActivityApi {
   }
 
   fetchActivitiesByDates(startDate?: Moment, endDate?: Moment, userId?: number, additionalFilter?: string, orderBy?: string, ascending?: boolean): Promise<any> {
-    let filterString = "IsDeleted ne 1"
-    filterString += startDate ? ` and WeekOf ge '${startDate.toISOString()}'` : "";
-    filterString += endDate ? ` and WeekOf le '${endDate.toISOString()}'` : "";
-    filterString += userId && userId !== null ? ` and (AuthorId eq ${userId} or OPRs/Id eq ${userId})` : "";
-    filterString += additionalFilter ? ` and ${additionalFilter}` : "";
-
+    //Order matters. Results must be below the 5,000 item threshold with the FIRST filter
+    let filterArray = [];
+    if (startDate) { filterArray.push(`WeekOf ge '${startDate.toISOString()}'`) };
+    if (endDate) { filterArray.push(`WeekOf le '${endDate.toISOString()}'`) };
+    if (userId && userId !== null) { filterArray.push(`(AuthorId eq ${userId} or OPRs/Id eq ${userId})`) };
+    if (additionalFilter) { filterArray.push(`${additionalFilter}`) };
+    filterArray.push("IsDeleted ne 1");
+    
+    let filterString = filterArray.join(' and ');
+    
     let items: IItems = this.activitiesList.items.select("Id", "Title", "WeekOf", "Branch", "AuthorId", "OPRs/Title", "OPRs/Id", "ActionTaken", "IsMarEntry", "IsHistoryEntry", "IsDeleted").expand("OPRs").filter(filterString);
     items = orderBy && orderBy !== null && orderBy !== "" ? items.orderBy(orderBy, ascending === false ? false : true) : items;
     return items.getPaged();
@@ -145,14 +149,8 @@ export default class ActivitiesApi implements IActivityApi {
    * and https://joshmccarty.com/a-caml-query-quick-reference/
    */
   async fetchActivitiesByQueryString(query: string, org?: string, includeSubOrgs?: boolean, startDate?: Moment, endDate?: Moment, isHistory?: boolean, isMAR?: boolean, userId?: number): Promise<IActivity> {
-
-    let conditions: string[] = ["<Neq><FieldRef Name='IsDeleted'/><Value Type='Boolean'>1</Value></Neq>"];
-    if (query) {
-      conditions.push(`<Contains><FieldRef Name='ActionTaken'/><Value Type='Note'>${query}</Value></Contains>`);
-    }
-    if (org) {
-      conditions.push(`<${includeSubOrgs ? "Contains" : "Eq"}><FieldRef Name='Branch'/><Value Type='Text'>${org}</Value></${includeSubOrgs ? "Contains" : "Eq"}>`);
-    }
+      // Query order matters -- first filter MUST reduce the possible result set to less than 5k items
+    let conditions: string[] = [];
     if (startDate) {
       conditions.push(`<Geq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${startDate.subtract(1, 'day').toISOString()}</Value></Geq>`);
     }
@@ -166,11 +164,19 @@ export default class ActivitiesApi implements IActivityApi {
     if (isMAR) {
       conditions.push("<Eq><FieldRef Name='IsMarEntry'/><Value Type='Boolean'>1</Value></Eq>");
     }
+    if (query) {
+      conditions.push(`<Contains><FieldRef Name='ActionTaken'/><Value Type='Note'>${query}</Value></Contains>`);
+    }
+    if (org) {
+      conditions.push(`<${includeSubOrgs ? "Contains" : "Eq"}><FieldRef Name='Branch'/><Value Type='Text'>${org}</Value></${includeSubOrgs ? "Contains" : "Eq"}>`);
+    }
     if (userId) {
       conditions.push(`<Or><Eq><FieldRef Name='Author' LookupId='True'/><Value Type='Lookup'>${userId}</Value></Eq>
                            <Eq><FieldRef Name='OPRs' LookupId='True'/><Value Type='Lookup'>${userId}</Value></Eq>
                        </Or>`);
     }
+    conditions.push("<Neq><FieldRef Name='IsDeleted'/><Value Type='Boolean'>1</Value></Neq>");
+
     let queryString = "";
     conditions.forEach((condition, i) => {
       queryString += i < conditions.length - 1 ? "<And>" : "";
