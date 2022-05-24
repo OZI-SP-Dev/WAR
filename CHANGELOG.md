@@ -8,18 +8,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 - (Keep your changes here until you have a release version)
 
-## [1.0.37] - 2021-01-20
+## [1.0.38] - 2022-01-20
+### Fixed
+- Users cannot be added to the same department/role they already hold
+- Correctly display user's department after adding them to a role
+- Correctly delete a role entry if it was added and page not refreshed
+- Don't allow user to select the same OPR more than once on an Activity
+- Don't show cached people in PeoplePicker twice
+- Properly clear out PeoplePicker after adding user to a role
+
+### Changed
+- Show spinner while role entry is being added
+
+## [1.0.37] - 2022-01-20
 ### Fixed
 - Removed hardcoded SharePoint URL and instead utilize the current hosted Web
 - Update Id and SPUserId to be number field types to match what SP provides back
 - Added a basic error catch wrapper around adding a new role to fix TS error and catch any SP server errors
 
-## [1.0.36] - 2021-01-10
+## [1.0.36] - 2022-01-10
 ### Fixed
 - Correctly show Active item in NavBar
 - Correctly Route to specific role in RoleManagement
 
-## [1.0.35] - 2021-01-07
+## [1.0.35] - 2022-01-07
 ### Fixed
 - Correctly allow multiple OPRs to be saved
 - Correctly save activities selected as Previous with Previous Week Of

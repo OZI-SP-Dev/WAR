@@ -34,8 +34,15 @@ interface IPeoplePickerProps {
 
 export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props) => {
 
-	const getEmptyResolveSuggestions = () => {
-		return cachedPeople.getCachedPeople().slice(0, 10);
+	const getEmptyResolveSuggestions = (selectedItems? : IPersonaProps[] | undefined): IPersonaProps[] =>  {
+		let cachedResults = cachedPeople.getCachedPeople();
+
+		//Remove already selected users from the initial suggestions
+		if(selectedItems){
+			cachedResults = removeDuplicates(cachedResults,selectedItems);
+		}
+
+		return cachedResults.slice(0, 10);
 	}
 
 	const removeSuggestion = (person: IPersonaProps) => {
@@ -44,7 +51,7 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 
 	const cachedPeople = useCachedPeople();
 	// I don't quite understand this but updating suggestions makes it update the rendered suggestions
-	const [, setSuggestions] = React.useState<SPPersona[]>(getEmptyResolveSuggestions);
+	const [, setSuggestions] = React.useState<IPersonaProps[]>(getEmptyResolveSuggestions);
 	const [peopleList] = React.useState<IPersonaProps[]>(people);
 	const [selectedItems, setSelectedItems] = React.useState<IPersonaProps[]>([]);
 
@@ -65,7 +72,7 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 		if (filterText) {
 			let filteredPersonas: IPersonaProps[] | Promise<IPersonaProps[]>;
 			if (process.env.NODE_ENV === 'development') {
-				filteredPersonas = filterPromise(filterPersonasByText(filterText));
+				filteredPersonas = filterPersonasByText(filterText);
 			} else {
 				const results = await sp.profiles.clientPeoplePickerSearchUser({
 					AllowEmailAddresses: false,
@@ -85,11 +92,35 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 					};
 					newPersonas.push(persona);
 				});
+
+				// Create list of matching cached suggestions
+				let cachedResults = cachedPeople.getCachedPeople().filter(p => p.text?.toLowerCase().includes(filterText.toLowerCase()));
+
+				// If we have a cached entry, remove the matching entry from newPersonas, so it is only listed once
+				if(cachedResults && newPersonas)
+				{
+					newPersonas = removeDuplicates(newPersonas,cachedResults);
+				}
+
+				// Return a listing of the cached matching entries, followed by the matching user entries
 				filteredPersonas = [
-					...cachedPeople.getCachedPeople().filter(p => p.text?.toLowerCase().includes(filterText.toLowerCase())),
+					...cachedResults,
 					...newPersonas
 				];
+
 			}
+
+			// If people were already selected, then do not list them as possible additions
+			if (currentPersonas && filteredPersonas) {
+				filteredPersonas = removeDuplicates(filteredPersonas, currentPersonas)
+			}
+
+			// Build in a delay if in the dev environment
+			if (process.env.NODE_ENV === 'development') 
+			{
+				filteredPersonas = filterPromise(filteredPersonas);
+			}
+
 			return filteredPersonas;
 		} else {
 			return [];
@@ -115,6 +146,17 @@ export const PeoplePicker: React.FunctionComponent<IPeoplePickerProps> = (props)
 
 	const isInvalid = (): boolean => {
 		return selectedItems.length ? false : true;
+	}
+
+	const removeDuplicates = (personas: IPersonaProps[], possibleDupes: IPersonaProps[]): IPersonaProps[] => {
+		return personas.filter(persona => !listContainsPersona(persona, possibleDupes));
+	}
+
+	const listContainsPersona = (persona: IPersonaProps, personas: IPersonaProps[]): boolean => {
+		if (!personas || !personas.length || personas.length === 0) {
+			return false;
+		}
+		return personas.filter(item => item.text === persona.text).length > 0;
 	}
 
 	return (
