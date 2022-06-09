@@ -31,7 +31,7 @@ export const ActivityModal: React.FunctionComponent<IActivityModalProps> = (prop
   }
 
   return (
-    <Modal show={props.show} onShow={() => props.handleShow()} onHide={() => onHide()}>
+    <Modal keyboard={false} backdrop="static" show={props.show} onShow={() => props.handleShow()} onHide={() => onHide()}>
       <Modal.Header closeButton>
         <Modal.Title>{props.modalDisplayName || "Pop-up"}</Modal.Title>
       </Modal.Header>
