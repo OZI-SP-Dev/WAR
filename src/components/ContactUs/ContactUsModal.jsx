@@ -89,7 +89,7 @@ export const ContactUsModal = (props) => {
 	}
 
 	return (
-		<Modal show={props.showContactUsModal} onHide={onHide}>
+		<Modal keyboard={false} backdrop="static" show={props.showContactUsModal} onHide={onHide}>
 			<Modal.Header closeButton>
 				<Modal.Title>Contact Us!</Modal.Title>
 			</Modal.Header>
