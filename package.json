@@ -15,7 +15,7 @@
     "env-cmd": "^10.1.0",
     "eslint-plugin-flowtype": "^5.2.0",
     "jquery": "^3.5.1",
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.0",
     "react-datepicker": "^2.14.1",
