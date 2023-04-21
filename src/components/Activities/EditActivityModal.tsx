@@ -1,5 +1,5 @@
 import { Moment } from "moment";
-import { FunctionComponent, useState } from "react";
+import { forwardRef, FunctionComponent, useRef, useState } from "react";
 import { Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -126,19 +126,26 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
     );
   };
 
-  const DatePickerCustomInput = (props: {
-    value?: string | number | string[];
-  }) => (
-    <>
-      <Form.Label>Period of Accomplishment (Week of)</Form.Label>
-      <Form.Control
-        type="text"
-        value={props.value}
-        onClick={() => !isReadOnly() && setDatePickerOpen(true)}
-        required
-        readOnly={isReadOnly()}
-      />
-    </>
+  let datePickerRef = useRef(null);
+  const DatePickerCustomInput = forwardRef(
+    (
+      props: {
+        value?: string | number | string[];
+      },
+      ref
+    ) => (
+      <>
+        <Form.Label>Period of Accomplishment (Week of)</Form.Label>
+        <Form.Control
+          ref={datePickerRef}
+          type="text"
+          defaultValue={props.value}
+          onClick={() => !isReadOnly() && setDatePickerOpen(true)}
+          required
+          readOnly={isReadOnly()}
+        />
+      </>
+    )
   );
 
   return (
@@ -183,7 +190,6 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
           <Form.Control
             as="select"
             defaultValue={props.activity.Branch}
-            value={activity.Branch}
             onChange={(e) => updateActivity(e.target.value, "Branch")}
             disabled={isReadOnly()}
             required
@@ -206,7 +212,6 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
             type="text"
             placeholder="Title with no trailing period"
             defaultValue={props.activity.Title}
-            value={activity.Title}
             onChange={(e) => updateActivity(e.target.value, "Title")}
             readOnly={isReadOnly()}
             required
@@ -222,7 +227,6 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
             rows={5}
             placeholder="Actions taken..."
             defaultValue={props.activity.ActionTaken}
-            value={activity.ActionTaken}
             onChange={(e) => updateActivity(e.target.value, "ActionTaken")}
             readOnly={isReadOnly()}
             required
