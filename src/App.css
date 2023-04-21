@@ -3,7 +3,7 @@
 }
 
 /** Content **/
-  
-   [role="main"] {
-    padding-top: 52px; /* Space for fixed navbar (48 + 4) */
-  }
+
+[role="main"] {
+  padding-top: 52px; /* Space for fixed navbar (48 + 4) */
+}
