@@ -16,12 +16,13 @@ export const DatePickerCustomInput = forwardRef<
   <>
     <Form.Label>{props.label}</Form.Label>
     <Form.Control
+      style={{ backgroundColor: "transparent" }}
       ref={ref}
       type="text"
       value={props.value}
       onClick={props.openPicker}
       required={props.required}
-      readOnly={props.readOnly}
+      readOnly
       // Manual input is disabled, you MUST use the overlay
       // Following line removes the console warning in dev
       onChange={() => {}}
