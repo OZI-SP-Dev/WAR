@@ -116,6 +116,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [deleting, setDeleting] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+  const [activeEventKey, setActiveEventKey] = useState("");
 
   const activitiesApi = ActivitiesApiConfig.activitiesApi;
 
@@ -140,6 +141,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
         );
       setActivities(groupActivities(newActivities));
       setLoading(false);
+      setActiveEventKey("");
     } catch (e) {
       console.error(e);
       setLoading(false);
@@ -275,7 +277,11 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
           {defaultQuery === null ? "Review Activities" : "Search Results"}
         </h1>
       </Row>
-      <CardAccordion defaultOpen={false} cardHeader="Search and Filter">
+      <CardAccordion
+        activeEventKey={activeEventKey}
+        setActiveEventKey={setActiveEventKey}
+        cardHeader="Search and Filter"
+      >
         <SearchForm
           defaultQuery={defaultQuery}
           defaultOrg={defaultOrg}
