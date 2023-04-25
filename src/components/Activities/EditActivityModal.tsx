@@ -1,5 +1,5 @@
 import { Moment } from "moment";
-import { forwardRef, FunctionComponent, useRef, useState } from "react";
+import { FunctionComponent, useRef, useState } from "react";
 import { Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,6 +8,7 @@ import { OrgsContext } from "../../providers/OrgsContext";
 import DateUtilities from "../../utilities/DateUtilities";
 import { PeoplePicker, SPPersona } from "../PeoplePicker/PeoplePicker";
 import ActivityModal from "./ActivityModal";
+import { DatePickerCustomInput } from "../DatePickerCustomInput/DatePickerCustomInput";
 
 export interface IEditActivityModalProps {
   activity: IActivity;
@@ -127,26 +128,6 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
   };
 
   let datePickerRef = useRef(null);
-  const DatePickerCustomInput = forwardRef(
-    (
-      props: {
-        value?: string | number | string[];
-      },
-      ref
-    ) => (
-      <>
-        <Form.Label>Period of Accomplishment (Week of)</Form.Label>
-        <Form.Control
-          ref={datePickerRef}
-          type="text"
-          defaultValue={props.value}
-          onClick={() => !isReadOnly() && setDatePickerOpen(true)}
-          required
-          readOnly={isReadOnly()}
-        />
-      </>
-    )
-  );
 
   return (
     <ActivityModal
@@ -179,7 +160,15 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
             highlightDates={highlightDates}
             minDate={DateUtilities.momentToDate(props.minCreateDate)}
             maxDate={DateUtilities.momentToDate(DateUtilities.getToday())}
-            customInput={<DatePickerCustomInput />}
+            customInput={
+              <DatePickerCustomInput
+                ref={datePickerRef}
+                label="Period of Accomplishment (Week of)"
+                openPicker={() => !isReadOnly() && setDatePickerOpen(true)}
+                required
+                readOnly={isReadOnly()}
+              />
+            }
             open={datePickerOpen}
             onClickOutside={() => setDatePickerOpen(false)}
             shouldCloseOnSelect={false}

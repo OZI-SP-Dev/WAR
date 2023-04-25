@@ -12,10 +12,12 @@ class CardAccordion extends Component {
             eventKey={"0"}
             style={{ cursor: "pointer" }}
             onClick={() => {
-              if (this.props.activeEventKey === "0") {
-                this.props.setActiveEventKey("");
-              } else {
-                this.props.setActiveEventKey("0");
+              if (typeof this.props.setActiveEventKey === "function") {
+                if (this.props.activeEventKey === "0") {
+                  this.props.setActiveEventKey("");
+                } else {
+                  this.props.setActiveEventKey("0");
+                }
               }
             }}
           >

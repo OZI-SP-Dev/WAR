@@ -1,6 +1,6 @@
 import { Moment } from "moment";
 import * as React from "react";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Col, Form, FormCheck, Row, Spinner } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -10,6 +10,7 @@ import DateUtilities from "../../utilities/DateUtilities";
 import { PeoplePicker, SPPersona } from "../PeoplePicker/PeoplePicker";
 import "../WeeklyReport/Report.css";
 import "./SearchForm.css";
+import { DatePickerCustomInput } from "../DatePickerCustomInput/DatePickerCustomInput";
 
 export interface ISearchFormProps {
   defaultQuery: string;
@@ -114,33 +115,8 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (
     getOpr(); // eslint-disable-next-line
   }, [props.defaultOpr]);
 
-  let startDatePickerRef = useRef(null);
-  const StartDatePickerCustomInput = forwardRef(
-    (props: { value?: any }, ref) => (
-      <>
-        <Form.Label>Search Week Start</Form.Label>
-        <Form.Control
-          ref={startDatePickerRef}
-          type="text"
-          defaultValue={props.value}
-          onClick={startDatePickerOnClick}
-        />
-      </>
-    )
-  );
-
-  let endDatePickerRef = useRef(null);
-  const EndDatePickerCustomInput = forwardRef((props: { value?: any }, ref) => (
-    <>
-      <Form.Label>Search Week End</Form.Label>
-      <Form.Control
-        ref={endDatePickerRef}
-        type="text"
-        defaultValue={props.value}
-        onClick={endDatePickerOnClick}
-      />
-    </>
-  ));
+  const startDatePickerRef = useRef(null);
+  const endDatePickerRef = useRef(null);
 
   return (
     <Form className={"mb-3"}>
@@ -210,7 +186,13 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (
                   ? DateUtilities.momentToDate(searchForm.endDate)
                   : undefined
               }
-              customInput={<StartDatePickerCustomInput />}
+              customInput={
+                <DatePickerCustomInput
+                  ref={startDatePickerRef}
+                  label="Search Week Start"
+                  openPicker={startDatePickerOnClick}
+                />
+              }
               open={startDatePickerOpen}
               onClickOutside={clickOutside}
               shouldCloseOnSelect={false}
@@ -237,7 +219,13 @@ export const SearchForm: React.FunctionComponent<ISearchFormProps> = (
                   : undefined
               }
               maxDate={DateUtilities.momentToDate(DateUtilities.getDate())}
-              customInput={<EndDatePickerCustomInput />}
+              customInput={
+                <DatePickerCustomInput
+                  ref={endDatePickerRef}
+                  label="Search Week End"
+                  openPicker={endDatePickerOnClick}
+                />
+              }
               open={endDatePickerOpen}
               onClickOutside={clickOutside}
               shouldCloseOnSelect={false}

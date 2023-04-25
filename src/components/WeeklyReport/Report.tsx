@@ -1,6 +1,5 @@
 import { Moment } from "moment";
 import React, {
-  forwardRef,
   FunctionComponent,
   useContext,
   useEffect,
@@ -24,6 +23,7 @@ import DateUtilities from "../../utilities/DateUtilities";
 import CardAccordion from "../CardAccordion/CardAccordion";
 import { PeoplePicker, SPPersona } from "../PeoplePicker/PeoplePicker";
 import "./Report.css";
+import { DatePickerCustomInput } from "../DatePickerCustomInput/DatePickerCustomInput";
 
 export interface IReportProps {
   pageHeader: string;
@@ -113,35 +113,8 @@ export const Report: FunctionComponent<IReportProps> = (props) => {
     getOpr(); // eslint-disable-next-line
   }, [props.defaultOpr]);
 
-  let startDatePickerRef = useRef(null);
-  let StartDatePickerCustomInput = forwardRef((props: {}, ref) => (
-    <>
-      <Form.Label>Report Start Week</Form.Label>
-      <Form.Control
-        ref={startDatePickerRef}
-        type="text"
-        defaultValue={
-          reportForm.startDate ? reportForm.startDate.format("MM/DD/YYYY") : ""
-        }
-        onClick={() => setStartDatePickerOpen(true)}
-      />
-    </>
-  ));
-
-  let endDatePickerRef = useRef(null);
-  let EndDatePickerCustomInput = forwardRef((props: {}, ref) => (
-    <>
-      <Form.Label>Report End Week</Form.Label>
-      <Form.Control
-        ref={endDatePickerRef}
-        type="text"
-        defaultValue={
-          reportForm.endDate ? reportForm.endDate.format("MM/DD/YYYY") : ""
-        }
-        onClick={() => setEndDatePickerOpen(true)}
-      />
-    </>
-  ));
+  const startDatePickerRef = useRef(null);
+  const endDatePickerRef = useRef(null);
 
   return (
     <Container fluid>
@@ -171,7 +144,13 @@ export const Report: FunctionComponent<IReportProps> = (props) => {
                       ? DateUtilities.momentToDate(reportForm.endDate)
                       : null
                   }
-                  customInput={<StartDatePickerCustomInput />}
+                  customInput={
+                    <DatePickerCustomInput
+                      ref={startDatePickerRef}
+                      label="Report Start Week"
+                      openPicker={() => setStartDatePickerOpen(true)}
+                    />
+                  }
                   open={startDatePickerOpen}
                   onClickOutside={() => setStartDatePickerOpen(false)}
                   shouldCloseOnSelect={false}
@@ -198,7 +177,13 @@ export const Report: FunctionComponent<IReportProps> = (props) => {
                       : null
                   }
                   maxDate={DateUtilities.momentToDate(DateUtilities.getToday())}
-                  customInput={<EndDatePickerCustomInput />}
+                  customInput={
+                    <DatePickerCustomInput
+                      ref={endDatePickerRef}
+                      label="Report End Week"
+                      openPicker={() => setEndDatePickerOpen(true)}
+                    />
+                  }
                   open={endDatePickerOpen}
                   onClickOutside={() => setEndDatePickerOpen(false)}
                   shouldCloseOnSelect={false}
