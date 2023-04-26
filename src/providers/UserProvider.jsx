@@ -1,9 +1,9 @@
-import '@pnp/sp/site-users';
-import { TestImages } from '@uifabric/example-data';
-import React, { useEffect, useState } from 'react';
-import { UserPreferencesApiConfig } from '../api/UserPreferencesApi';
-import RoleUtilities from '../utilities/RoleUtilities';
-import { spWebContext } from './SPWebContext';
+import "@pnp/sp/site-users";
+import { TestImages } from "@uifabric/example-data";
+import React, { useEffect, useState } from "react";
+import { UserPreferencesApiConfig } from "../api/UserPreferencesApi";
+import RoleUtilities from "../utilities/RoleUtilities";
+import { spWebContext } from "./SPWebContext";
 
 export const UserContext = React.createContext();
 export const UserProvider = ({ children }) => {
@@ -20,16 +20,16 @@ export const UserProvider = ({ children }) => {
   const updateUserPreferences = (defaultOrg) => {
     userPreferencesApi.submitPreferences(Id, defaultOrg);
     setUserPreferences({ ...UserPreferences, DefaultOrg: defaultOrg });
-  }
+  };
 
   const getUser = async () => {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       setId(1);
-      setTitle('Default User');
-      setEmail('me@example.com');
+      setTitle("Default User");
+      setEmail("me@example.com");
       setUsersRoles([{ role: RoleUtilities.ADMIN, department: undefined }]);
       setUserPreferences(await userPreferencesApi.fetchPreferences(1));
-      setPersona({ text: 'Default User', imageUrl: TestImages.personaMale });
+      setPersona({ text: "Default User", imageUrl: TestImages.personaMale });
       setLoading(false);
     } else {
       try {
@@ -41,43 +41,59 @@ export const UserProvider = ({ children }) => {
         setEmail(currentUser.Email);
         setPersona({
           text: currentUser.Title,
-          imageUrl: "/_layouts/15/userphoto.aspx?accountname=" + currentUser.LoginName + "&size=S",
-          Email: currentUser.Email
+          imageUrl:
+            "/_layouts/15/userphoto.aspx?accountname=" +
+            currentUser.LoginName +
+            "&size=S",
+          Email: currentUser.Email,
         });
 
         const filterstring = "UserId eq " + currentUser.Id;
-        const myRoles = await web.lists.getByTitle("Roles").items.filter(filterstring).get();
+        const myRoles = await web.lists
+          .getByTitle("Roles")
+          .items.filter(filterstring)
+          .get();
         let roleNames = [];
-        myRoles.forEach(element => {
-          roleNames.push({ role: element.Title, department: element.Department });
+        myRoles.forEach((element) => {
+          roleNames.push({
+            role: element.Title,
+            department: element.Department,
+          });
         });
         setUsersRoles(roleNames);
-        setUserPreferences(await userPreferencesApi.fetchPreferences(currentUser.Id));
+        setUserPreferences(
+          await userPreferencesApi.fetchPreferences(currentUser.Id)
+        );
         setLoading(false);
       } catch (error) {
         console.log(error);
         setLoading(false);
       }
     }
-  }
+  };
 
   useEffect(() => {
     getUser().catch((error) => {
       console.log(error);
-    })// eslint-disable-next-line
-  }, [])
+    }); // eslint-disable-next-line
+  }, []);
 
   return (
-    <UserContext.Provider value={{
-      loading,
-      Title,
-      Id,
-      Email,
-      UsersRoles,
-      UserPreferences: { ...UserPreferences, updateDefaultOrg: updateUserPreferences },
-      Persona
-    }}>
+    <UserContext.Provider
+      value={{
+        loading,
+        Title,
+        Id,
+        Email,
+        UsersRoles,
+        UserPreferences: {
+          ...UserPreferences,
+          updateDefaultOrg: updateUserPreferences,
+        },
+        Persona,
+      }}
+    >
       {children}
     </UserContext.Provider>
-  )
-}
+  );
+};
