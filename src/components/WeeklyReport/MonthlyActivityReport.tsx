@@ -126,6 +126,7 @@ export const MonthlyActivityReport: FunctionComponent<
           activities={activities}
           reportGenerated={reportGenerated}
           hideWeekOf
+          MAR
         />
       </Report>
     </div>

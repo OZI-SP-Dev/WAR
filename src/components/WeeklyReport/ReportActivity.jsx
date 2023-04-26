@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import { Row } from "react-bootstrap";
 import DateUtilities from "../../utilities/DateUtilities";
 import "./ReportActivity.css";
@@ -6,6 +6,7 @@ import "./ReportActivity.css";
 class ReportActivity extends Component {
   render() {
     let activity = this.props.activity;
+    const MAR = this.props.MAR;
     return (
       <Row className="activity">
         <p className="preserve-whitespace">
@@ -20,7 +21,10 @@ class ReportActivity extends Component {
           )}
           <strong>Activity/Purpose:</strong> {activity.Title}
           <br />
-          <strong>Action Taken/In Work:</strong> {activity.ActionTaken}
+          <strong>Action Taken/In Work:</strong>{" "}
+          {MAR
+            ? activity.MARText || activity.ActionTaken // If MAR and no MARText, default to ActionTaken
+            : activity.ActionTaken}
           <br />
           <strong>OPRs:</strong>{" "}
           {activity.OPRs &&

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import { Row } from "react-bootstrap";
 import ReportActivity from "./ReportActivity";
 import "./ReportActivity.css";
@@ -31,6 +31,7 @@ class ReportActivitiesByParent extends Component {
             <ReportActivity
               activity={activity}
               hideWeekOf={this.props.hideWeekOf}
+              MAR={this.props.MAR}
             />
           ))}
         </div>
