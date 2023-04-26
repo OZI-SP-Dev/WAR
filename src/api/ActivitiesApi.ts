@@ -38,6 +38,7 @@ export interface IActivity {
   __metadata?: {
     etag: string;
   };
+  MARText?: string;
 }
 
 export interface IActivityApi {

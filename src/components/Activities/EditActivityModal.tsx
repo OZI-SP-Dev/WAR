@@ -1,6 +1,6 @@
 import { Moment } from "moment";
 import { FunctionComponent, useRef, useState } from "react";
-import { Form } from "react-bootstrap";
+import { Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { IActivity, UserList } from "../../api/ActivitiesApi";
@@ -9,6 +9,7 @@ import DateUtilities from "../../utilities/DateUtilities";
 import { PeoplePicker, SPPersona } from "../PeoplePicker/PeoplePicker";
 import ActivityModal from "./ActivityModal";
 import { DatePickerCustomInput } from "../DatePickerCustomInput/DatePickerCustomInput";
+import { IconButton } from "office-ui-fabric-react";
 
 export interface IEditActivityModalProps {
   activity: IActivity;
@@ -142,6 +143,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
       readOnly={isReadOnly()}
       showDeleteButton={props.activity.Id > -1}
       error={props.error}
+      wide={activity.IsMarEntry}
     >
       <Form
         id="EditActivityModal"
@@ -153,117 +155,163 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
           validateActivity();
         }}
       >
-        <Form.Group controlId="editActivityWeekOf">
-          <DatePicker
-            selected={selectedDate}
-            onChange={(date) => onDateChange(date)}
-            highlightDates={highlightDates}
-            minDate={DateUtilities.momentToDate(props.minCreateDate)}
-            maxDate={DateUtilities.momentToDate(DateUtilities.getToday())}
-            customInput={
-              <DatePickerCustomInput
-                ref={datePickerRef}
-                label="Period of Accomplishment (Week of)"
-                openPicker={() => !isReadOnly() && setDatePickerOpen(true)}
-                required
-                readOnly={isReadOnly()}
-              />
-            }
-            open={datePickerOpen}
-            onClickOutside={() => setDatePickerOpen(false)}
-            shouldCloseOnSelect={false}
-          />
-        </Form.Group>
-        <Form.Group controlId="editActivityOrg">
-          <Form.Label>Organization</Form.Label>
-          <Form.Control
-            as="select"
-            defaultValue={props.activity.Branch}
-            onChange={(e) => updateActivity(e.target.value, "Branch")}
-            disabled={isReadOnly()}
-            required
-          >
-            <option value="">--</option>
-            <OrgsContext.Consumer>
-              {(orgsContext) => (
-                <>
-                  {(orgsContext.orgs ? orgsContext.orgs : []).map((org) => (
-                    <option key={org}>{org}</option>
-                  ))}
-                </>
+        <Container>
+          <Row>
+            <Col xs={activity.IsMarEntry ? "6" : "12"}>
+              <Form.Group controlId="editActivityWeekOf">
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={(date) => onDateChange(date)}
+                  highlightDates={highlightDates}
+                  minDate={DateUtilities.momentToDate(props.minCreateDate)}
+                  maxDate={DateUtilities.momentToDate(DateUtilities.getToday())}
+                  customInput={
+                    <DatePickerCustomInput
+                      ref={datePickerRef}
+                      label="Period of Accomplishment (Week of)"
+                      openPicker={() =>
+                        !isReadOnly() && setDatePickerOpen(true)
+                      }
+                      required
+                      readOnly={isReadOnly()}
+                    />
+                  }
+                  open={datePickerOpen}
+                  onClickOutside={() => setDatePickerOpen(false)}
+                  shouldCloseOnSelect={false}
+                />
+              </Form.Group>
+              <Form.Group controlId="editActivityOrg">
+                <Form.Label>Organization</Form.Label>
+                <Form.Control
+                  as="select"
+                  defaultValue={props.activity.Branch}
+                  onChange={(e) => updateActivity(e.target.value, "Branch")}
+                  disabled={isReadOnly()}
+                  required
+                >
+                  <option value="">--</option>
+                  <OrgsContext.Consumer>
+                    {(orgsContext) => (
+                      <>
+                        {(orgsContext.orgs ? orgsContext.orgs : []).map(
+                          (org) => (
+                            <option key={org}>{org}</option>
+                          )
+                        )}
+                      </>
+                    )}
+                  </OrgsContext.Consumer>
+                </Form.Control>
+              </Form.Group>
+              <Form.Group controlId="editActivityTitle">
+                <Form.Label>Activity/Purpose</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Title with no trailing period"
+                  defaultValue={props.activity.Title}
+                  onChange={(e) => updateActivity(e.target.value, "Title")}
+                  readOnly={isReadOnly()}
+                  required
+                />
+                <Form.Control.Feedback type="invalid">
+                  Enter a title with no trailing period.
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group controlId="editActivityInterestItems">
+                <Form.Label>Action Taken/In Work</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={5}
+                  placeholder="Actions taken..."
+                  defaultValue={props.activity.ActionTaken}
+                  onChange={(e) =>
+                    updateActivity(e.target.value, "ActionTaken")
+                  }
+                  readOnly={isReadOnly()}
+                  required
+                />
+                <Form.Control.Feedback type="invalid">
+                  Enter at least one action taken.
+                </Form.Control.Feedback>
+              </Form.Group>
+              {props.showMarCheck(activity.Branch) && (
+                <Form.Group>
+                  <InputGroup>
+                    <Form.Check
+                      label="MAR Entry?"
+                      type="checkbox"
+                      defaultChecked={props.activity.IsMarEntry}
+                      onChange={(e) =>
+                        updateActivity(e.target.checked, "IsMarEntry")
+                      }
+                      disabled={isReadOnly()}
+                    />
+                    {activity.IsMarEntry && (
+                      <IconButton
+                        onClick={(e) => {
+                          const MARText = activity.ActionTaken;
+                          updateActivity(MARText, "MARText");
+                        }}
+                        iconProps={{ iconName: "Copy" }}
+                        title="Copy WAR text to MAR"
+                        ariaLabel="Copy"
+                        className="float-right"
+                      />
+                    )}
+                  </InputGroup>
+                </Form.Group>
               )}
-            </OrgsContext.Consumer>
-          </Form.Control>
-        </Form.Group>
-        <Form.Group controlId="editActivityTitle">
-          <Form.Label>Activity/Purpose</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Title with no trailing period"
-            defaultValue={props.activity.Title}
-            onChange={(e) => updateActivity(e.target.value, "Title")}
-            readOnly={isReadOnly()}
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            Enter a title with no trailing period.
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group controlId="editActivityInterestItems">
-          <Form.Label>Action Taken/In Work</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={5}
-            placeholder="Actions taken..."
-            defaultValue={props.activity.ActionTaken}
-            onChange={(e) => updateActivity(e.target.value, "ActionTaken")}
-            readOnly={isReadOnly()}
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            Enter at least one action taken.
-          </Form.Control.Feedback>
-        </Form.Group>
-        {props.showMarCheck(activity.Branch) && (
-          <Form.Group>
-            <Form.Check
-              label="MAR Entry?"
-              type="checkbox"
-              defaultChecked={props.activity.IsMarEntry}
-              onChange={(e) => updateActivity(e.target.checked, "IsMarEntry")}
-              disabled={isReadOnly()}
-            />
-          </Form.Group>
-        )}
-        {props.showHistoryCheck(activity.Branch) && (
-          <Form.Group>
-            <Form.Check
-              label="History Entry?"
-              type="checkbox"
-              defaultChecked={props.activity.IsHistoryEntry}
-              onChange={(e) =>
-                updateActivity(e.target.checked, "IsHistoryEntry")
-              }
-              disabled={isReadOnly()}
-            />
-          </Form.Group>
-        )}
-        <Form.Group controlId="editActivityOPRs">
-          <Form.Label>OPRs</Form.Label>
-          <Form.Control
-            as={PeoplePicker}
-            defaultValue={convertOPRsToPersonas(activity.OPRs)}
-            updatePeople={(newOPRs: SPPersona[]) => updateOPRs(newOPRs)}
-            readOnly={isReadOnly()}
-            required={true}
-            itemLimit={25}
-            isInvalid={isOPRInvalid()}
-            isValid={!isOPRInvalid()}
-          ></Form.Control>
-          <Form.Control.Feedback type="invalid">
-            You must have at least one OPR.
-          </Form.Control.Feedback>
-        </Form.Group>
+              {props.showHistoryCheck(activity.Branch) && (
+                <Form.Group>
+                  <Form.Check
+                    label="History Entry?"
+                    type="checkbox"
+                    defaultChecked={props.activity.IsHistoryEntry}
+                    onChange={(e) =>
+                      updateActivity(e.target.checked, "IsHistoryEntry")
+                    }
+                    disabled={isReadOnly()}
+                  />
+                </Form.Group>
+              )}
+              <Form.Group controlId="editActivityOPRs">
+                <Form.Label>OPRs</Form.Label>
+                <Form.Control
+                  as={PeoplePicker}
+                  defaultValue={convertOPRsToPersonas(activity.OPRs)}
+                  updatePeople={(newOPRs: SPPersona[]) => updateOPRs(newOPRs)}
+                  readOnly={isReadOnly()}
+                  required={true}
+                  itemLimit={25}
+                  isInvalid={isOPRInvalid()}
+                  isValid={!isOPRInvalid()}
+                ></Form.Control>
+                <Form.Control.Feedback type="invalid">
+                  You must have at least one OPR.
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Col>
+            {activity.IsMarEntry && (
+              <Col xs={activity.IsMarEntry ? "6" : "12"}>
+                <Form.Group controlId="editActivityMarText">
+                  <Form.Label>MAR Text</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={20}
+                    value={activity.MARText}
+                    onChange={(e) => updateActivity(e.target.value, "MARText")}
+                    readOnly={!props.userIsOrgChief(props.activity.Branch)}
+                    required
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    Enter at least one action taken.
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+            )}
+          </Row>
+        </Container>
       </Form>
     </ActivityModal>
   );

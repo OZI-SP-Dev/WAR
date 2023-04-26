@@ -1,25 +1,27 @@
-import React, { useState } from 'react';
-import { Alert, Button, Col, Modal, Spinner } from 'react-bootstrap';
-import ConfirmSubmitPopover from './ConfirmSubmitPopover';
+import React, { useState } from "react";
+import { Alert, Button, Col, Modal, Spinner } from "react-bootstrap";
+import ConfirmSubmitPopover from "./ConfirmSubmitPopover";
 
 export interface IActivityModalProps {
-  show: boolean,
-  saving: boolean,
-  modalDisplayName?: string,
-  readOnly: boolean,
-  showDeleteButton: boolean,
-  deleting: boolean,
-  submitButtonVariant?: "primary" | "danger",
-  submitButtonText?: string,
-  error: boolean,
-  handleShow: () => void,
-  handleClose: () => void,
-  handleDelete: () => void,
-  handleSubmit: () => void
+  show: boolean;
+  saving: boolean;
+  modalDisplayName?: string;
+  readOnly: boolean;
+  showDeleteButton: boolean;
+  deleting: boolean;
+  submitButtonVariant?: "primary" | "danger";
+  submitButtonText?: string;
+  error: boolean;
+  handleShow: () => void;
+  handleClose: () => void;
+  handleDelete: () => void;
+  handleSubmit: () => void;
+  wide?: boolean;
 }
 
-export const ActivityModal: React.FunctionComponent<IActivityModalProps> = (props) => {
-
+export const ActivityModal: React.FunctionComponent<IActivityModalProps> = (
+  props
+) => {
   const [showDeletePopover, setShowDeletePopover] = useState<boolean>(false);
   const [deletePopoverTarget, setDeletePopoverTarget] = useState<any>(null);
 
@@ -28,17 +30,24 @@ export const ActivityModal: React.FunctionComponent<IActivityModalProps> = (prop
     if (!props.saving) {
       props.handleClose();
     }
-  }
+  };
 
   return (
-    <Modal keyboard={false} backdrop="static" show={props.show} onShow={() => props.handleShow()} onHide={() => onHide()}>
+    <Modal
+      keyboard={false}
+      backdrop="static"
+      show={props.show}
+      onShow={() => props.handleShow()}
+      onHide={() => onHide()}
+      id={props.wide ? "marModal" : "narrowMarModal"}
+    >
       <Modal.Header closeButton>
         <Modal.Title>{props.modalDisplayName || "Pop-up"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>{props.children || "description"}</Modal.Body>
       <Modal.Footer>
         <Col style={{ paddingLeft: 0 }}>
-          {!props.readOnly && props.showDeleteButton &&
+          {!props.readOnly && props.showDeleteButton && (
             <>
               <ConfirmSubmitPopover
                 title="Confirm Delete"
@@ -63,10 +72,11 @@ export const ActivityModal: React.FunctionComponent<IActivityModalProps> = (prop
               >
                 Delete
               </Button>
-            </>}
+            </>
+          )}
         </Col>
         <Col style={{ paddingRight: 0 }}>
-          {!props.readOnly &&
+          {!props.readOnly && (
             <Button
               style={{ marginLeft: "5%" }}
               className="float-right"
@@ -78,21 +88,35 @@ export const ActivityModal: React.FunctionComponent<IActivityModalProps> = (prop
                 props.handleSubmit();
               }}
             >
-              {props.saving && <Spinner as="span" size="sm" animation="grow" role="status" aria-hidden="true" />}
-              {' '}{props.submitButtonText || "Submit"}
-            </Button>}
+              {props.saving && (
+                <Spinner
+                  as="span"
+                  size="sm"
+                  animation="grow"
+                  role="status"
+                  aria-hidden="true"
+                />
+              )}{" "}
+              {props.submitButtonText || "Submit"}
+            </Button>
+          )}
           <Button
             className="float-right"
             disabled={props.saving}
             variant="secondary"
-            onClick={props.handleClose}>
+            onClick={props.handleClose}
+          >
             Close
           </Button>
         </Col>
-        {props.error && <Alert variant='danger' className="w-100">There was an error saving your activity!</Alert>}
+        {props.error && (
+          <Alert variant="danger" className="w-100">
+            There was an error saving your activity!
+          </Alert>
+        )}
       </Modal.Footer>
     </Modal>
   );
-}
+};
 
 export default ActivityModal;
