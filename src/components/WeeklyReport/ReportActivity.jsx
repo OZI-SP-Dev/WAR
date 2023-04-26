@@ -26,7 +26,7 @@ class ReportActivity extends Component {
             ? activity.MARText || activity.ActionTaken // If MAR and no MARText, default to ActionTaken
             : activity.ActionTaken}
           <br />
-          <strong>OPRs:</strong>{" "}
+          <strong>{MAR ? "AO" : "OPR"}s:</strong>{" "}
           {activity.OPRs &&
             activity.OPRs.results &&
             activity.OPRs.results.map((OPR, index, array) => (
