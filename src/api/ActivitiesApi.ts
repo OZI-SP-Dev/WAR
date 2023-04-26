@@ -198,7 +198,8 @@ export default class ActivitiesApi implements IActivityApi {
         "ActionTaken",
         "IsMarEntry",
         "IsHistoryEntry",
-        "IsDeleted"
+        "IsDeleted",
+        "MARText"
       )
       .expand("OPRs")
       .filter(filterString);
@@ -297,6 +298,7 @@ export default class ActivitiesApi implements IActivityApi {
                     <FieldRef Name='IsMarEntry' />
                     <FieldRef Name='IsHistoryEntry' />
                     <FieldRef Name='IsDeleted' />
+                    <FieldRef Name='MARText' />
                   </ViewFields>
                   <Query>
                     <Where>
@@ -319,6 +321,7 @@ export default class ActivitiesApi implements IActivityApi {
         WeekOf: activity["WeekOf."],
         Branch: activity.Branch,
         ActionTaken: activity.ActionTaken,
+        MARText: activity.MARText,
         IsMarEntry: activity.IsMarEntry === "Yes" ? true : false,
         IsHistoryEntry: activity.IsHistoryEntry === "Yes" ? true : false,
         IsDeleted: activity.IsDeleted === "Yes" ? true : false,
