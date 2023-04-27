@@ -22,9 +22,7 @@ class ReportActivity extends Component {
           <strong>Activity/Purpose:</strong> {activity.Title}
           <br />
           <strong>Action Taken/In Work:</strong>{" "}
-          {MAR
-            ? activity.MARText || activity.ActionTaken // If MAR and no MARText, default to ActionTaken
-            : activity.ActionTaken}
+          {MAR && activity.MARText ? activity.MARText : activity.ActionTaken}
           <br />
           <strong>{MAR ? "AO" : "OPR"}s:</strong>{" "}
           {activity.OPRs &&

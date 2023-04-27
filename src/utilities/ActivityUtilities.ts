@@ -8,7 +8,7 @@ export default class ActivityUtilities {
    * This method will turn all of the raw input data fields into the nicely formatted data that the API needs.
    *
    * @param activity The activity as built from the input forms.
-   * it needs {Id: number, Title: string, WeekOf: string | Moment, Branch: string, ActionTaken: string, IsMarEntry: boolean, IsHistoryEntry: boolean, MARText?: string}
+   * it needs {Id: number, Title: string, WeekOf: string | Moment, Branch: string, ActionTaken: string, IsMarEntry: boolean, IsHistoryEntry: boolean, MARText: string}
    */
   static async buildActivity(activity: any): Promise<IActivity> {
     let builtActivity: any = {
@@ -20,7 +20,7 @@ export default class ActivityUtilities {
       IsMarEntry: activity.IsMarEntry,
       IsHistoryEntry: activity.IsHistoryEntry,
       OPRsId: { results: [] },
-      MARText: activity.MARText,
+      MARText: activity.MARText.trim(),
     };
 
     //include etag if it exists - new items will not have an etag
