@@ -296,14 +296,28 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
               <Col xs={activity.IsMarEntry ? "6" : "12"}>
                 <Form.Group controlId="editActivityMarText">
                   <Form.Label>MAR Text</Form.Label>
+                  <Form.Text>
+                    <ul>
+                      <li>
+                        Write at the strategic level for the 3-star; save
+                        day-to-day commentary for Division briefs and
+                        DPMAP/AcqDemo Input
+                      </li>
+                      <li>
+                        Define ALL acronyms on first use, even those that seem
+                        obvious or straightforward.
+                      </li>
+                    </ul>
+                  </Form.Text>
                   <Form.Control
                     as="textarea"
-                    rows={20}
+                    rows={19}
                     value={activity.MARText}
                     onChange={(e) => updateActivity(e.target.value, "MARText")}
                     readOnly={!props.userIsOrgChief(props.activity.Branch)}
                     required
                   />
+
                   <Form.Control.Feedback type="invalid">
                     Enter at least one action taken.
                   </Form.Control.Feedback>
