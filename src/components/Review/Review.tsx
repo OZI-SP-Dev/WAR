@@ -334,6 +334,7 @@ export const Review: React.FunctionComponent<IReviewProps> = ({ user }) => {
                             key={`${activity.Id}_card`}
                             activity={activity}
                             onClick={cardOnClick}
+                            review
                           />
                           <EditActivityModal
                             key={`${activity.Id}_modal`}
