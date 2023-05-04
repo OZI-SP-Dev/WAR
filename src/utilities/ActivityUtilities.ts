@@ -20,7 +20,7 @@ export default class ActivityUtilities {
       IsMarEntry: activity.IsMarEntry,
       IsHistoryEntry: activity.IsHistoryEntry,
       OPRsId: { results: [] },
-      MARText: activity.MARText.trim(),
+      MARText: activity.MARText?.trim(),
     };
 
     //include etag if it exists - new items will not have an etag
