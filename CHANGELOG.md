@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - (Keep your changes here until you have a release version)
 
+## [1.0.40] - 2023-05-04
+
+### Fixed
+
+- Normal users were unable to save new Activities
+
 ## [1.0.39] - 2023-04-24
 
 ### Fixed
