@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - (Keep your changes here until you have a release version)
 
+## [1.0.41] - 2025-09-05
+
+### Changed
+
+- Updated Contact Us to open a MS Form which feeds the Workload Tracker, elminating soon to be deprecated sendEmail
+
 ## [1.0.40] - 2023-05-04
 
 ### Fixed

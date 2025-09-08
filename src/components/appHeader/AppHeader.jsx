@@ -10,16 +10,19 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { UserContext } from "../../providers/UserProvider";
 import RoleUtilities from "../../utilities/RoleUtilities";
-import { ContactUsContext } from "../ContactUs/ContactUsProvider";
 import "./AppHeader.css";
 
 function AppHeader() {
   const [query, setQuery] = useState("");
 
   let history = useHistory();
+
+  const location = useLocation().pathname;
+  // Prefills in WAR as the tool, and a debug text of "Current Route: {pathname}"
+  const feedbackURL = `https://forms.osi.apps.mil/Pages/ResponsePage.aspx?id=jbExg4ct70ijX6yIGOv5tIAxYCOoNORIqIakY2dHNltUMVFaUUVFME9XQlc1S0UxWkNRNFdJUjhQWiQlQCN0PWcu&r5a32baccb51a4671852783b3f67af1aa=%22Weekly%20Activity%20Report%20(WAR)%22&r15b810f001d8426aace4f653c4846001=Current%20Route%3A%20${location}`;
 
   const user = useContext(UserContext);
 
@@ -76,28 +79,26 @@ function AppHeader() {
               </LinkContainer>
             </NavDropdown>
           </LinkContainer>
-          <ContactUsContext.Consumer>
-            {(ContactUs) => (
-              <OverlayTrigger
-                placement="bottom"
-                delay={{ show: 500, hide: 0 }}
-                overlay={
-                  <Tooltip id="ContactUsNavTooltip">
-                    Submit feedback, bug reports, or just say hello!
-                  </Tooltip>
-                }
+          {
+            <OverlayTrigger
+              placement="bottom"
+              delay={{ show: 500, hide: 0 }}
+              overlay={
+                <Tooltip id="ContactUsNavTooltip">
+                  Submit feedback, bug reports, or just say hello!
+                </Tooltip>
+              }
+            >
+              <button
+                className="nav-link link-button"
+                onClick={() => {
+                  window.open(feedbackURL, "_blank");
+                }}
               >
-                <button
-                  className="nav-link link-button"
-                  onClick={() => {
-                    ContactUs.setShowContactUs(true);
-                  }}
-                >
-                  Contact Us
-                </button>
-              </OverlayTrigger>
-            )}
-          </ContactUsContext.Consumer>
+                Contact Us
+              </button>
+            </OverlayTrigger>
+          }
           {RoleUtilities.userCanAccessAdminPage(user) && (
             <LinkContainer to="/RoleManagement">
               <Nav.Link>Admin</Nav.Link>
