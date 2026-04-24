@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - (Keep your changes here until you have a release version)
 
+## [1.0.42] - 2026-04-24
+
+### Changed
+
+- Updated link to form moved to different MS Team
+
 ## [1.0.41] - 2025-09-05
 
 ### Changed
