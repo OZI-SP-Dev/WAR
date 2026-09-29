@@ -21,6 +21,10 @@ class ReportActivity extends Component {
           )}
           <strong>Activity/Purpose:</strong> {activity.Title}
           <br />
+          <strong>Objective:</strong> {activity.Objective}
+          <br />
+          <strong>Sub Objective:</strong> {activity.SubObjective}
+          <br />
           <strong>Action Taken/In Work:</strong>{" "}
           {MAR && activity.MARText ? activity.MARText : activity.ActionTaken}
           <br />

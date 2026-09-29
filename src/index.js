@@ -6,7 +6,9 @@ import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { initializeIcons } from "@uifabric/icons";
-initializeIcons();
+initializeIcons(
+  "https://static2.sharepointonline.com/files/fabric/assets/icons/",
+);
 
 ReactDOM.render(<App />, document.getElementById("root"));
 

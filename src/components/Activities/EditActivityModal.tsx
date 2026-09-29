@@ -10,6 +10,7 @@ import { PeoplePicker, SPPersona } from "../PeoplePicker/PeoplePicker";
 import ActivityModal from "./ActivityModal";
 import { DatePickerCustomInput } from "../DatePickerCustomInput/DatePickerCustomInput";
 import { IconButton } from "office-ui-fabric-react";
+import { ObjectivesContext } from "../../providers/ObjectivesContext";
 
 export interface IEditActivityModalProps {
   activity: IActivity;
@@ -28,16 +29,16 @@ export interface IEditActivityModalProps {
 }
 
 export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
-  props
+  props,
 ) => {
   const weekStart = DateUtilities.getStartOfWeek(props.activity?.WeekOf);
   const [activity, setActivity] = useState<IActivity>({ ...props.activity });
   const [validated, setValidated] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date>(
-    DateUtilities.momentToDate(weekStart)
+    DateUtilities.momentToDate(weekStart),
   );
   const [highlightDates, setHighlightDates] = useState<Date[]>(
-    DateUtilities.getWeek(weekStart)
+    DateUtilities.getWeek(weekStart),
   );
   const [datePickerOpen, setDatePickerOpen] = useState<boolean>(false);
 
@@ -197,7 +198,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                         {(orgsContext.orgs ? orgsContext.orgs : []).map(
                           (org) => (
                             <option key={org}>{org}</option>
-                          )
+                          ),
                         )}
                       </>
                     )}
@@ -217,6 +218,64 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                 <Form.Control.Feedback type="invalid">
                   Enter a title with no trailing period.
                 </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group controlId="editActivityObjective">
+                <Form.Label>Objective</Form.Label>
+                <Form.Control
+                  as="select"
+                  defaultValue={props.activity.Objective}
+                  onChange={(e) => updateActivity(e.target.value, "Objective")}
+                  disabled={isReadOnly()}
+                  required
+                >
+                  <option value="">--</option>
+                  <ObjectivesContext.Consumer>
+                    {(objectiveContext) => (
+                      <>
+                        {(objectiveContext.objectives ?? [])
+                          .filter(
+                            (objective, index, self) =>
+                              index ===
+                              self.findIndex(
+                                (p) =>
+                                  p.Objective.Id === objective.Objective.Id,
+                              ),
+                          )
+                          .map((obj) => (
+                            <option key={obj.Objective.Title}>
+                              {obj.Objective.Title}
+                            </option>
+                          ))}
+                      </>
+                    )}
+                  </ObjectivesContext.Consumer>
+                </Form.Control>
+              </Form.Group>
+              <Form.Group controlId="editActivitySubObjective">
+                <Form.Label>Sub Objective</Form.Label>
+                <Form.Control
+                  as="select"
+                  defaultValue={props.activity.SubObjective}
+                  onChange={(e) =>
+                    updateActivity(e.target.value, "SubObjective")
+                  }
+                  disabled={isReadOnly()}
+                  required
+                >
+                  <option value="">--</option>
+                  <ObjectivesContext.Consumer>
+                    {(objectiveContext) => (
+                      <>
+                        {(objectiveContext.objectives ?? []).map(
+                          (obj) =>
+                            obj.Objective.Title === activity.Objective && (
+                              <option key={obj.Title}>{obj.Title}</option>
+                            ),
+                        )}
+                      </>
+                    )}
+                  </ObjectivesContext.Consumer>
+                </Form.Control>
               </Form.Group>
               <Form.Group controlId="editActivityInterestItems">
                 <Form.Label>Action Taken/In Work</Form.Label>
