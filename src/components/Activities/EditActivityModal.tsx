@@ -10,6 +10,7 @@ import { PeoplePicker, SPPersona } from "../PeoplePicker/PeoplePicker";
 import ActivityModal from "./ActivityModal";
 import { DatePickerCustomInput } from "../DatePickerCustomInput/DatePickerCustomInput";
 import { IconButton } from "office-ui-fabric-react";
+import { ObjectivesContext } from "../../providers/ObjectivesContext";
 
 export interface IEditActivityModalProps {
   activity: IActivity;
@@ -28,16 +29,16 @@ export interface IEditActivityModalProps {
 }
 
 export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
-  props
+  props,
 ) => {
   const weekStart = DateUtilities.getStartOfWeek(props.activity?.WeekOf);
   const [activity, setActivity] = useState<IActivity>({ ...props.activity });
   const [validated, setValidated] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date>(
-    DateUtilities.momentToDate(weekStart)
+    DateUtilities.momentToDate(weekStart),
   );
   const [highlightDates, setHighlightDates] = useState<Date[]>(
-    DateUtilities.getWeek(weekStart)
+    DateUtilities.getWeek(weekStart),
   );
   const [datePickerOpen, setDatePickerOpen] = useState<boolean>(false);
 
@@ -81,8 +82,8 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
     newActivity.OPRs = {
       results: value.map((newOPR) => {
         return {
-          Id: newOPR.SPUserId ? newOPR.SPUserId : 0, // Set to 0 if not defined -- we can then look up the user when processing
-          Title: newOPR.text ? newOPR.text : "",
+          Id: newOPR.SPUserId ?? 0, // Set to 0 if not defined -- we can then look up the user when processing
+          Title: newOPR.text ?? "",
           Email: newOPR.Email,
         };
       }),
@@ -185,7 +186,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                 <Form.Label>Organization</Form.Label>
                 <Form.Control
                   as="select"
-                  defaultValue={props.activity.Branch}
+                  value={activity.Branch}
                   onChange={(e) => updateActivity(e.target.value, "Branch")}
                   disabled={isReadOnly()}
                   required
@@ -197,7 +198,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                         {(orgsContext.orgs ? orgsContext.orgs : []).map(
                           (org) => (
                             <option key={org}>{org}</option>
-                          )
+                          ),
                         )}
                       </>
                     )}
@@ -209,7 +210,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                 <Form.Control
                   type="text"
                   placeholder="Title with no trailing period"
-                  defaultValue={props.activity.Title}
+                  value={activity.Title}
                   onChange={(e) => updateActivity(e.target.value, "Title")}
                   readOnly={isReadOnly()}
                   required
@@ -218,13 +219,71 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                   Enter a title with no trailing period.
                 </Form.Control.Feedback>
               </Form.Group>
+              <Form.Group controlId="editActivityObjective">
+                <Form.Label>Objective</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={activity.Objective}
+                  onChange={(e) => updateActivity(e.target.value, "Objective")}
+                  disabled={isReadOnly()}
+                  required
+                >
+                  <option value="">--</option>
+                  <ObjectivesContext.Consumer>
+                    {(objectiveContext) => (
+                      <>
+                        {(objectiveContext.objectives ?? [])
+                          .filter(
+                            (objective, index, self) =>
+                              index ===
+                              self.findIndex(
+                                (p) =>
+                                  p.Objective.Id === objective.Objective.Id,
+                              ),
+                          )
+                          .map((obj) => (
+                            <option key={obj.Objective.Title}>
+                              {obj.Objective.Title}
+                            </option>
+                          ))}
+                      </>
+                    )}
+                  </ObjectivesContext.Consumer>
+                </Form.Control>
+              </Form.Group>
+              <Form.Group controlId="editActivitySubObjective">
+                <Form.Label>Sub Objective</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={activity.SubObjective}
+                  onChange={(e) =>
+                    updateActivity(e.target.value, "SubObjective")
+                  }
+                  disabled={isReadOnly()}
+                  required
+                >
+                  <option value="">--</option>
+                  <ObjectivesContext.Consumer>
+                    {(objectiveContext) => (
+                      <>
+                        {(objectiveContext.objectives ?? []).map(
+                          (obj) =>
+                            obj.Objective.Title === activity.Objective && (
+                              <option key={obj.Title}>{obj.Title}</option>
+                            ),
+                        )}
+                      </>
+                    )}
+                  </ObjectivesContext.Consumer>
+                </Form.Control>
+              </Form.Group>
               <Form.Group controlId="editActivityInterestItems">
                 <Form.Label>Action Taken/In Work</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={5}
                   placeholder="Actions taken..."
-                  defaultValue={props.activity.ActionTaken}
+                  value={activity.ActionTaken}
                   onChange={(e) =>
                     updateActivity(e.target.value, "ActionTaken")
                   }
@@ -241,7 +300,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                     <Form.Check
                       label="MAR Entry?"
                       type="checkbox"
-                      defaultChecked={props.activity.IsMarEntry}
+                      checked={activity.IsMarEntry}
                       onChange={(e) =>
                         updateActivity(e.target.checked, "IsMarEntry")
                       }
@@ -267,7 +326,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                   <Form.Check
                     label="History Entry?"
                     type="checkbox"
-                    defaultChecked={props.activity.IsHistoryEntry}
+                    checked={activity.IsHistoryEntry}
                     onChange={(e) =>
                       updateActivity(e.target.checked, "IsHistoryEntry")
                     }

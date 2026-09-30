@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - (Keep your changes here until you have a release version)
 
+## [1.1.0] - 2026-09-29
+
+### Changed
+
+- Fixed icons not loading correctly
+- Added Objective and SubObjective dropdowns
+
 ## [1.0.42] - 2026-04-24
 
 ### Changed

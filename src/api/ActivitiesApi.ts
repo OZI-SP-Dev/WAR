@@ -39,6 +39,8 @@ export interface IActivity {
     etag: string;
   };
   MARText?: string;
+  Objective?: string;
+  SubObjective?: string;
 }
 
 export interface IActivityApi {
@@ -52,7 +54,7 @@ export interface IActivityApi {
   fetchActivitiesByNumWeeks(
     numWeeks: number,
     weekStart: Moment,
-    userId: number
+    userId: number,
   ): Promise<any>;
 
   /**
@@ -72,7 +74,7 @@ export interface IActivityApi {
     userId?: number,
     additionalFilter?: string,
     orderBy?: string,
-    ascending?: boolean
+    ascending?: boolean,
   ): Promise<any>;
 
   /**
@@ -96,7 +98,7 @@ export interface IActivityApi {
     endDate?: Moment,
     isHistory?: boolean,
     isMAR?: boolean,
-    userId?: number
+    userId?: number,
   ): Promise<any>;
 
   /**
@@ -111,7 +113,7 @@ export interface IActivityApi {
     startDate: Moment,
     endDate: Moment,
     userId: number,
-    orderBy?: string
+    orderBy?: string,
   ): Promise<any>;
 
   /**
@@ -126,7 +128,7 @@ export interface IActivityApi {
     startDate: Moment,
     endDate: Moment,
     userId: number,
-    orderBy?: string
+    orderBy?: string,
   ): Promise<any>;
 
   /**
@@ -151,7 +153,7 @@ export default class ActivitiesApi implements IActivityApi {
   fetchActivitiesByNumWeeks(
     numWeeks: number,
     weekStart: Moment,
-    userId: number
+    userId: number,
   ): Promise<any> {
     let maxDate = DateUtilities.getDate(weekStart);
     maxDate.add(1, "day");
@@ -166,7 +168,7 @@ export default class ActivitiesApi implements IActivityApi {
     userId?: number,
     additionalFilter?: string,
     orderBy?: string,
-    ascending?: boolean
+    ascending?: boolean,
   ): Promise<any> {
     //Order matters. Results must be below the 5,000 item threshold with the FIRST filter
     let filterArray = [];
@@ -199,7 +201,9 @@ export default class ActivitiesApi implements IActivityApi {
         "IsMarEntry",
         "IsHistoryEntry",
         "IsDeleted",
-        "MARText"
+        "MARText",
+        "Objective",
+        "SubObjective",
       )
       .expand("OPRs")
       .filter(filterString);
@@ -223,7 +227,7 @@ export default class ActivitiesApi implements IActivityApi {
     endDate?: Moment,
     isHistory?: boolean,
     isMAR?: boolean,
-    userId?: number
+    userId?: number,
   ): Promise<IActivity[]> {
     // Query order matters -- first filter MUST reduce the possible result set to less than 5k items
     let conditions: string[] = [];
@@ -231,7 +235,7 @@ export default class ActivitiesApi implements IActivityApi {
       conditions.push(
         `<Geq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${startDate
           .subtract(1, "day")
-          .toISOString()}</Value></Geq>`
+          .toISOString()}</Value></Geq>`,
       );
     }
     if (endDate) {
@@ -240,22 +244,22 @@ export default class ActivitiesApi implements IActivityApi {
         `<Leq><FieldRef Name='WeekOf'/><Value Type='DateTime'>${endDate
           .startOf("week")
           .add(1, "day")
-          .toISOString()}</Value></Leq>`
+          .toISOString()}</Value></Leq>`,
       );
     }
     if (isHistory) {
       conditions.push(
-        "<Eq><FieldRef Name='IsHistoryEntry'/><Value Type='Boolean'>1</Value></Eq>"
+        "<Eq><FieldRef Name='IsHistoryEntry'/><Value Type='Boolean'>1</Value></Eq>",
       );
     }
     if (isMAR) {
       conditions.push(
-        "<Eq><FieldRef Name='IsMarEntry'/><Value Type='Boolean'>1</Value></Eq>"
+        "<Eq><FieldRef Name='IsMarEntry'/><Value Type='Boolean'>1</Value></Eq>",
       );
     }
     if (query) {
       conditions.push(
-        `<Contains><FieldRef Name='ActionTaken'/><Value Type='Note'>${query}</Value></Contains>`
+        `<Contains><FieldRef Name='ActionTaken'/><Value Type='Note'>${query}</Value></Contains>`,
       );
     }
     if (org) {
@@ -264,7 +268,7 @@ export default class ActivitiesApi implements IActivityApi {
           includeSubOrgs ? "Contains" : "Eq"
         }><FieldRef Name='Branch'/><Value Type='Text'>${org}</Value></${
           includeSubOrgs ? "Contains" : "Eq"
-        }>`
+        }>`,
       );
     }
     if (userId) {
@@ -273,7 +277,7 @@ export default class ActivitiesApi implements IActivityApi {
                        </Or>`);
     }
     conditions.push(
-      "<Neq><FieldRef Name='IsDeleted'/><Value Type='Boolean'>1</Value></Neq>"
+      "<Neq><FieldRef Name='IsDeleted'/><Value Type='Boolean'>1</Value></Neq>",
     );
 
     let queryString = "";
@@ -299,6 +303,8 @@ export default class ActivitiesApi implements IActivityApi {
                     <FieldRef Name='IsHistoryEntry' />
                     <FieldRef Name='IsDeleted' />
                     <FieldRef Name='MARText' />
+                    <FieldRef Name='Objective' />
+                    <FieldRef Name='SubObjective' />
                   </ViewFields>
                   <Query>
                     <Where>
@@ -336,6 +342,8 @@ export default class ActivitiesApi implements IActivityApi {
           }),
         },
         __metadata: { etag: `"${activity.owshiddenversion}"` },
+        Objective: activity.Objective,
+        SubObjective: activity.SubObjective,
       };
     });
   }
@@ -344,14 +352,14 @@ export default class ActivitiesApi implements IActivityApi {
     startDate: Moment,
     endDate: Moment,
     userId: number,
-    orderBy?: string
+    orderBy?: string,
   ): Promise<any> {
     return this.fetchActivitiesByDates(
       startDate,
       endDate,
       userId,
       "IsMarEntry eq 1",
-      orderBy
+      orderBy,
     );
   }
 
@@ -359,14 +367,14 @@ export default class ActivitiesApi implements IActivityApi {
     startDate: Moment,
     endDate: Moment,
     userId: number,
-    orderBy?: string
+    orderBy?: string,
   ): Promise<any> {
     return this.fetchActivitiesByDates(
       startDate,
       endDate,
       userId,
       "IsHistoryEntry eq 1",
-      orderBy
+      orderBy,
     );
   }
 

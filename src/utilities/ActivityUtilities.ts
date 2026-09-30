@@ -21,6 +21,8 @@ export default class ActivityUtilities {
       IsHistoryEntry: activity.IsHistoryEntry,
       OPRsId: { results: [] },
       MARText: activity.MARText?.trim(),
+      Objective: activity.Objective.trim(),
+      SubObjective: activity.SubObjective.trim(),
     };
 
     //include etag if it exists - new items will not have an etag
@@ -62,7 +64,7 @@ export default class ActivityUtilities {
   static updateActivityEtagFromResponse(
     res: any,
     oldActivity: any,
-    activity: any
+    activity: any,
   ) {
     let newActivity = { ...activity, OPRs: oldActivity.OPRs };
     if (res.data["odata.etag"]) {

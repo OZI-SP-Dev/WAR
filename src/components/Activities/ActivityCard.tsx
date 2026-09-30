@@ -15,7 +15,7 @@ export interface IActivityCardProps {
 }
 
 export const ActivityCard: React.FunctionComponent<IActivityCardProps> = (
-  props
+  props,
 ) => {
   const [showCopyPopover, setShowCopyPopover] = useState<boolean>(false);
   const [popoverTarget, setPopoverTarget] = useState<any>(null);
@@ -69,8 +69,14 @@ export const ActivityCard: React.FunctionComponent<IActivityCardProps> = (
             <Card.Text as="div">
               <strong>Week of:</strong>{" "}
               {DateUtilities.getDate(props.activity.WeekOf).format(
-                "MM/DD/YYYY"
+                "MM/DD/YYYY",
               )}
+              <br />
+              <strong>Objective:</strong>{" "}
+              <span>{props.activity.Objective}</span>
+              <br />
+              <strong>Sub Objective:</strong>{" "}
+              <span>{props.activity.SubObjective}</span>
               <br />
               <strong>Action Taken/In Work:</strong>{" "}
               <span style={{ whiteSpace: "pre-line" }}>
@@ -90,7 +96,7 @@ export const ActivityCard: React.FunctionComponent<IActivityCardProps> = (
                       {OPR.Title}
                       {array.length - 1 > index ? ";" : ""}{" "}
                     </span>
-                  )
+                  ),
                 )}
               <br />
               {props.activity.IsMarEntry ? (
