@@ -82,8 +82,8 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
     newActivity.OPRs = {
       results: value.map((newOPR) => {
         return {
-          Id: newOPR.SPUserId ? newOPR.SPUserId : 0, // Set to 0 if not defined -- we can then look up the user when processing
-          Title: newOPR.text ? newOPR.text : "",
+          Id: newOPR.SPUserId ?? 0, // Set to 0 if not defined -- we can then look up the user when processing
+          Title: newOPR.text ?? "",
           Email: newOPR.Email,
         };
       }),
@@ -186,7 +186,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                 <Form.Label>Organization</Form.Label>
                 <Form.Control
                   as="select"
-                  defaultValue={props.activity.Branch}
+                  value={activity.Branch}
                   onChange={(e) => updateActivity(e.target.value, "Branch")}
                   disabled={isReadOnly()}
                   required
@@ -210,7 +210,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                 <Form.Control
                   type="text"
                   placeholder="Title with no trailing period"
-                  defaultValue={props.activity.Title}
+                  value={activity.Title}
                   onChange={(e) => updateActivity(e.target.value, "Title")}
                   readOnly={isReadOnly()}
                   required
@@ -223,7 +223,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                 <Form.Label>Objective</Form.Label>
                 <Form.Control
                   as="select"
-                  defaultValue={props.activity.Objective}
+                  value={activity.Objective}
                   onChange={(e) => updateActivity(e.target.value, "Objective")}
                   disabled={isReadOnly()}
                   required
@@ -255,7 +255,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                 <Form.Label>Sub Objective</Form.Label>
                 <Form.Control
                   as="select"
-                  defaultValue={props.activity.SubObjective}
+                  value={activity.SubObjective}
                   onChange={(e) =>
                     updateActivity(e.target.value, "SubObjective")
                   }
@@ -283,7 +283,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                   as="textarea"
                   rows={5}
                   placeholder="Actions taken..."
-                  defaultValue={props.activity.ActionTaken}
+                  value={activity.ActionTaken}
                   onChange={(e) =>
                     updateActivity(e.target.value, "ActionTaken")
                   }
@@ -300,7 +300,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                     <Form.Check
                       label="MAR Entry?"
                       type="checkbox"
-                      defaultChecked={props.activity.IsMarEntry}
+                      checked={activity.IsMarEntry}
                       onChange={(e) =>
                         updateActivity(e.target.checked, "IsMarEntry")
                       }
@@ -326,7 +326,7 @@ export const EditActivityModal: FunctionComponent<IEditActivityModalProps> = (
                   <Form.Check
                     label="History Entry?"
                     type="checkbox"
-                    defaultChecked={props.activity.IsHistoryEntry}
+                    checked={activity.IsHistoryEntry}
                     onChange={(e) =>
                       updateActivity(e.target.checked, "IsHistoryEntry")
                     }
